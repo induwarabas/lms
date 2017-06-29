@@ -9,7 +9,8 @@ use Yii;
  *
  * @property string $id
  * @property string $type
- * @property string $balance
+ * @property number $balance
+ * @property string $protection
  */
 class Account extends \yii\db\ActiveRecord
 {
@@ -27,8 +28,8 @@ class Account extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'type', 'balance'], 'required'],
-            [['type'], 'string'],
+            [['id', 'type', 'balance', 'protection'], 'required'],
+            [['type', 'protection'], 'string'],
             [['balance'], 'number'],
             [['id'], 'string', 'max' => 12],
         ];
@@ -43,6 +44,7 @@ class Account extends \yii\db\ActiveRecord
             'id' => 'Acocunt ID',
             'type' => 'Type',
             'balance' => 'Balance',
+            'protection' => 'Protection',
         ];
     }
 

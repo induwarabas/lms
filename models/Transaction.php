@@ -11,9 +11,9 @@ use Yii;
  * @property string $timestamp
  * @property string $cr_account
  * @property string $dr_account
- * @property string $cr_balance
- * @property string $dr_balance
- * @property string $amount
+ * @property number $cr_balance
+ * @property number $dr_balance
+ * @property number $amount
  * @property string $type
  * @property string $description
  */
