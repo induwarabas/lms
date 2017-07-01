@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\utils\TxHandler;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -10,7 +11,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
-class SiteController extends LmsContoller
+class SiteController extends LmsController
 {
 //    /**
 //     * @inheritdoc
@@ -103,15 +104,22 @@ class SiteController extends LmsContoller
      */
     public function actionContact()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
+        $tx = new TxHandler();
+        if ($tx->createTransaction("9000000001", "9000000002", 1000, "CAPITAL", "Initial transfer")) {
+            echo $tx->getTransactionID();
+        } else {
+            echo $tx->getError();
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+
+//        $model = new ContactForm();
+//        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+//            Yii::$app->session->setFlash('contactFormSubmitted');
+//
+//            return $this->refresh();
+//        }
+//        return $this->render('contact', [
+//            'model' => $model,
+//        ]);
     }
 
     /**

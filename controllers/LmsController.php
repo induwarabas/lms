@@ -16,7 +16,7 @@ use yii\filters\VerbFilter;
 use webvimark\modules\UserManagement\components\GhostMenu;
 use webvimark\modules\UserManagement\UserManagementModule;
 
-class LmsContoller extends Controller
+class LmsController extends Controller
 {
     /**
      * @inheritdoc
