@@ -31,7 +31,7 @@ class TxHandler
 
     public function createTransaction($cr, $dr, $amount, $type, $description)
     {
-        $tx = Yii::$app->getDb()->beginTransaction();
+        //$tx = Yii::$app->getDb()->beginTransaction();
         $crAccount = Account::find()->where(["id" => $cr])->one();
 
         if ($crAccount->protection == 'PLUS' && $crAccount->balance - $amount < 0.0) {
@@ -63,7 +63,7 @@ class TxHandler
         $drAccount->balance = $transaction->dr_balance;
         $drAccount->save();
 
-        $tx->commit();
+        //$tx->commit();
         return true;
     }
 }

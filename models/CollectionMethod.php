@@ -11,6 +11,8 @@ use Yii;
  * @property string $name
  * @property integer $penal_after
  * @property string $penal_after_unit
+ * @property string $penal
+ * @property string $interval_format
  *
  * @property Loan[] $loans
  */
@@ -30,10 +32,12 @@ class CollectionMethod extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'penal_after', 'penal_after_unit'], 'required'],
+            [['name', 'penal_after', 'penal_after_unit', 'penal', 'interval_format'], 'required'],
             [['penal_after'], 'integer'],
             [['penal_after_unit'], 'string'],
+            [['penal'], 'number'],
             [['name'], 'string', 'max' => 12],
+            [['interval_format'], 'string', 'max' => 8],
         ];
     }
 
@@ -47,6 +51,8 @@ class CollectionMethod extends \yii\db\ActiveRecord
             'name' => 'Name',
             'penal_after' => 'Penal After',
             'penal_after_unit' => 'Penal After Unit',
+            'penal' => 'Penal',
+            'interval_format' => 'Interval Format',
         ];
     }
 

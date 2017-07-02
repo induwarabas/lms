@@ -6,6 +6,8 @@ use app\models\Loan;
 use app\models\LoanSearch;
 use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanCreator;
+use app\utils\loan\LoanDisbursement;
+use app\utils\loan\LoanRecovery;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -54,6 +56,7 @@ class LoanController extends LmsController
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'error' => null
         ]);
     }
 
@@ -78,6 +81,7 @@ class LoanController extends LmsController
             $model->type,
             $model->amount,
             $model->interest,
+            $model->penalty,
             $model->charges,
             $model->collection_method,
             $model->period);
@@ -111,20 +115,36 @@ class LoanController extends LmsController
         }
     }
 
-    public function actionSchedule($amount, $interest, $terms)
+    public function actionSchedule($amount, $interest, $terms, $charges)
     {
         $calc = new AmortizationCalculator();
-        $calc->amount = $amount;
-        $calc->interest = $interest;
-        $calc->terms = $terms;
 
-        $schedule = $calc->calculate();
+        $schedule = $calc->calculate($amount, $interest, $terms, 12, $charges);
 
         return $this->render('schedule', [
             'schedule' => $schedule,
         ]);
     }
 
+    public function actionDisburse($id)
+    {
+        $disbursement = new LoanDisbursement();
+        $disbursement->disburse($id);
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+            'error' => $disbursement->error
+        ]);
+    }
+
+    public function actionRecover($id,$date)
+    {
+        $disbursement = new LoanRecovery();
+        $disbursement->recover($id, $date);
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+            'error' => $disbursement->error
+        ]);
+    }
     /**
      * Deletes an existing Loan model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

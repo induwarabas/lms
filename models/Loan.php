@@ -14,12 +14,16 @@ use Yii;
  * @property string $loan_account
  * @property string $amount
  * @property string $interest
+ * @property string $penalty
  * @property string $charges
  * @property integer $collection_method
  * @property integer $period
  * @property string $status
  * @property string $disbursed_date
  * @property string $closed_date
+ * @property number $installment
+ * @property string $total_interest
+ * @property string $total_payment
  *
  * @property CollectionMethod $collectionMethod
  * @property LoanType $type0
@@ -40,9 +44,9 @@ class Loan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'customer_id', 'amount', 'interest', 'charges', 'collection_method', 'period'], 'required'],
+            [['type', 'customer_id', 'amount', 'interest', 'penalty', 'charges', 'collection_method', 'period'], 'required'],
             [['type', 'customer_id', 'collection_method', 'period'], 'integer'],
-            [['amount', 'interest', 'charges'], 'number'],
+            [['amount', 'interest', 'penalty', 'charges', 'installment', 'total_interest', 'total_payment'], 'number'],
             [['status'], 'string'],
             [['disbursed_date', 'closed_date'], 'safe'],
             [['saving_account', 'loan_account'], 'string', 'max' => 12],
@@ -64,12 +68,16 @@ class Loan extends \yii\db\ActiveRecord
             'loan_account' => 'Loan Account',
             'amount' => 'Amount',
             'interest' => 'Interest',
+            'penalty' => 'Penalty',
             'charges' => 'Charges',
             'collection_method' => 'Collection Method',
             'period' => 'Period',
             'status' => 'Status',
             'disbursed_date' => 'Disbursed Date',
             'closed_date' => 'Closed Date',
+            'installment' => 'Installment',
+            'total_interest' => 'Total Interest',
+            'total_payment' => 'Total Payment',
         ];
     }
 

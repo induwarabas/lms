@@ -16,6 +16,7 @@ class AmortizationSchedule
     public $totalPayment = 0.0;
     public $amount = 0.0;
     public $interest = 0.0;
+    public $charges = 0.0;
     public $terms = 0;
     public $interest_terms = 12;
     public $schedule = array();

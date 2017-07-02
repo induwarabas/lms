@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => "payment", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "totalInterest", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "totalPayment", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "charges", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "terms", 'contentOptions'=>array('style' => 'text-align: right;')],
             ['attribute' => "payment", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
         ],
@@ -39,6 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => "Amount", 'value' => 'amount', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "Interest", 'value' => 'interest', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "Principal", 'value' => 'principal', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "Charges", 'value' => 'charges', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "Balance", 'value' => 'balance', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
         ]
     ]) ?><?php Pjax::end(); ?>

@@ -22,12 +22,13 @@ class LoanCreator
         return $this->loanId;
     }
 
-    public function createLoan($customer_id, $type, $amount, $interest, $charges, $collection_method, $period) {
+    public function createLoan($customer_id, $type, $amount, $interest, $penalty, $charges, $collection_method, $period) {
         $loan = new Loan;
         $loan->customer_id = $customer_id;
         $loan->amount = $amount;
         $loan->interest = $interest;
         $loan->charges = $charges;
+        $loan->penalty = $penalty;
         $loan->type = $type;
         $loan->collection_method = $collection_method;
         $loan->period = $period;

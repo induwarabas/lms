@@ -21,6 +21,7 @@ use \app\models\LoanType;
 
     <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
     <?= $form->field($model, 'interest')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+    <?= $form->field($model, 'penalty')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
     <?= $form->field($model, 'charges')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
 
     <?= $form->field($model, 'collection_method')->dropDownList(ArrayHelper::map(CollectionMethod::find()->all(), 'id', 'name')) ?>
