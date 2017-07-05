@@ -17,7 +17,7 @@ use Yii;
  * @property integer $arrears
  * @property number $penalty
  * @property string $paid
- * @property string $due
+ * @property number $due
  * @property string $balance
  */
 class LoanSchedule extends \yii\db\ActiveRecord

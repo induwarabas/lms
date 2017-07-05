@@ -11,6 +11,7 @@ namespace app\utils\loan;
 
 use app\models\Account;
 use app\models\Loan;
+use app\utils\enums\LoanStatus;
 
 class LoanCreator
 {
@@ -30,6 +31,7 @@ class LoanCreator
         $loan->charges = $charges;
         $loan->penalty = $penalty;
         $loan->type = $type;
+        $loan->status = LoanStatus::PENDING;
         $loan->collection_method = $collection_method;
         $loan->period = $period;
         if (!$loan->save()) {

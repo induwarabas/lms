@@ -13,6 +13,9 @@ use app\models\Account;
 use app\models\CollectionMethod;
 use app\models\Loan;
 use app\models\LoanSchedule;
+use app\utils\enums\LoanScheduleStatus;
+use app\utils\enums\LoanStatus;
+use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
 use DateTime;
@@ -21,6 +24,10 @@ use Yii;
 class LoanRecovery
 {
     public $error = null;
+
+    private function getAmountToPay($schedule) {
+        return $schedule->principal + $schedule->interest + $schedule->charges;
+    }
 
     public function updateSchedule($loanId, $date)
     {
@@ -35,7 +42,7 @@ class LoanRecovery
             return false;
         }
 
-        if ($loan->status !== 'ACTIVE') {
+        if ($loan->status !== LoanStatus::ACTIVE) {
             $this->error = "The loan #" . $loanId . " is not active.";
             $tx->rollBack();
             return false;
@@ -45,7 +52,7 @@ class LoanRecovery
         $recoveryDate = date('Y-m-d', strtotime("-" . $collectionMethod->penal_after . " " . $collectionMethod->penal_after_unit, strtotime($date)));
 
         $schedules = LoanSchedule::find()->where(["loan_id" => $loanId])
-            ->andWhere("status in ('DEMANDED', 'ARREARS', 'PENDING')")
+            ->andWhere("status in ('".LoanScheduleStatus::DEMANDED."', '".LoanScheduleStatus::ARREARS."', '".LoanScheduleStatus::PENDING."')")
             ->andWhere("demand_date <= '" . $date . "'")
             ->orderBy(['installment_id' => SORT_ASC])
             ->all();
@@ -63,9 +70,10 @@ class LoanRecovery
 
             $interval++;
 
-            if ($schedule->status == 'PENDING' && $schedule->demand_date <= $date) {
-                $schedule->status = 'DEMANDED';
-                $schedule->due = $loan->installment;
+            if ($schedule->status == LoanScheduleStatus::PENDING && $schedule->demand_date <= $date) {
+                $schedule->status = LoanScheduleStatus::DEMANDED;
+                $schedule->due = $this->getAmountToPay($schedule);
+
                 $schedule->save();
             }
 
@@ -74,13 +82,14 @@ class LoanRecovery
             }
 
             if ($schedule->arrears < $interval) {
-                $schedule->status = 'ARREARS';
+                $schedule->status = LoanScheduleStatus::ARREARS;
                 for ($i = $schedule->arrears; $i < $interval; ++$i) {
-                    $arrears = $loan->installment + $schedule->penalty;
+                    $amountToPay = $this->getAmountToPay($schedule);
+                    $arrears = $amountToPay + $schedule->penalty - $schedule->paid;
                     $penalty = round($arrears * $loan->penalty / 100.0, 2);
                     $schedule->penalty = $schedule->penalty + $penalty;
                     $schedule->arrears = $schedule->arrears + 1;
-                    $schedule->due = $schedule->penalty + $loan->installment - $schedule->paid;
+                    $schedule->due = $schedule->penalty + $amountToPay - $schedule->paid;
                 }
                 $schedule->save();
             }
@@ -103,7 +112,7 @@ class LoanRecovery
         $remain = $savingAccount->balance;
 
         if ($remain > 0) {
-            $schedules = LoanSchedule::find()->where(['status' => 'ARREARS'])->andWhere("penalty > 0")->orderBy("installment_id")->all();
+            $schedules = LoanSchedule::find()->where(["loan_id" => $loanId])->where(['status' => LoanScheduleStatus::ARREARS])->andWhere("penalty > 0")->orderBy("installment_id")->all();
             $amount = 0.0;
 
             foreach ($schedules as $schedule) {
@@ -124,13 +133,14 @@ class LoanRecovery
 
             if ($amount > 0) {
                 $txHnd = new TxHandler();
-                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, "PENALTY","Penalty charge for loan #".$loanId)){
+                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, "Penalty charge for loan #" . $loanId)) {
                     $tx->rollBack();
                     $this->error = $txHnd->error;
                     return false;
                 }
             }
         }
+        $tx->commit();
         return true;
     }
 
@@ -147,24 +157,44 @@ class LoanRecovery
         $savingAccount = Account::findOne(['id' => $loan->saving_account]);
         $remain = $savingAccount->balance;
 
-        if ($remain >= $loan->installment) {
-            $schedules = LoanSchedule::find()->where("status in ('ARREARS', 'DEMANDED')")->orderBy("installment_id")->all();
+        $schedules = LoanSchedule::find()->where(["loan_id" => $loanId])->where("status in ('".LoanScheduleStatus::ARREARS."', '".LoanScheduleStatus::DEMANDED."')")->orderBy("installment_id")->all();
 
-            foreach ($schedules as $schedule) {
-                if ($remain < $loan->installment){
-                    break;
-                }
-                $schedule->paid += Grrrrrrrrrrr
-                $remain -= $loan->installment;
-                $txHnd = new TxHandler();
-                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $schedule->charges, "CHARGES","Penalty charge for loan #".$loanId)){
-                    $tx->rollBack();
-                    $this->error = $txHnd->error;
-                    return false;
-                }
+        foreach ($schedules as $schedule) {
 
+            if ($remain < $schedule->due) {
+                break;
             }
+            $schedule->paid += $schedule->due;
+            $remain -= $schedule->due;
+            $txHnd = new TxHandler();
+            if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $schedule->due, TxType::RECOVERY, "Installment recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+                $tx->rollBack();
+                $this->error = $txHnd->error;
+                return false;
+            }
+
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK, $loan->loan_account, $schedule->principal, TxType::CAPITAL_RECOVERY, "Capital recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+                $tx->rollBack();
+                $this->error = $txHnd->error;
+                return false;
+            }
+
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::INTEREST, $schedule->interest, TxType::INTEREST_RECOVERY, "Interest recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+                $tx->rollBack();
+                $this->error = $txHnd->error;
+                return false;
+            }
+
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::COMMISSION, $schedule->interest, TxType::CHARGES_RECOVERY, "Charges recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+                $tx->rollBack();
+                $this->error = $txHnd->error;
+                return false;
+            }
+            $schedule->due = 0.0;
+            $schedule->status = LoanScheduleStatus::PAYED;
+            $schedule->save();
         }
+        $tx->commit();
         return true;
     }
 
@@ -178,6 +208,10 @@ class LoanRecovery
             return false;
         }
 
+        if (!$this->recoverInstallments($loanId)) {
+            return false;
+        }
 
+        return true;
     }
 }

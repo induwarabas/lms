@@ -31,6 +31,9 @@ class TxHandler
 
     public function createTransaction($cr, $dr, $amount, $type, $description)
     {
+        if($amount == 0) {
+            return true;
+        }
         //$tx = Yii::$app->getDb()->beginTransaction();
         $crAccount = Account::find()->where(["id" => $cr])->one();
 

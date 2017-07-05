@@ -10,6 +10,9 @@ namespace app\utils\loan;
 
 use app\models\Loan;
 use app\models\LoanSchedule;
+use app\utils\enums\LoanScheduleStatus;
+use app\utils\enums\LoanStatus;
+use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
 
@@ -25,7 +28,7 @@ class LoanDisbursement
             return false;
         }
 
-        if ($loan->status !== 'PENDING') {
+        if ($loan->status !== LoanStatus::PENDING) {
             $this->error = "The loan is already disbursed.";
             return false;
         }
@@ -52,7 +55,7 @@ class LoanDisbursement
         $loan->installment = $schedule->payment;
         $loan->total_interest = $schedule->totalInterest;
         $loan->total_payment = $schedule->totalPayment;
-        $loan->status = 'ACTIVE';
+        $loan->status = LoanStatus::ACTIVE;
         $loan->save();
 
         for ($x = 1; $x <= $loan->period; $x++) {
@@ -61,7 +64,7 @@ class LoanDisbursement
             $s = new LoanSchedule();
             $s->loan_id = $loan->id;
             $s->installment_id = $x;
-            $s->status = 'PENDING';
+            $s->status = LoanScheduleStatus::PENDING;
             $s->demand_date = $dt;
             $s->principal = $installment['principal'];
             $s->interest = $installment['interest'];
@@ -75,12 +78,20 @@ class LoanDisbursement
         }
 
         $txHnd = new TxHandler();
-        if (!$txHnd->createTransaction($loan->loan_account, GeneralAccounts::PAYABLE, $loan->amount, 'DISBURSE', "Disbursement of the loan #" . $loan->id)) {
+        if (!$txHnd->createTransaction($loan->loan_account,
+            GeneralAccounts::PAYABLE,
+            $loan->amount,
+            TxType::DISBURSE,
+            "Disbursement of the loan #" . $loan->id)) {
             $this->error = $txHnd->error;
             return false;
         }
 
-        if (!$txHnd->createTransaction(GeneralAccounts::COMMISSION, GeneralAccounts::PAYABLE, $loan->charges, 'CHARGES', "Disbursement charges of the loan #" . $loan->id)) {
+        if (!$txHnd->createTransaction(GeneralAccounts::COMMISSION,
+            GeneralAccounts::PAYABLE,
+            $loan->charges,
+            TxType::CHARGES,
+            "Disbursement charges of the loan #" . $loan->id)) {
             $this->error = $txHnd->error;
             return false;
         }

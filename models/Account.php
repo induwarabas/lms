@@ -9,7 +9,7 @@ use Yii;
  *
  * @property string $id
  * @property string $type
- * @property number $balance
+ * @property double $balance
  * @property string $protection
  */
 class Account extends \yii\db\ActiveRecord
