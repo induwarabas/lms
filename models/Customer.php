@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\utils\NICValidator;
 use Yii;
 
 /**
@@ -42,8 +43,9 @@ class Customer extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nic', 'full_name', 'name', 'dob', 'area', 'residential_address', 'billing_address', 'phone', 'mobile', 'email', 'occupation', 'work_address', 'work_phone', 'work_email', 'fixed_salary', 'other_incomes', 'spouse_id'], 'required'],
+            [['nic', 'full_name', 'name', 'dob', 'area', 'residential_address', 'work_phone'], 'required'],
             [['dob'], 'safe'],
+            [['nic'], NICValidator::class],
             [['residential_address', 'billing_address', 'work_address'], 'string'],
             [['fixed_salary', 'other_incomes'], 'number'],
             [['spouse_id'], 'integer'],
@@ -51,6 +53,7 @@ class Customer extends \yii\db\ActiveRecord
             [['full_name'], 'string', 'max' => 256],
             [['name', 'email', 'occupation', 'work_email'], 'string', 'max' => 64],
             [['area'], 'string', 'max' => 32],
+            [['nic'], 'unique'],
         ];
     }
 

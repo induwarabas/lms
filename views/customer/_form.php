@@ -1,5 +1,6 @@
 <?php
 
+use dosamigos\datepicker\DatePicker;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,15 +11,24 @@ use yii\widgets\ActiveForm;
 
 <div class="customer-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL,'formConfig' => ['labelSpan' => 3, 'deviceSize' => ActiveForm::SIZE_SMALL]); ?>
 
-    <?= $form->field($model, 'nic')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'nic')->hiddenInput(['maxlength' => true])->label(false) ?>
 
     <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'dob')->textInput() ?>
+    <?= $form->field($model, 'dob')->widget(DatePicker::className(), [
+        'model' => $model,
+        'attribute' => 'dob',
+        'size' => 'ms',
+        'clientOptions' => [
+            'autoclose' => true,
+            'format' => 'yyyy/mm/dd',
+            'todayBtn' => true
+        ]
+    ]) ?>
 
     <?= $form->field($model, 'area')->textInput(['maxlength' => true]) ?>
 

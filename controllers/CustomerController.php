@@ -64,11 +64,36 @@ class CustomerController extends LmsController
     public function actionCreate()
     {
         $model = new Customer();
+        $uuid = Yii::$app->request->get('uuid');
+        if ($uuid == null) {
+            return $this->redirect(['createnic']);
+        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('create', [
+            if (Yii::$app->session->has($uuid)) {
+                $model->nic = Yii::$app->session->get($uuid);
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            } else {
+                return $this->redirect(['createnic']);
+            }
+        }
+    }
+
+    public function actionCreatenic()
+    {
+        $model = new Customer();
+        $model->load(Yii::$app->request->post());
+
+        if (isset($model['nic']) && $model->validate(['nic'])) {
+            $uuid = uniqid();
+            Yii::$app->session->set($uuid, $model->nic);
+            return $this->redirect(['create', 'uuid' => $uuid]);
+        } else {
+            return $this->render('createnic', [
                 'model' => $model,
             ]);
         }

@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
 
-    <?= $form->field($model, 'dob') ?>
+    <?php // echo $form->field($model, 'dob') ?>
 
     <?php // echo $form->field($model, 'area') ?>
 

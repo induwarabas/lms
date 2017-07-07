@@ -24,6 +24,7 @@ class AppAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        'Zelenin\yii\SemanticUI\assets\SemanticUICSSAsset',
+        'yii\bootstrap\BootstrapPluginAsset'
     ];
 }
