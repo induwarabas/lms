@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\Customer;
 use app\models\CustomerSearch;
-use app\controllers\LmsController;
-use yii\web\NotFoundHttpException;
+use app\utils\NICValidator;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * CustomerController implements the CRUD actions for Customer model.
@@ -37,7 +37,7 @@ class CustomerController extends LmsController
     {
         $searchModel = new CustomerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $dataProvider->pagination->pageSize=10;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -65,36 +65,107 @@ class CustomerController extends LmsController
     {
         $model = new Customer();
         $uuid = Yii::$app->request->get('uuid');
-        if ($uuid == null) {
+        if ($uuid == null || !Yii::$app->session->has($uuid)) {
             return $this->redirect(['createnic']);
         }
 
-        if($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            if (Yii::$app->session->has($uuid)) {
-                $model->nic = Yii::$app->session->get($uuid);
-                return $this->render('create', [
-                    'model' => $model,
-                ]);
-            } else {
+        $data = Yii::$app->session->get($uuid);
+        $spouse = null;
+        if (isset($data['spouse'])) {
+            $spouse = Customer::findOne(['id' => $data['spouse']]);
+        }
+        if ($model->load(Yii::$app->request->post())) {
+            $nicValidator = new NICValidator();
+            $details = $nicValidator->getDetails($data['nic']);
+            if ($details == null) {
                 return $this->redirect(['createnic']);
             }
+            $model->nic = $data['nic'];
+            $model->dob = $details["dob"];
+            $model->gender = $details["gender"];
+            if ($spouse !== null) {
+                $model->spouse_id = $spouse->id;
+            }
+            if ($model->save()) {
+                if ($spouse !== null) {
+                    $spouse->spouse_id = $model->id;
+                    $spouse->save();
+                    return $this->redirect(['view', 'id' => $spouse->id]);
+                } else {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            } else {
+                return $this->render('create', [
+                    'model' => $model,
+                    'spouse' => $spouse
+                ]);
+            }
+        } else {
+            $model->nic = $data['nic'];
+            $nicValidator = new NICValidator();
+            $details = $nicValidator->getDetails($model->nic);
+            if ($details == null) {
+                return $this->redirect(['createnic']);
+            }
+            $model->dob = $details["dob"];
+            $model->gender = $details["gender"];
+            return $this->render('create', [
+                'model' => $model,
+                'spouse' => $spouse
+            ]);
+
         }
+    }
+
+    public function actionRemovespouse($id) {
+        $model = Customer::findOne(['id' => $id]);
+        if ($model !== null) {
+            $spouse = Customer::findOne(['id' => $model->spouse_id]);
+            if ($spouse !== null) {
+                $spouse->spouse_id = null;
+                $spouse->save();
+            }
+            $model->spouse_id = null;
+            $model->save();
+        }
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 
     public function actionCreatenic()
     {
         $model = new Customer();
         $model->load(Yii::$app->request->post());
+        $spouse_id = Yii::$app->request->getQueryParam("spouse", null);
+
+        if ($spouse_id !== null && isset($model['nic'])) {
+            $customer = Customer::findOne(['nic' => $model['nic']]);
+            $spouse = Customer::findOne(['id' => $spouse_id]);
+            if ($customer !== null && $spouse !== null && $spouse->id !== $customer->id) {
+                $customer->spouse_id = $spouse_id;
+                $customer->save();
+                $spouse->spouse_id = $customer->id;
+                $spouse->save();
+                return $this->redirect(['view', 'id' => $spouse_id]);
+            }
+        }
 
         if (isset($model['nic']) && $model->validate(['nic'])) {
+            if (Customer::findOne(['nic'=>NICValidator::getOldNic($model->nic)]) != null || Customer::findOne(['nic'=>NICValidator::getNewNic($model->nic)]) != null) {
+                $spouse = Customer::findOne(['id' => $spouse_id]);
+                $model->addError('nic', 'NIC number "'.NICValidator::formatNicNo($model->nic).'" has already been taken.');
+                return $this->render('createnic', [
+                    'model' => $model,
+                    'spouse' => $spouse
+                ]);
+            }
             $uuid = uniqid();
-            Yii::$app->session->set($uuid, $model->nic);
+            Yii::$app->session->set($uuid, ['nic' => $model->nic, 'spouse' => $spouse_id]);
             return $this->redirect(['create', 'uuid' => $uuid]);
         } else {
+            $spouse = Customer::findOne(['id' => $spouse_id]);
             return $this->render('createnic', [
                 'model' => $model,
+                'spouse' => $spouse
             ]);
         }
     }
@@ -113,7 +184,7 @@ class CustomerController extends LmsController
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model' => $model
             ]);
         }
     }

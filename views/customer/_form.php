@@ -1,36 +1,29 @@
 <?php
 
-use dosamigos\datepicker\DatePicker;
+use app\models\Area;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Customer */
+/* @var $spouse app\models\Customer */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="customer-form">
 
-    <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL,'formConfig' => ['labelSpan' => 3, 'deviceSize' => ActiveForm::SIZE_SMALL]); ?>
+    <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'nic')->hiddenInput(['maxlength' => true])->label(false) ?>
+    <?= $form->field($model, 'nic')->textInput(['maxlength' => true, "readonly" => true, "style" => 'text-color: black;']) ?>
+    <?= $form->field($model, 'gender')->textInput(['maxlength' => true, "readonly" => true]) ?>
+    <?= $form->field($model, 'dob')->textInput(['maxlength' => true, "readonly" => true]) ?>
 
     <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'dob')->widget(DatePicker::className(), [
-        'model' => $model,
-        'attribute' => 'dob',
-        'size' => 'ms',
-        'clientOptions' => [
-            'autoclose' => true,
-            'format' => 'yyyy/mm/dd',
-            'todayBtn' => true
-        ]
-    ]) ?>
-
-    <?= $form->field($model, 'area')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'area')->dropDownList(ArrayHelper::map(Area::find()->all(), 'id', 'name'))  ?>
 
     <?= $form->field($model, 'residential_address')->textarea(['rows' => 6]) ?>
 
@@ -54,10 +47,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'other_incomes')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'spouse_id')->textInput() ?>
-
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
+        <?php
+        if ($spouse != null){
+            echo Html::a('Cancel' , Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $spouse->id]), ['class' => 'ui button']);
+        } else if (!$model->isNewRecord) {
+            echo Html::a('Cancel' , Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $model->id]), ['class' => 'ui button']);
+        }
+        ?>
     </div>
 
     <?php ActiveForm::end(); ?>

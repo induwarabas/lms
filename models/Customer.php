@@ -3,7 +3,9 @@
 namespace app\models;
 
 use app\utils\NICValidator;
+use app\utils\PhoneNoValidator;
 use Yii;
+use yii\validators\EmailValidator;
 
 /**
  * This is the model class for table "customer".
@@ -12,6 +14,7 @@ use Yii;
  * @property string $nic
  * @property string $full_name
  * @property string $name
+ * @property string $gender
  * @property string $dob
  * @property string $area
  * @property string $residential_address
@@ -43,16 +46,17 @@ class Customer extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nic', 'full_name', 'name', 'dob', 'area', 'residential_address', 'work_phone'], 'required'],
+            [['nic', 'full_name', 'name', 'gender', 'dob', 'area', 'residential_address', 'phone'], 'required'],
             [['dob'], 'safe'],
             [['nic'], NICValidator::class],
             [['residential_address', 'billing_address', 'work_address'], 'string'],
             [['fixed_salary', 'other_incomes'], 'number'],
-            [['spouse_id'], 'integer'],
+            [['spouse_id','area'], 'integer'],
             [['nic', 'phone', 'mobile', 'work_phone'], 'string', 'max' => 12],
+            [['phone', 'mobile', 'work_phone'], PhoneNoValidator::class],
             [['full_name'], 'string', 'max' => 256],
             [['name', 'email', 'occupation', 'work_email'], 'string', 'max' => 64],
-            [['area'], 'string', 'max' => 32],
+            [['email', 'work_email'], EmailValidator::class],
             [['nic'], 'unique'],
         ];
     }
@@ -67,6 +71,7 @@ class Customer extends \yii\db\ActiveRecord
             'nic' => 'NIC number',
             'full_name' => 'Name in full',
             'name' => 'Name with initials',
+            'gender' => 'Gender',
             'dob' => 'Date of birth',
             'area' => 'Area',
             'residential_address' => 'Residential Address',
@@ -80,7 +85,7 @@ class Customer extends \yii\db\ActiveRecord
             'work_email' => 'Work Email',
             'fixed_salary' => 'Fixed Salary',
             'other_incomes' => 'Other Incomes',
-            'spouse_id' => 'Spouse ID',
+            'spouse_id' => 'Spouse',
         ];
     }
 

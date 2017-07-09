@@ -1,8 +1,11 @@
 <?php
 
+use app\models\Area;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\widgets\Pjax;
+use Zelenin\yii\SemanticUI\widgets\GridView;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CustomerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -23,27 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            ['attribute' => 'nic'],
-            //'full_name',
-            'name',
-            // 'dob',
-            'area',
-            // 'residential_address:ntext',
-            // 'billing_address:ntext',
-            // 'phone',
-            // 'mobile',
-            // 'email:email',
-            // 'occupation',
-            // 'work_address:ntext',
-            // 'work_phone',
-            // 'work_email:email',
-            // 'fixed_salary',
-            // 'other_incomes',
-            // 'spouse_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            ['attribute' => 'name', 'content' => function($data){return Html::a($data->name, ['view', 'id' => $data->id]);}],
+            ['attribute' => 'area', 'content' => function($data){return Area::findOne(['id' => $data->area])->name;}, 'filter'=>array_merge(['0'=>'All'], ArrayHelper::map(Area::find()->asArray()->all(), 'id', 'name')),],
+            'nic',
         ],
     ]); ?>
 <?php Pjax::end(); ?></div>
