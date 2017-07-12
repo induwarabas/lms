@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\models\Loan;
 use app\models\LoanSearch;
+use app\utils\enums\LoanTypes;
 use app\utils\loan\AmortizationCalculator;
-use app\utils\loan\LoanCreator;
 use app\utils\loan\LoanDisbursement;
 use app\utils\loan\LoanRecovery;
 use Yii;
@@ -67,29 +67,98 @@ class LoanController extends LmsController
      */
     public function actionCreate()
     {
-        $model = new Loan();
-        $model->collection_method = 1;
-        if (!$model->load(Yii::$app->request->post())) {
+        $model = Yii::$app->getSession()->get("loan");
+        if ($model == null) {
+            $model = new Loan();
+            $model->collection_method = 1;
+
+            if (!$model->load(Yii::$app->request->post()) || !isset($model->type)) {
+                return $this->render('create', [
+                    'model' => $model
+                ]);
+            }
+        }
+
+        if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
+            return $this->redirect(["hp-new-vehicle-loan/create"]);
+        } else {
+            Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
                 'model' => $model
             ]);
         }
 
-        $tx = Yii::$app->getDb()->beginTransaction();
-        $loanCreator = new LoanCreator;
-        $created = $loanCreator->createLoan($model->customer_id,
-            $model->type,
-            $model->amount,
-            $model->interest,
-            $model->penalty,
-            $model->charges,
-            $model->collection_method,
-            $model->period);
-        if ($created) {
-            $tx->commit();
-            return $this->redirect(['view', 'id' => $loanCreator->getLoanId()]);
+
+//        $tx = Yii::$app->getDb()->beginTransaction();
+//        $loanCreator = new LoanCreator;
+//        $created = $loanCreator->createLoan($model->customer_id,
+//            $model->type,
+//            $model->amount,
+//            $model->interest,
+//            $model->penalty,
+//            $model->charges,
+//            $model->collection_method,
+//            $model->period);
+//        if ($created) {
+//            $tx->commit();
+//            return $this->redirect(['view', 'id' => $loanCreator->getLoanId()]);
+//        } else {
+//            $tx->rollBack();
+//            return $this->render('create', [
+//                'model' => $model
+//            ]);
+//        }
+    }
+
+    public function actionCustomer($id, $type)
+    {
+        Yii::$app->getSession()->remove("loan-req");
+        $model = Yii::$app->getSession()->get("loan");
+        if ($model == null) {
+            return $this->redirect(["loan/index"]);
+        }
+        if ($type == "Applicant") {
+            $model->customer_id = $id;
+        } else if ($type == "Guarantor 1") {
+            $model->guarantor_1 = $id;
+        } else if ($type == "Guarantor 2") {
+            $model->guarantor_2 = $id;
+        } else if ($type == "Guarantor 3") {
+            $model->guarantor_3 = $id;
+        }
+        if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
+            return $this->redirect(["hp-new-vehicle-loan/create"]);
         } else {
-            $tx->rollBack();
+            Yii::$app->getSession()->remove('loan');
+            return $this->render('create', [
+                'model' => $model
+            ]);
+        }
+    }
+
+    public function actionRemoveCustomer($type)
+    {
+        Yii::$app->getSession()->remove("loan-req");
+        $model = Yii::$app->getSession()->get("loan");
+        if ($model == null) {
+            return $this->redirect(["loan/index"]);
+        }
+        if ($type == "Applicant") {
+            $model->customer_id = null;
+        } else if ($type == "Guarantor 1") {
+            $model->guarantor_1 = $model->guarantor_2;
+            $model->guarantor_2 = $model->guarantor_3;
+            $model->guarantor_3 = null;
+        } else if ($type == "Guarantor 2") {
+            $model->guarantor_2 = $model->guarantor_3;
+            $model->guarantor_3 = null;
+        } else if ($type == "Guarantor 3") {
+            $model->guarantor_3 = null;
+        }
+        if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
+            return $this->redirect(["hp-new-vehicle-loan/create"]);
+        } else {
+            Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
                 'model' => $model
             ]);
@@ -136,7 +205,7 @@ class LoanController extends LmsController
         ]);
     }
 
-    public function actionRecover($id,$date)
+    public function actionRecover($id, $date)
     {
         $disbursement = new LoanRecovery();
         $disbursement->recover($id, $date);
@@ -145,6 +214,7 @@ class LoanController extends LmsController
             'error' => $disbursement->error
         ]);
     }
+
     /**
      * Deletes an existing Loan model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

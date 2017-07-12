@@ -10,6 +10,7 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Customer */
+/* @var $loan_req string */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Customers', 'url' => ['index']];
@@ -21,6 +22,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php
+        if ($loan_req !=null) {
+            echo Html::a('Set as '.$loan_req, ['loan/customer', 'id' => $model->id, 'type' => $loan_req], ['class' => 'btn btn-primary']);
+        }
+        ?>
     </p>
 
     <?= DetailView::widget([

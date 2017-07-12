@@ -53,6 +53,7 @@ class CustomerController extends LmsController
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'loan_req' => Yii::$app->getSession()->get('loan-req')
         ]);
     }
 

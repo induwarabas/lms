@@ -24,6 +24,9 @@ use Yii;
  * @property number $installment
  * @property string $total_interest
  * @property string $total_payment
+ * @property string $guarantor_1
+ * @property string $guarantor_2
+ * @property string $guarantor_3
  *
  * @property CollectionMethod $collectionMethod
  * @property LoanType $type0
@@ -46,7 +49,7 @@ class Loan extends \yii\db\ActiveRecord
         return [
             [['type', 'customer_id', 'amount', 'interest', 'penalty', 'charges', 'collection_method', 'period'], 'required'],
             [['type', 'customer_id', 'collection_method', 'period'], 'integer'],
-            [['amount', 'interest', 'penalty', 'charges', 'installment', 'total_interest', 'total_payment'], 'number'],
+            [['amount', 'interest', 'penalty', 'charges', 'installment', 'total_interest', 'total_payment', 'guarantor_1', 'guarantor_2', 'guarantor_3'], 'number'],
             [['status'], 'string'],
             [['disbursed_date', 'closed_date'], 'safe'],
             [['saving_account', 'loan_account'], 'string', 'max' => 12],
@@ -63,7 +66,7 @@ class Loan extends \yii\db\ActiveRecord
         return [
             'id' => 'Loan ID',
             'type' => 'Loan Type',
-            'customer_id' => 'Customer ID',
+            'customer_id' => 'Applicant',
             'saving_account' => 'Saving Account',
             'loan_account' => 'Loan Account',
             'amount' => 'Amount',
@@ -78,6 +81,9 @@ class Loan extends \yii\db\ActiveRecord
             'installment' => 'Installment',
             'total_interest' => 'Total Interest',
             'total_payment' => 'Total Payment',
+            'guarantor_1' => 'Guarantor 1',
+            'guarantor_2' => 'Guarantor 2',
+            'guarantor_3' => 'Guarantor 3',
         ];
     }
 
