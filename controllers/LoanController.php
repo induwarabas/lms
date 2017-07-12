@@ -122,9 +122,19 @@ class LoanController extends LmsController
         } else if ($type == "Guarantor 1") {
             $model->guarantor_1 = $id;
         } else if ($type == "Guarantor 2") {
-            $model->guarantor_2 = $id;
+            if ($model->guarantor_1 == null) {
+                $model->guarantor_1 = $id;
+            } else {
+                $model->guarantor_2 = $id;
+            }
         } else if ($type == "Guarantor 3") {
-            $model->guarantor_3 = $id;
+            if ($model->guarantor_1 == null) {
+                $model->guarantor_1 = $id;
+            } else if ($model->guarantor_2 == null) {
+                $model->guarantor_2 = $id;
+            } else {
+                $model->guarantor_3 = $id;
+            }
         }
         if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
             return $this->redirect(["hp-new-vehicle-loan/create"]);
@@ -163,6 +173,13 @@ class LoanController extends LmsController
                 'model' => $model
             ]);
         }
+    }
+
+    public function actionCancel() {
+        Yii::$app->getSession()->remove("loan-req");
+        Yii::$app->getSession()->remove("loan");
+        Yii::$app->getSession()->remove("loanex");
+        return $this->redirect(["loan/index"]);
     }
 
     /**

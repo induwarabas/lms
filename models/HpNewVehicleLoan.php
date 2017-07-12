@@ -13,7 +13,7 @@ use Yii;
  * @property string $engine_no
  * @property string $chasis_no
  * @property string $model
- * @property string $make
+ * @property integer $make
  * @property integer $supplier
  * @property string $price
  * @property string $loan_amount
@@ -38,11 +38,11 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'supplier', 'sales_commision', 'canvassed', 'canvassing_commision', 'insurance'], 'required'],
-            [['id', 'vehicle_type', 'supplier', 'canvassed'], 'integer'],
+            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make'], 'required'],
+            [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
             [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance'], 'number'],
             [['vehicle_no'], 'string', 'max' => 10],
-            [['engine_no', 'chasis_no', 'model', 'make'], 'string', 'max' => 128],
+            [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
         ];
     }
 

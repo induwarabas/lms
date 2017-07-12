@@ -76,8 +76,17 @@ class HpNewVehicleLoanController extends LmsController
             $loan = new Loan();
             $loan->type = LoanTypes::HP_NEW_VEHICLE;
         }
+        $model->id = 0;
+        $loan->amount = $model->loan_amount;
+        $loan->charges = $model->sales_commision + $model->canvassing_commision;
+        $loan->penalty= 0.0;
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post()) && $model->validate() && $loan->validate()) {
+            $tx = Yii::$app->getDb()->beginTransaction();
+            $loan->save();
+            $model->id = $loan->primaryKey;
+            $model->save();
+            $tx->commit();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             $applicant = null;
