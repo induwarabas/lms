@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\utils\LoanCustomerValidator;
 use Yii;
 
 /**
@@ -55,6 +56,7 @@ class Loan extends \yii\db\ActiveRecord
             [['saving_account', 'loan_account'], 'string', 'max' => 12],
             [['collection_method'], 'exist', 'skipOnError' => true, 'targetClass' => CollectionMethod::className(), 'targetAttribute' => ['collection_method' => 'id']],
             [['type'], 'exist', 'skipOnError' => true, 'targetClass' => LoanType::className(), 'targetAttribute' => ['type' => 'id']],
+            [['guarantor_1', 'guarantor_2', 'guarantor_3'], LoanCustomerValidator::class],
         ];
     }
 

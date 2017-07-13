@@ -45,11 +45,11 @@ class CustomerSelector extends InputWidget
 
         if ($this->customer == null) {
 
-            return '<span style="color: red; margin-right: 20px;"><i>Not Set</i></span>'
-                . Html::a("Set", '#', ['class' => 'ui button blue', 'id' => 'csbtn_' . $this->attribute]);
+            return '<div style="display: block"><span style="color: red; margin-right: 20px"><i>Not Set</i></span>'
+                . Html::a("Set", '#', ['class' => 'ui button blue', 'id' => 'csbtn_' . $this->attribute]).'</div>';
         }
         $customerUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $this->customer->id]);
-        $out = '<a href="'.$customerUrl.'" style="color: #1e70bf; margin-right: 20px;"><b>'.$this->customer->name . " (" . $this->customer->nic . ")".'</b></a>' . Html::activeHiddenInput($this->model, $this->attribute, ['value' => $this->customer->id])
+        $out = '<div style="display: block"><a href="'.$customerUrl.'" style="color: #1e70bf; margin-right: 20px;"><b>'.$this->customer->name . " (" . $this->customer->nic . ")".'</b></a>' . Html::activeHiddenInput($this->model, $this->attribute, ['value' => $this->customer->id])
             . Html::a("Change", $this->url, ['class' => 'ui button blue', 'id' => 'csbtn_' . $this->attribute]);
         if ($this->remove_url != null) {
             $this->getView()->registerJs('
@@ -60,7 +60,7 @@ class CustomerSelector extends InputWidget
                     });
                 });
             ');
-            $out .= Html::a("Remove", '#', ['class' => 'ui button red', 'id' => 'csrbtn_' . $this->attribute]);
+            $out .= Html::a("Remove", '#', ['class' => 'ui button red', 'id' => 'csrbtn_' . $this->attribute]).'</div>';
         }
         return $out;
     }

@@ -15,12 +15,18 @@ use Yii;
  * @property string $model
  * @property integer $make
  * @property integer $supplier
- * @property string $price
- * @property string $loan_amount
- * @property string $sales_commision
+ * @property number $price
+ * @property number $loan_amount
+ * @property number $sales_commision
  * @property integer $canvassed
- * @property string $canvassing_commision
- * @property string $insurance
+ * @property number $canvassing_commision
+ * @property number $insurance
+ * @property string $rmv_sent_date
+ * @property string $rmv_sent_agent
+ * @property string $rmv_sent_by
+ * @property string $rmv_recv_date
+ * @property string $rmv_recv_agent
+ * @property string $rmv_recv_by
  */
 class HpNewVehicleLoan extends \yii\db\ActiveRecord
 {
@@ -41,8 +47,9 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make'], 'required'],
             [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
             [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance'], 'number'],
-            [['vehicle_no'], 'string', 'max' => 10],
+            [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
             [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
+            [['rmv_sent_agent', 'rmv_sent_by', 'rmv_recv_agent', 'rmv_recv_by'], 'string', 'max' => 64],
         ];
     }
 
@@ -66,6 +73,12 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             'canvassed' => 'Canvassed By',
             'canvassing_commision' => 'Canvassing Commision',
             'insurance' => 'Insurance Premium',
+            'rmv_sent_date' => 'RMV Sent Date',
+            'rmv_sent_agent' => 'RMV Sent Agent',
+            'rmv_sent_by' => 'RMV Sent By',
+            'rmv_recv_date' => 'RMV Received Date',
+            'rmv_recv_agent' => 'RMV Received Agent',
+            'rmv_recv_by' => 'RMV Received By',
         ];
     }
 

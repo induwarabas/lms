@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 09, 2017 at 09:02 PM
+-- Generation Time: Jul 13, 2017 at 07:01 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 5.6.30
 
@@ -119,6 +119,12 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('//index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('//model', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('//module', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/area/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/area/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/area/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/area/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/area/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/area/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/asset/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/asset/compress', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/asset/template', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
@@ -127,6 +133,21 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/cache/flush-all', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/cache/flush-schema', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/cache/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/customer/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/createnic', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/removespouse', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/customer/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/default/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/default/db-explain', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/default/download-mail', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/default/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/default/toolbar', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/debug/default/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/fixture/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/fixture/load', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/fixture/unload', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
@@ -144,6 +165,22 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/help/list', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/help/list-action-options', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/help/usage', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/hp-new-vehicle-loan/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/lms/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/disburse', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/recover', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/schedule', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/message/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/message/config', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/message/config-template', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
@@ -159,10 +196,83 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/migrate/up', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/serve/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/serve/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/site/*', 3, NULL, NULL, NULL, 1499834414, 1499834414, NULL),
+('/site/about', 3, NULL, NULL, NULL, 1499834414, 1499834414, NULL),
+('/site/captcha', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/site/contact', 3, NULL, NULL, NULL, 1499834414, 1499834414, NULL),
+('/site/error', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/site/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/site/login', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/site/logout', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/user-management/auth-item-group/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/bulk-activate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/bulk-deactivate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/bulk-delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/grid-page-size', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/grid-sort', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/toggle-attribute', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth-item-group/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/captcha', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/auth/change-own-password', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/user-management/auth/confirm-email', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/confirm-email-receive', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/confirm-registration-email', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/login', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/logout', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/password-recovery', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/password-recovery-receive', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/auth/registration', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/bulk-activate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/bulk-deactivate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/bulk-delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/grid-page-size', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/grid-sort', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/refresh-routes', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/set-child-permissions', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/set-child-routes', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/toggle-attribute', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/permission/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/bulk-activate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/bulk-deactivate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/bulk-delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/grid-page-size', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/grid-sort', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/set-child-permissions', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/set-child-roles', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/toggle-attribute', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/role/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-permission/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/user-permission/set', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user-permission/set-roles', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/user-management/user-visit-log/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/bulk-activate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/bulk-deactivate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/bulk-delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/grid-page-size', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/grid-sort', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/toggle-attribute', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user-visit-log/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/user-management/user/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/user/bulk-activate', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user/bulk-deactivate', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user/bulk-delete', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
@@ -170,7 +280,9 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/user-management/user/create', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user/delete', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user/grid-page-size', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/user-management/user/grid-sort', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/user/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/user-management/user/toggle-attribute', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/user/update', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user/view', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('Admin', 1, 'Admin', NULL, NULL, 1498749424, 1498749424, NULL),
@@ -335,7 +447,47 @@ INSERT INTO `customer` (`id`, `nic`, `full_name`, `name`, `gender`, `dob`, `area
 (9, '865841252V', 'Monkey Donkey', 'M. Donkey', 'Female', '1986-03-24', 1, 'Sdf', '', '+94777777777', '', '', '', '', '', '', NULL, NULL, NULL),
 (10, '852123623V', 'AASDasd', 'asdasasd', 'Male', '1985-07-30', 1, 'sadsa', '', '+94777858585', '', '', '', '', '', '', NULL, NULL, 11),
 (11, '896562522V', 'aasdasd', 'asdasdasd', 'Female', '1989-06-04', 1, 'sad', '', '+94777777777', '', '', '', '', '', '', NULL, NULL, 10),
-(12, '925452522V', 'sdf sfd sf sd', 'f sdf sdf', 'Female', '1992-02-14', 1, 'sdf sfd', '', '+94222222222', '', '', '', '', '', '', NULL, NULL, NULL);
+(12, '925452522V', 'sdf sfd sf sd', 'f sdf sdf', 'Female', '1992-02-14', 1, 'sdf sfd', '', '+94222222222', '', '', '', '', '', '', NULL, NULL, NULL),
+(13, '862841808V', 'Bulath Puwak Hunu Dunkola', 'B.P.H. Dunkola', 'Male', '1986-10-10', 1, 'Kela para,\r\nPadikkama', '', '+94777102102', '', '', '', '', '', '', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hp_new_vehicle_loan`
+--
+
+CREATE TABLE `hp_new_vehicle_loan` (
+  `id` int(11) NOT NULL COMMENT 'Loan ID',
+  `vehicle_type` int(11) NOT NULL COMMENT 'Vehicle Type',
+  `vehicle_no` varchar(10) DEFAULT NULL COMMENT 'Vehicle Number',
+  `engine_no` varchar(128) NOT NULL COMMENT 'Engine Number',
+  `chasis_no` varchar(128) NOT NULL COMMENT 'Chasis Number',
+  `model` varchar(128) NOT NULL COMMENT 'Model',
+  `make` int(11) NOT NULL COMMENT 'Make/Brand',
+  `supplier` int(11) DEFAULT NULL COMMENT 'Supplier',
+  `price` decimal(10,2) NOT NULL COMMENT 'Selling Price',
+  `loan_amount` decimal(10,2) NOT NULL COMMENT 'Loan Amount',
+  `sales_commision` decimal(10,2) DEFAULT '0.00' COMMENT 'Sales Commision',
+  `canvassed` int(11) DEFAULT NULL COMMENT 'Canvassed By',
+  `canvassing_commision` decimal(10,2) DEFAULT '0.00' COMMENT 'Canvassing Commision',
+  `insurance` decimal(10,2) DEFAULT '0.00' COMMENT 'Insurance Premium',
+  `rmv_sent_date` date DEFAULT NULL COMMENT 'RMV Sent Date',
+  `rmv_sent_agent` varchar(64) DEFAULT NULL COMMENT 'RMV Sent Agent',
+  `rmv_sent_by` varchar(64) DEFAULT NULL COMMENT 'RMV Sent By',
+  `rmv_recv_date` date DEFAULT NULL COMMENT 'RMV Received Date',
+  `rmv_recv_agent` varchar(64) DEFAULT NULL COMMENT 'RMV Received Agent',
+  `rmv_recv_by` varchar(64) DEFAULT NULL COMMENT 'RMV Received By'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `hp_new_vehicle_loan`
+--
+
+INSERT INTO `hp_new_vehicle_loan` (`id`, `vehicle_type`, `vehicle_no`, `engine_no`, `chasis_no`, `model`, `make`, `supplier`, `price`, `loan_amount`, `sales_commision`, `canvassed`, `canvassing_commision`, `insurance`, `rmv_sent_date`, `rmv_sent_agent`, `rmv_sent_by`, `rmv_recv_date`, `rmv_recv_agent`, `rmv_recv_by`) VALUES
+(7, 1, '', '12', '1', '1', 1, 12, '111.00', '111.00', NULL, NULL, NULL, '11.00', NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 1, '', '1', '1', 'edas', 2, NULL, '11.00', '10.00', NULL, NULL, NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 1, '', '1', '1', 'edas', 2, NULL, '1000.00', '560.00', NULL, NULL, NULL, '0.00', '2017-07-25', 'AASD', 'ASD', '2017-07-29', 'dsa', 'ds'),
+(10, 1, '', '1', '1', 'edas', 2, NULL, '11.00', '10.00', NULL, NULL, NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -360,20 +512,27 @@ CREATE TABLE `loan` (
   `closed_date` date DEFAULT NULL COMMENT 'Closed Date',
   `installment` decimal(10,2) DEFAULT NULL COMMENT 'Installment',
   `total_interest` decimal(10,2) DEFAULT NULL COMMENT 'Total Interest',
-  `total_payment` decimal(10,2) DEFAULT NULL COMMENT 'Total Payment'
+  `total_payment` decimal(10,2) DEFAULT NULL COMMENT 'Total Payment',
+  `guarantor_1` int(11) DEFAULT NULL COMMENT 'Guarantor 1',
+  `guarantor_2` int(11) DEFAULT NULL COMMENT 'Guarantor 2',
+  `guarantor_3` int(11) DEFAULT NULL COMMENT 'Guarantor 3'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `loan`
 --
 
-INSERT INTO `loan` (`id`, `type`, `customer_id`, `saving_account`, `loan_account`, `amount`, `interest`, `penalty`, `charges`, `collection_method`, `period`, `status`, `disbursed_date`, `closed_date`, `installment`, `total_interest`, `total_payment`) VALUES
-(1, 1, 1, '1000000001', '2000000001', '1000.00', '0.00', '3.00', '0.00', 1, 12, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL),
-(2, 1, 1, '1000000002', '2000000002', '2000.00', '0.00', '5.00', '0.00', 2, 36, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL),
-(3, 1, 1, '1000000003', '2000000003', '1000.00', '0.00', '10.00', '0.00', 1, 12, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL),
-(4, 1, 1, '1000000004', '2000000004', '1223.00', '12.24', '10.00', '1232.00', 1, 12, 'PENDING', NULL, NULL, NULL, NULL, NULL),
-(5, 1, 1, '1000000005', '2000000005', '1000.00', '12.00', '10.00', '100.00', 1, 60, 'ACTIVE', '2017-07-02', NULL, '23.90', '434.40', '1434.40'),
-(6, 1, 1, '1000000006', '2000000006', '1111.00', '11.00', '10.00', '11.00', 2, 12, 'ACTIVE', '2017-07-02', NULL, '94.77', '26.32', '1137.32');
+INSERT INTO `loan` (`id`, `type`, `customer_id`, `saving_account`, `loan_account`, `amount`, `interest`, `penalty`, `charges`, `collection_method`, `period`, `status`, `disbursed_date`, `closed_date`, `installment`, `total_interest`, `total_payment`, `guarantor_1`, `guarantor_2`, `guarantor_3`) VALUES
+(1, 1, 1, '1000000001', '2000000001', '1000.00', '0.00', '3.00', '0.00', 1, 12, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 1, 1, '1000000002', '2000000002', '2000.00', '0.00', '5.00', '0.00', 2, 36, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 1, 1, '1000000003', '2000000003', '1000.00', '0.00', '10.00', '0.00', 1, 12, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 1, 1, '1000000004', '2000000004', '1223.00', '12.24', '10.00', '1232.00', 1, 12, 'PENDING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 1, 1, '1000000005', '2000000005', '1000.00', '12.00', '10.00', '100.00', 1, 60, 'ACTIVE', '2017-07-02', NULL, '23.90', '434.40', '1434.40', NULL, NULL, NULL),
+(6, 1, 1, '1000000006', '2000000006', '1111.00', '11.00', '10.00', '11.00', 2, 12, 'ACTIVE', '2017-07-02', NULL, '94.77', '26.32', '1137.32', NULL, NULL, NULL),
+(7, 1, 1, NULL, NULL, '111.00', '11.00', '0.00', '0.00', 1, 36, 'PENDING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 1, 1, NULL, NULL, '10.00', '1.00', '0.00', '0.00', 1, 1, 'PENDING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 1, 1, NULL, NULL, '560.00', '1.00', '0.00', '0.00', 1, 36, 'PENDING', NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL),
+(10, 1, 1, NULL, NULL, '10.00', '1.00', '0.00', '0.00', 1, 1, 'PENDING', NULL, NULL, NULL, NULL, NULL, 9, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -677,7 +836,55 @@ INSERT INTO `user_visit_log` (`id`, `token`, `ip`, `language`, `user_agent`, `us
 (6, '595a88f5ce770', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499105525, 'Chrome', 'Windows'),
 (7, '595d274c6c28c', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499277132, 'Chrome', 'Windows'),
 (8, '595db509ee920', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499313417, 'Chrome', 'Windows'),
-(9, '59625369c086b', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499616105, 'Chrome', 'Windows');
+(9, '59625369c086b', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499616105, 'Chrome', 'Windows'),
+(10, '59659f4a86404', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499832138, 'Chrome', 'Windows'),
+(11, '59663e93678d7', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499872915, 'Chrome', 'Windows'),
+(12, '596646dbb4d2d', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499875035, 'Chrome', 'Windows'),
+(13, '5966e7100640d', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499916048, 'Chrome', 'Windows');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vehicle_brand`
+--
+
+CREATE TABLE `vehicle_brand` (
+  `id` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `vehicle_brand`
+--
+
+INSERT INTO `vehicle_brand` (`id`, `name`) VALUES
+(1, 'Yamaha'),
+(2, 'Bajaj'),
+(3, 'Honda'),
+(4, 'Hero Honda'),
+(5, 'Suzuki'),
+(6, 'Toyota'),
+(7, 'Nissan'),
+(8, 'Tata');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vehicle_type`
+--
+
+CREATE TABLE `vehicle_type` (
+  `id` int(11) NOT NULL,
+  `name` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `vehicle_type`
+--
+
+INSERT INTO `vehicle_type` (`id`, `name`) VALUES
+(1, 'Motor Bike'),
+(2, 'Three Wheller');
 
 --
 -- Indexes for dumped tables
@@ -745,6 +952,12 @@ ALTER TABLE `customer`
   ADD KEY `FK_CUSTOMER_AREA` (`area`);
 
 --
+-- Indexes for table `hp_new_vehicle_loan`
+--
+ALTER TABLE `hp_new_vehicle_loan`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `loan`
 --
 ALTER TABLE `loan`
@@ -790,6 +1003,18 @@ ALTER TABLE `user_visit_log`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `vehicle_brand`
+--
+ALTER TABLE `vehicle_brand`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `vehicle_type`
+--
+ALTER TABLE `vehicle_type`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -807,12 +1032,12 @@ ALTER TABLE `collection_method`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Client ID', AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Client ID', AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `loan`
 --
 ALTER TABLE `loan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Loan ID', AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Loan ID', AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `loan_type`
 --
@@ -832,7 +1057,17 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `user_visit_log`
 --
 ALTER TABLE `user_visit_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+--
+-- AUTO_INCREMENT for table `vehicle_brand`
+--
+ALTER TABLE `vehicle_brand`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+--
+-- AUTO_INCREMENT for table `vehicle_type`
+--
+ALTER TABLE `vehicle_type`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- Constraints for dumped tables
 --
