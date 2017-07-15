@@ -56,7 +56,10 @@ class LoanDisbursement
         $loan->total_interest = $schedule->totalInterest;
         $loan->total_payment = $schedule->totalPayment;
         $loan->status = LoanStatus::ACTIVE;
-        $loan->save();
+        if(!$loan->save()) {
+            $this->error = $loan->errors[0];
+            return false;
+        }
 
         for ($x = 1; $x <= $loan->period; $x++) {
             $dt = date('Y-m-d', strtotime($timeAdd, strtotime($dt)));
@@ -73,8 +76,12 @@ class LoanDisbursement
             $s->penalty = 0.0;
             $s->paid = 0.0;
             $s->due = 0.0;
+            $s->arrears = 0;
             $s->balance = $installment['balance'];
-            $s->save();
+            if(!$s->save()) {
+                $this->error = $s->errors[0];
+                return false;
+            }
         }
 
         $txHnd = new TxHandler();

@@ -9,10 +9,18 @@
 namespace app\utils\enums;
 
 
+use Zelenin\yii\SemanticUI\Elements;
+
 class LoanStatus
 {
     const PENDING = "PENDING";
     const ACTIVE = "ACTIVE";
     const COMPLETED = "COMPLETED";
     const CLOSED = "CLOSED";
+    const colors  = [LoanStatus::PENDING => 'blue', LoanStatus::ACTIVE => 'green', LoanStatus::COMPLETED => 'orange', LoanStatus::CLOSED => 'gray'];
+
+    public static function label($status) {
+
+        return Elements::label($status, ['class' => LoanStatus::colors[$status]]);
+    }
 }

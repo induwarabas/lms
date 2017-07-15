@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $schedule \app\utils\AmortizationSchedule */
+/* @var $schedule \app\utils\loan\AmortizationSchedule */
 
 $this->title = "Schedule";
 $this->params['breadcrumbs'][] = ['label' => 'Loans', 'url' => ['index']];

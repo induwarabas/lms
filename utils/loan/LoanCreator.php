@@ -23,19 +23,24 @@ class LoanCreator
         return $this->loanId;
     }
 
-    public function createLoan($customer_id, $type, $amount, $interest, $penalty, $charges, $collection_method, $period) {
-        $loan = new Loan;
-        $loan->customer_id = $customer_id;
-        $loan->amount = $amount;
-        $loan->interest = $interest;
-        $loan->charges = $charges;
-        $loan->penalty = $penalty;
-        $loan->type = $type;
+    /**
+     * Create loan
+     * @param Loan $loan
+     * @return integer instance matching the condition, or `null` if nothing matches.
+     */
+    public function createLoan($loan) {
+//        $loan = new Loan;
+//        $loan->customer_id = $customer_id;
+//        $loan->amount = $amount;
+//        $loan->interest = $interest;
+//        $loan->charges = $charges;
+//        $loan->penalty = $penalty;
+//        $loan->type = $type;
         $loan->status = LoanStatus::PENDING;
-        $loan->collection_method = $collection_method;
-        $loan->period = $period;
+        //$loan->collection_method = $collection_method;
+        //$loan->period = $period;
         if (!$loan->save()) {
-            return false;
+            return -1;
         }
 
         $this->loanId = $loan->getPrimaryKey();
@@ -62,6 +67,6 @@ class LoanCreator
         $loanAccount->protection = 'MINUS';
         $loanAccount->save();
 
-        return true;
+        return $loan->getPrimaryKey();
     }
 }

@@ -4,6 +4,9 @@ use app\models\CollectionMethod;
 use yii\bootstrap\Alert;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use Zelenin\yii\SemanticUI\Elements;
+use Zelenin\yii\SemanticUI\helpers\Size;
+use Zelenin\yii\SemanticUI\modules\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Loan */
@@ -17,18 +20,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Disburse', ['disburse', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to disburse this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+    <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+
+    <?= Html::a('Disburse', ['disburse', 'id' => $model->id], [
+        'class' => 'btn btn-danger',
+        'data' => [
+            'confirm' => 'Are you sure you want to disburse this item?',
+            'method' => 'post',
+        ],
+    ]) ?>
     <?php
-    if($error != null && $error != '') {
+    if ($error != null && $error != '') {
         echo Alert::widget([
             'options' => [
                 'class' => 'alert-info',
@@ -48,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'interest',
             'penalty',
             'charges',
-            ['attribute'=>'collection_method', 'value'=>CollectionMethod::findOne(['id' => $model->collection_method])->name],
+            ['attribute' => 'collection_method', 'value' => CollectionMethod::findOne(['id' => $model->collection_method])->name],
             'period',
             'status',
             'disbursed_date',

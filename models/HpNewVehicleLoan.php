@@ -44,7 +44,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make'], 'required'],
+            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance'], 'required'],
             [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
             [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance'], 'number'],
             [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
@@ -69,9 +69,9 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             'supplier' => 'Supplier',
             'price' => 'Selling Price',
             'loan_amount' => 'Loan Amount',
-            'sales_commision' => 'Sales Commision',
+            'sales_commision' => 'Sales Commission',
             'canvassed' => 'Canvassed By',
-            'canvassing_commision' => 'Canvassing Commision',
+            'canvassing_commision' => 'Canvassing Commission',
             'insurance' => 'Insurance Premium',
             'rmv_sent_date' => 'RMV Sent Date',
             'rmv_sent_agent' => 'RMV Sent Agent',

@@ -9,7 +9,6 @@ use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanDisbursement;
 use app\utils\loan\LoanRecovery;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -18,21 +17,6 @@ use yii\web\NotFoundHttpException;
 class LoanController extends LmsController
 {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all Loan models.
      * @return mixed
      */
@@ -40,6 +24,9 @@ class LoanController extends LmsController
     {
         $searchModel = new LoanSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination = array(
+            'pageSize' => 10,
+        );
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -55,7 +42,7 @@ class LoanController extends LmsController
     public function actionView($id)
     {
         $loan = $this->findModel($id);
-        if ($loan->type == LoanTypes::HP_NEW_VEHICLE){
+        if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
             return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id]);
         }
         return $this->render('view', [
@@ -142,6 +129,9 @@ class LoanController extends LmsController
         }
         Yii::$app->getSession()->set("loan", $model);
         if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
+            if (isset($model->id) && $model->id > 0) {
+                return $this->redirect(["hp-new-vehicle-loan/update", 'id' => $model->id]);
+            }
             return $this->redirect(["hp-new-vehicle-loan/create"]);
         } else {
             Yii::$app->getSession()->remove('loan');
@@ -180,7 +170,8 @@ class LoanController extends LmsController
         }
     }
 
-    public function actionCancel() {
+    public function actionCancel()
+    {
         Yii::$app->getSession()->remove("loan-req");
         Yii::$app->getSession()->remove("loan");
         Yii::$app->getSession()->remove("loanex");
@@ -217,14 +208,23 @@ class LoanController extends LmsController
         ]);
     }
 
+    public function actionCreatex()
+    {
+        Yii::$app->getSession()->remove("loan");
+        Yii::$app->getSession()->remove("loanex");
+        return $this->redirect(["create"]);
+    }
+
     public function actionDisburse($id)
     {
+        $tx = Yii::$app->getDb()->beginTransaction();
         $disbursement = new LoanDisbursement();
-        $disbursement->disburse($id);
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'error' => $disbursement->error
-        ]);
+        if ($disbursement->disburse($id)) {
+            $tx->commit();
+        } else {
+            $tx->rollBack();
+        }
+        $this->redirect(['view', 'id' => $id]);
     }
 
     public function actionRecover($id, $date)
@@ -235,19 +235,6 @@ class LoanController extends LmsController
             'model' => $this->findModel($id),
             'error' => $disbursement->error
         ]);
-    }
-
-    /**
-     * Deletes an existing Loan model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**
