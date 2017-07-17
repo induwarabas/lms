@@ -21,8 +21,6 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
     <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($model, 'area')->dropDownList(ArrayHelper::map(Area::find()->all(), 'id', 'name'))  ?>
 
     <?= $form->field($model, 'residential_address')->textarea(['rows' => 6]) ?>

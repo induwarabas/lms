@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Area;
+use app\utils\PhoneNoFormatter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
@@ -24,11 +25,16 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'rowOptions' =>function ($model, $key, $index, $grid) {
+            return ['id' => $model['id'], 'onclick' => 'window.location = "'.Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $model['id']]).'";'];
+        },
+        'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
             ['attribute' => 'name', 'content' => function($data){return Html::a($data->name, ['view', 'id' => $data->id]);}],
             ['attribute' => 'area', 'content' => function($data){return Area::findOne(['id' => $data->area])->name;}, 'filter'=>array_merge(['0'=>'All'], ArrayHelper::map(Area::find()->asArray()->all(), 'id', 'name')),],
             'nic',
+            'gender',
+            ['attribute'=>'phone', 'content'=> function($data) {return PhoneNoFormatter::formatAll($data->phone, $data->mobile,$data->work_phone);}],
         ],
     ]); ?>
 <?php Pjax::end(); ?></div>

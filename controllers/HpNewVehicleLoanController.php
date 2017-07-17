@@ -66,6 +66,10 @@ class HpNewVehicleLoanController extends LmsController
         if ($loan == null) {
             $loan = new Loan();
             $loan->type = LoanTypes::HP_NEW_VEHICLE;
+            $loan->collection_method = 1;
+            $loan->period = 36;
+            $loan->interest = 12;
+            $loan->penalty = 3;
         } else if (isset($loan->id)) {
             $this->redirect(["update", 'id' => $loan->id]);
         }
@@ -73,8 +77,7 @@ class HpNewVehicleLoanController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post())) {
             $loan->amount = $model->loan_amount;
-            $loan->charges = $model->sales_commision + $model->canvassing_commision;
-            $loan->penalty = 0.0;
+            $loan->charges = round($model->loan_amount * ($model->sales_commision + $model->canvassing_commision) / 100.0, 2);
             if ($model->validate() && $loan->validate()) {
                 $tx = Yii::$app->getDb()->beginTransaction();
                 $loanCreator = new LoanCreator();
@@ -85,6 +88,8 @@ class HpNewVehicleLoanController extends LmsController
                     $model->id = $id;
                     $model->save();
                     $tx->commit();
+                    Yii::$app->getSession()->remove("loan");
+                    Yii::$app->getSession()->remove("loanex");
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
@@ -164,6 +169,8 @@ class HpNewVehicleLoanController extends LmsController
             $model->id = $loan->primaryKey;
             $model->save();
             $tx->commit();
+            Yii::$app->getSession()->remove("loan");
+            Yii::$app->getSession()->remove("loanex");
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             $applicant = null;

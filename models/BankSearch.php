@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Loan;
+use app\models\Bank;
 
 /**
- * LoanSearch represents the model behind the search form about `app\models\Loan`.
+ * BankSearch represents the model behind the search form about `app\models\Bank`.
  */
-class LoanSearch extends Loan
+class BankSearch extends Bank
 {
     /**
      * @inheritdoc
@@ -18,9 +18,8 @@ class LoanSearch extends Loan
     public function rules()
     {
         return [
-            [['id', 'customer_id', 'period', 'type'], 'integer'],
-            [['saving_account', 'loan_account', 'collection_method', 'status', 'disbursed_date', 'closed_date'], 'safe'],
-            [['amount'], 'number'],
+            [['id'], 'integer'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -42,7 +41,7 @@ class LoanSearch extends Loan
      */
     public function search($params)
     {
-        $query = Loan::find();
+        $query = Bank::find();
 
         // add conditions that should always apply here
 
@@ -58,25 +57,12 @@ class LoanSearch extends Loan
             return $dataProvider;
         }
 
-        if ($this->type == 0) {
-            unset($this->type);
-        }
-
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'customer_id' => $this->customer_id,
-            'amount' => $this->amount,
-            'period' => $this->period,
-            'disbursed_date' => $this->disbursed_date,
-            'closed_date' => $this->closed_date,
-            'type' => $this->type,
         ]);
 
-        $query->andFilterWhere(['like', 'saving_account', $this->saving_account])
-            ->andFilterWhere(['like', 'loan_account', $this->loan_account])
-            ->andFilterWhere(['like', 'collection_method', $this->collection_method])
-            ->andFilterWhere(['like', 'status', $this->status]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

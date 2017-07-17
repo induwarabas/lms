@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "account".
  *
@@ -14,6 +12,21 @@ use Yii;
  */
 class Account extends \yii\db\ActiveRecord
 {
+    const TYPE_SAVING = 'SAVING';
+    const TYPE_LOAN = 'LOAN';
+    const TYPE_SUPPLIER = 'SUPPLIER';
+    const TYPE_GENERAL = 'GENERAL';
+    const TYPE_IDS = [
+        Account::TYPE_SAVING => '1',
+        Account::TYPE_LOAN => '2',
+        Account::TYPE_SUPPLIER => '3',
+        Account::TYPE_GENERAL => '9',
+    ];
+
+    const PROTECTION_NONE = 'NONE';
+    const PROTECTION_PLUS = 'PLUS';
+    const PROTECTION_MINUS = 'MINUS';
+
     /**
      * @inheritdoc
      */
@@ -55,5 +68,16 @@ class Account extends \yii\db\ActiveRecord
     public static function find()
     {
         return new AccountQuery(get_called_class());
+    }
+
+    /**
+     * Creates the account id
+     * @param $type integer
+     * @param $id integer
+     * @return string
+     */
+    public static function createAccountId($type, $id)
+    {
+        return Account::TYPE_IDS[$type] . str_pad($id, 9, '0', STR_PAD_LEFT);
     }
 }

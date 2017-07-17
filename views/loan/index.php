@@ -1,6 +1,9 @@
 <?php
 
+use app\models\Customer;
+use app\models\LoanType;
 use app\utils\enums\LoanStatus;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use Zelenin\yii\SemanticUI\widgets\GridView;
@@ -29,8 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
             'id',
-            'type',
-            'customer_id',
+            ['attribute' => 'type', 'content' => function($data){return LoanType::findOne(['id' => $data->type])->name;}, 'filter'=>array_merge(['0'=>'All'], ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name')),],
+            ['attribute' => 'customer_id', 'content' => function($data){return Customer::findOne(['id' => $data->customer_id])->name;}],
             'amount',
             ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return LoanStatus::label($data->status);}]
             // 'collection_method',

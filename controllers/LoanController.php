@@ -227,14 +227,18 @@ class LoanController extends LmsController
         $this->redirect(['view', 'id' => $id]);
     }
 
-    public function actionRecover($id, $date)
+    public function actionRecover($id)
     {
+        $date = Yii::$app->request->getQueryParam('date',null);
+        if ($date == null) {
+            $date = date('Y-m-d');
+        }
         $disbursement = new LoanRecovery();
-        $disbursement->recover($id, $date);
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'error' => $disbursement->error
-        ]);
+        if ($disbursement->recover($id, $date)) {
+            return $this->redirect(["view", 'id' => $id]);
+        }else{
+            echo $disbursement->error;
+        }
     }
 
     /**

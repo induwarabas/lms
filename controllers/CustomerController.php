@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\models\Customer;
-use app\models\CustomerSearch;
+use app\models\CustomerSearchEx;
 use app\utils\NICValidator;
 use Yii;
 use yii\filters\VerbFilter;
@@ -35,9 +35,9 @@ class CustomerController extends LmsController
      */
     public function actionIndex()
     {
-        $searchModel = new CustomerSearch();
+        $searchModel = new CustomerSearchEx();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize=10;
+        $dataProvider->pagination->pageSize = 10;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -55,6 +55,24 @@ class CustomerController extends LmsController
             'model' => $this->findModel($id),
             'loan_req' => Yii::$app->getSession()->get('loan-req')
         ]);
+    }
+
+    private function getNameWithInitials($fullname)
+    {
+        if ($fullname == '') {
+            return '';
+        }
+        $parts = explode(' ', $fullname);
+        $name = "";
+        $count = count($parts);
+
+        for ($i = 0; $i < $count - 1; $i++) {
+            if ($parts[$i] != '') {
+                $name .= substr($parts[$i], 0, 1) . ". ";
+            }
+        }
+        $name .= $parts[$count - 1];
+        return $name;
     }
 
     /**
@@ -84,6 +102,9 @@ class CustomerController extends LmsController
             $model->nic = $data['nic'];
             $model->dob = $details["dob"];
             $model->gender = $details["gender"];
+            $model->full_name = ucwords($model->full_name);
+            $model->name = $this->getNameWithInitials($model->full_name);
+
             if ($spouse !== null) {
                 $model->spouse_id = $spouse->id;
             }
@@ -118,7 +139,8 @@ class CustomerController extends LmsController
         }
     }
 
-    public function actionRemovespouse($id) {
+    public function actionRemovespouse($id)
+    {
         $model = Customer::findOne(['id' => $id]);
         if ($model !== null) {
             $spouse = Customer::findOne(['id' => $model->spouse_id]);
@@ -151,9 +173,9 @@ class CustomerController extends LmsController
         }
 
         if (isset($model['nic']) && $model->validate(['nic'])) {
-            if (Customer::findOne(['nic'=>NICValidator::getOldNic($model->nic)]) != null || Customer::findOne(['nic'=>NICValidator::getNewNic($model->nic)]) != null) {
+            if (Customer::findOne(['nic' => NICValidator::getOldNic($model->nic)]) != null || Customer::findOne(['nic' => NICValidator::getNewNic($model->nic)]) != null) {
                 $spouse = Customer::findOne(['id' => $spouse_id]);
-                $model->addError('nic', 'NIC number "'.NICValidator::formatNicNo($model->nic).'" has already been taken.');
+                $model->addError('nic', 'NIC number "' . NICValidator::formatNicNo($model->nic) . '" has already been taken.');
                 return $this->render('createnic', [
                     'model' => $model,
                     'spouse' => $spouse
@@ -181,13 +203,16 @@ class CustomerController extends LmsController
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model
-            ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->full_name = ucwords($model->full_name);
+            $model->name = $this->getNameWithInitials($model->full_name);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
+        return $this->render('update', [
+            'model' => $model
+        ]);
     }
 
     /**

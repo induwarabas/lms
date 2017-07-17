@@ -3,13 +3,11 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use yii\helpers\Html;
+use app\assets\AppAsset;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
-use webvimark\modules\UserManagement\components\GhostMenu;
-use webvimark\modules\UserManagement\UserManagementModule;
 
 AppAsset::register($this);
 ?>
@@ -39,13 +37,19 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Customers', 'url' => ['/customer/index']],
+            [
+                'label' => 'Partners',
+                'items' => [
+                    ['label' => 'Customers', 'url' => ['/customer/index']],
+                    ['label' => 'Suppliers', 'url' => ['/supplier/index']],
+                ]
+            ],
             ['label' => 'Loans', 'url' => ['/loan/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             [
                 'label' => 'Backend routes',
-                'items'=>[
+                'items' => [
                     ['label' => 'Users', 'url' => ['/user-management/user/index']],
                     ['label' => 'Roles', 'url' => ['/user-management/role/index']],
                     ['label' => 'Permissions', 'url' => ['/user-management/permission/index']],
@@ -55,17 +59,17 @@ AppAsset::register($this);
             ],
             [
                 'label' => 'Frontend routes',
-                'items'=>[
-                    ['label'=>'Login', 'url'=>['/user-management/auth/login']],
-                    ['label'=>'Logout', 'url'=>['/user-management/auth/logout']],
-                    ['label'=>'Registration', 'url'=>['/user-management/auth/registration']],
-                    ['label'=>'Change own password', 'url'=>['/user-management/auth/change-own-password']],
-                    ['label'=>'Password recovery', 'url'=>['/user-management/auth/password-recovery']],
-                    ['label'=>'E-mail confirmation', 'url'=>['/user-management/auth/confirm-email']],
+                'items' => [
+                    ['label' => 'Login', 'url' => ['/user-management/auth/login']],
+                    ['label' => 'Logout', 'url' => ['/user-management/auth/logout']],
+                    ['label' => 'Registration', 'url' => ['/user-management/auth/registration']],
+                    ['label' => 'Change own password', 'url' => ['/user-management/auth/change-own-password']],
+                    ['label' => 'Password recovery', 'url' => ['/user-management/auth/password-recovery']],
+                    ['label' => 'E-mail confirmation', 'url' => ['/user-management/auth/confirm-email']],
                 ],
             ],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
+            ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')

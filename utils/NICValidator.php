@@ -63,7 +63,7 @@ class NICValidator extends Validator
     }
 
     public static function getOldNic($nic) {
-        if (strlen($nic) == 12) {
+        if (strlen($nic) == 12 && substr($nic, 0, 2) == "19") {
             return substr($nic, 2, 5).substr($nic, 8, 4).'V';
         }
         return $nic;
@@ -79,7 +79,7 @@ class NICValidator extends Validator
     public static function formatNicNo($nic) {
         if (strlen($nic) == 10) {
             return $nic." / 19".substr($nic, 0, 5)."0".substr($nic, 5, 4);
-        } else if (strlen($nic) == 12) {
+        } else if (strlen($nic) == 12 && substr($nic, 0, 2) == "19") {
             return $nic." / ".substr($nic, 2, 5).substr($nic, 8, 4).'V';
         }
         return $nic;

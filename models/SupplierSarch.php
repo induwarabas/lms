@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Loan;
+use app\models\Supplier;
 
 /**
- * LoanSearch represents the model behind the search form about `app\models\Loan`.
+ * SupplierSarch represents the model behind the search form about `app\models\Supplier`.
  */
-class LoanSearch extends Loan
+class SupplierSarch extends Supplier
 {
     /**
      * @inheritdoc
@@ -18,9 +18,8 @@ class LoanSearch extends Loan
     public function rules()
     {
         return [
-            [['id', 'customer_id', 'period', 'type'], 'integer'],
-            [['saving_account', 'loan_account', 'collection_method', 'status', 'disbursed_date', 'closed_date'], 'safe'],
-            [['amount'], 'number'],
+            [['id', 'bank'], 'integer'],
+            [['name', 'account', 'status', 'contact', 'address', 'phone', 'mobile', 'email', 'bank_account'], 'safe'],
         ];
     }
 
@@ -42,7 +41,7 @@ class LoanSearch extends Loan
      */
     public function search($params)
     {
-        $query = Loan::find();
+        $query = Supplier::find();
 
         // add conditions that should always apply here
 
@@ -58,25 +57,21 @@ class LoanSearch extends Loan
             return $dataProvider;
         }
 
-        if ($this->type == 0) {
-            unset($this->type);
-        }
-
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'customer_id' => $this->customer_id,
-            'amount' => $this->amount,
-            'period' => $this->period,
-            'disbursed_date' => $this->disbursed_date,
-            'closed_date' => $this->closed_date,
-            'type' => $this->type,
+            'bank' => $this->bank,
         ]);
 
-        $query->andFilterWhere(['like', 'saving_account', $this->saving_account])
-            ->andFilterWhere(['like', 'loan_account', $this->loan_account])
-            ->andFilterWhere(['like', 'collection_method', $this->collection_method])
-            ->andFilterWhere(['like', 'status', $this->status]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'account', $this->account])
+            ->andFilterWhere(['like', 'status', $this->status])
+            ->andFilterWhere(['like', 'contact', $this->contact])
+            ->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'phone', $this->phone])
+            ->andFilterWhere(['like', 'mobile', $this->mobile])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'bank_account', $this->bank_account]);
 
         return $dataProvider;
     }

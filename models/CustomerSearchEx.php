@@ -11,7 +11,7 @@ use app\models\Customer;
 /**
  * CustomerSearch represents the model behind the search form about `app\models\Customer`.
  */
-class CustomerSearch extends Customer
+class CustomerSearchEx extends Customer
 {
     /**
      * @inheritdoc
@@ -86,11 +86,10 @@ class CustomerSearch extends Customer
                     $phone = substr($phone, 1);
                 }
             }
-            $query->andWhere("phone like '%".$phone."%'");
+            $query->andWhere("phone like '%".$phone."%' or work_phone like '%".$phone."%' or mobile like '%".$phone."%'");
         }
 
-        $query->andFilterWhere(['like', 'full_name', $this->full_name])
-            ->andFilterWhere(['like', 'name', $this->name])
+        $query->andFilterWhere(['like', 'full_name', $this->name])
             ->andFilterWhere(['like', 'residential_address', $this->residential_address])
             ->andFilterWhere(['like', 'billing_address', $this->billing_address])
             ->andFilterWhere(['like', 'mobile', $this->mobile])

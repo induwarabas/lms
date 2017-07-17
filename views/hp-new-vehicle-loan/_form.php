@@ -1,6 +1,7 @@
 <?php
 
 use app\models\CollectionMethod;
+use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
 use app\utils\widgets\CustomerSelector;
@@ -30,19 +31,19 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= Elements::header(Elements::icon('users') . '<div class="content">Customer Details<div class="sub header">Manage customer details.</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>
         <?= $form->field($loan, 'customer_id')->widget(CustomerSelector::className(), ['form' => 'hp',
-            'url' => Yii::$app->urlManager->createUrl(["hp-new-vehicle-loan/set-customer", 'type' => 'Applicant', 'id' => $model->id]), 'customer' => $applicant]) ?>
+            'url' => Yii::$app->urlManager->createUrl(["hp-new-vehicle-loan/set-customer", 'type' => 'Applicant', 'id' => $model->id]), 'customer' => $applicant, 'fullname' => true]) ?>
 
         <?= $form->field($loan, 'guarantor_1')->widget(CustomerSelector::className(), ['form' => 'hp',
             'url' => Yii::$app->urlManager->createUrl(["hp-new-vehicle-loan/set-customer", 'type' => 'Guarantor 1', 'id' => $model->id]),
-            'remove_url' => Yii::$app->urlManager->createUrl(["loan/remove-customer", 'type' => 'Guarantor 1']), 'customer' => $guarantor1]) ?>
+            'remove_url' => Yii::$app->urlManager->createUrl(["loan/remove-customer", 'type' => 'Guarantor 1']), 'customer' => $guarantor1, 'fullname' => true]) ?>
 
         <?= $form->field($loan, 'guarantor_2')->widget(CustomerSelector::className(), ['form' => 'hp',
             'url' => Yii::$app->urlManager->createUrl(["hp-new-vehicle-loan/set-customer", 'type' => 'Guarantor 2', 'id' => $model->id]),
-            'remove_url' => Yii::$app->urlManager->createUrl(["loan/remove-customer", 'type' => 'Guarantor 2']), 'customer' => $guarantor2]) ?>
+            'remove_url' => Yii::$app->urlManager->createUrl(["loan/remove-customer", 'type' => 'Guarantor 2']), 'customer' => $guarantor2, 'fullname' => true]) ?>
 
         <?= $form->field($loan, 'guarantor_3')->widget(CustomerSelector::className(), ['form' => 'hp',
             'url' => Yii::$app->urlManager->createUrl(["hp-new-vehicle-loan/set-customer", 'type' => 'Guarantor 3', 'id' => $model->id]),
-            'remove_url' => Yii::$app->urlManager->createUrl(["loan/remove-customer", 'type' => 'Guarantor 3']), 'customer' => $guarantor3]) ?>
+            'remove_url' => Yii::$app->urlManager->createUrl(["loan/remove-customer", 'type' => 'Guarantor 3']), 'customer' => $guarantor3, 'fullname' => true]) ?>
     </div>
 
     <div class="ui segment">
@@ -64,13 +65,14 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= $form->field($model, 'insurance')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'loan_amount')->textInput(['maxlength' => true]) ?>
         <?= $form->field($loan, 'interest')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($loan, 'penalty')->textInput(['maxlength' => true]) ?>
         <?= $form->field($loan, 'collection_method')->dropDownList(ArrayHelper::map(CollectionMethod::find()->all(), 'id', 'name')) ?>
         <?= $form->field($loan, 'period')->textInput(['type' => 'number', 'step' => '1']) ?>
     </div>
     <div class="ui segment">
         <?= Elements::header(Elements::icon('briefcase') . '<div class="content">Charges<div class="sub header">Manage charges details.</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>
-        <?= $form->field($model, 'supplier')->textInput() ?>
+        <?= $form->field($model, 'supplier')->dropDownList(array_merge([0 => '-- No supplier --'], ArrayHelper::map(Supplier::find()->all(), 'id', 'name'))) ?>
         <?= $form->field($model, 'sales_commision')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'canvassed')->textInput() ?>
         <?= $form->field($model, 'canvassing_commision')->textInput(['maxlength' => true]) ?>

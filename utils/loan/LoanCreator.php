@@ -46,8 +46,8 @@ class LoanCreator
         $this->loanId = $loan->getPrimaryKey();
         $accIdPostfix = str_pad($this->loanId, 9, '0', STR_PAD_LEFT);
 
-        $this->savingAccountId = '1'.$accIdPostfix;
-        $this->loanAccountId = '2'.$accIdPostfix;
+        $this->savingAccountId = Account::createAccountId(Account::TYPE_SAVING, $this->loanId);
+        $this->loanAccountId = Account::createAccountId(Account::TYPE_LOAN, $this->loanId);
 
         $loan->saving_account = $this->savingAccountId;
         $loan->loan_account = $this->loanAccountId;
