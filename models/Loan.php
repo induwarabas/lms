@@ -13,10 +13,10 @@ use Yii;
  * @property integer $customer_id
  * @property string $saving_account
  * @property string $loan_account
- * @property string $amount
- * @property string $interest
- * @property string $penalty
- * @property string $charges
+ * @property number $amount
+ * @property number $interest
+ * @property number $penalty
+ * @property number $charges
  * @property integer $collection_method
  * @property integer $period
  * @property string $status

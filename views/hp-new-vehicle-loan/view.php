@@ -1,6 +1,8 @@
 <?php
 
+use app\models\Canvasser;
 use app\models\CollectionMethod;
+use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
 use app\utils\enums\LoanStatus;
@@ -121,9 +123,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                'supplier',
-                ['attribute' => 'sales_commision', 'format' => 'html','value' => function($data) {return isset($data->sales_commision)? $data->sales_commision.' %' : '<span class="not-set">(not set)</span> ';}],
-                'canvassed',
+                ['attribute'=>'supplier', 'value'=> function($data) {return Supplier::findOne($data->supplier)->name;}],
+                ['attribute' => 'sales_commision', 'format' => 'html','value' => function($data) {return isset($data->sales_commision)? $data->sales_commision.' %' : '<span class="not-set">(not set)</span>';}],
+                ['attribute'=>'canvassed', 'value'=> function($data) {return Canvasser::findOne($data->canvassed)->name;}],
                 ['attribute' => 'canvassing_commision', 'format' => 'html','value' => function($data) {return isset($data->canvassing_commision)? $data->canvassing_commision.' %' : '<span class="not-set">(not set)</span>';}],
             ],
         ]) ?>

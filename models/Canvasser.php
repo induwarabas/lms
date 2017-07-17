@@ -7,28 +7,25 @@ use Yii;
 use yii\validators\EmailValidator;
 
 /**
- * This is the model class for table "supplier".
+ * This is the model class for table "canvasser".
  *
  * @property integer $id
  * @property string $name
- * @property string $account
- * @property string $status
- * @property string $contact
- * @property string $address
  * @property string $phone
  * @property string $mobile
  * @property string $email
- * @property integer $bank
- * @property string $bank_account
+ * @property string $address
+ * @property string $status
+ * @property string $account
  */
-class Supplier extends \yii\db\ActiveRecord
+class Canvasser extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'supplier';
+        return 'canvasser';
     }
 
     /**
@@ -37,17 +34,17 @@ class Supplier extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'status', 'address', 'phone'], 'required'],
-            [['status', 'address'], 'string'],
+            [['name', 'phone', 'status'], 'required'],
+            [['address', 'status'], 'string'],
             [['bank'], 'integer'],
-            [['name', 'contact','bank_account_name'], 'string', 'max' => 128],
-            [['account'], 'string', 'max' => 12],
+            [['name','bank_account_name'], 'string', 'max' => 128],
             [['phone', 'mobile'], 'string', 'max' => 16],
+            [['account'], 'string', 'max' => 12],
+            [['phone', 'mobile'], PhoneNoValidator::class],
             [['email'], 'string', 'max' => 64],
             [['email'], EmailValidator::class],
             [['bank_account'], 'string', 'max' => 20],
-            [['phone', 'mobile'], PhoneNoValidator::class],
-            [['name'], 'unique'],
+
         ];
     }
 
@@ -59,13 +56,12 @@ class Supplier extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'account' => 'Account',
-            'status' => 'Status',
-            'contact' => 'Contact Person',
-            'address' => 'Address',
             'phone' => 'Phone',
             'mobile' => 'Mobile',
             'email' => 'Email',
+            'address' => 'Address',
+            'status' => 'Status',
+            'account' => 'Account No.',
             'bank' => 'Bank',
             'bank_account_name' => 'Bank Account Name',
             'bank_account' => 'Bank Account No.',
@@ -74,10 +70,10 @@ class Supplier extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return SupplierQuery the active query used by this AR class.
+     * @return CanvasserQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new SupplierQuery(get_called_class());
+        return new CanvasserQuery(get_called_class());
     }
 }

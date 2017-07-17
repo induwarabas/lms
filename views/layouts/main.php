@@ -42,6 +42,7 @@ AppAsset::register($this);
                 'items' => [
                     ['label' => 'Customers', 'url' => ['/customer/index']],
                     ['label' => 'Suppliers', 'url' => ['/supplier/index']],
+                    ['label' => 'Canvassers', 'url' => ['/canvasser/index']],
                 ]
             ],
             ['label' => 'Loans', 'url' => ['/loan/index']],

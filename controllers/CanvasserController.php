@@ -3,24 +3,42 @@
 namespace app\controllers;
 
 use app\models\Account;
-use app\models\Supplier;
-use app\models\SupplierSarch;
+use app\utils\enums\CanvasserStatus;
+use app\utils\enums\SupplierStatus;
 use Yii;
-use yii\filters\VerbFilter;
+use app\models\Canvasser;
+use app\models\CanvasserSearch;
+use app\controllers\LmsController;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
- * SupplierController implements the CRUD actions for Supplier model.
+ * CanvasserController implements the CRUD actions for Canvasser model.
  */
-class SupplierController extends LmsController
+class CanvasserController extends LmsController
 {
     /**
-     * Lists all Supplier models.
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Lists all Canvasser models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new SupplierSarch();
+        $searchModel = new CanvasserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -30,7 +48,7 @@ class SupplierController extends LmsController
     }
 
     /**
-     * Displays a single Supplier model.
+     * Displays a single Canvasser model.
      * @param integer $id
      * @return mixed
      */
@@ -42,20 +60,20 @@ class SupplierController extends LmsController
     }
 
     /**
-     * Creates a new Supplier model.
+     * Creates a new Canvasser model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Supplier();
+        $model = new Canvasser();
 
         if ($model->load(Yii::$app->request->post())) {
             $tx = Yii::$app->getDb()->beginTransaction();
             if ($model->save()) {
                 $account = new Account();
-                $account->id = Account::createAccountId(Account::TYPE_SUPPLIER, $model->primaryKey);
-                $account->type = Account::TYPE_SUPPLIER;
+                $account->id = Account::createAccountId(Account::TYPE_CANVASSER, $model->primaryKey);
+                $account->type = Account::TYPE_CANVASSER;
                 $account->balance = 0.0;
                 $account->protection = Account::PROTECTION_PLUS;
                 if ($account->save()) {
@@ -69,14 +87,14 @@ class SupplierController extends LmsController
             $tx->rollBack();
 
         }
+        $model->status = CanvasserStatus::ACTIVE;
         return $this->render('create', [
             'model' => $model,
         ]);
-
     }
 
     /**
-     * Updates an existing Supplier model.
+     * Updates an existing Canvasser model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -95,15 +113,15 @@ class SupplierController extends LmsController
     }
 
     /**
-     * Finds the Supplier model based on its primary key value.
+     * Finds the Canvasser model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Supplier the loaded model
+     * @return Canvasser the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Supplier::findOne($id)) !== null) {
+        if (($model = Canvasser::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

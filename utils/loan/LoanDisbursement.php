@@ -8,10 +8,14 @@
 
 namespace app\utils\loan;
 
+use app\models\Canvasser;
+use app\models\HpNewVehicleLoan;
 use app\models\Loan;
 use app\models\LoanSchedule;
+use app\models\Supplier;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
+use app\utils\enums\LoanTypes;
 use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
@@ -85,23 +89,81 @@ class LoanDisbursement
         }
 
         $txHnd = new TxHandler();
+        $link = $txHnd->createLink();
         if (!$txHnd->createTransaction($loan->loan_account,
-            GeneralAccounts::PAYABLE,
-            $loan->amount,
+            GeneralAccounts::PARK,
+            $loan->amount + $loan->charges,
             TxType::DISBURSE,
-            "Disbursement of the loan #" . $loan->id)) {
+            "Disbursement of the loan #" . $loan->id,
+            $link)) {
             $this->error = $txHnd->error;
             return false;
         }
 
-        if (!$txHnd->createTransaction(GeneralAccounts::COMMISSION,
+        if (!$txHnd->createTransaction(GeneralAccounts::PARK,
             GeneralAccounts::PAYABLE,
-            $loan->charges,
-            TxType::CHARGES,
-            "Disbursement charges of the loan #" . $loan->id)) {
+            $loan->amount,
+            TxType::DISBURSE,
+            "Disbursement of the loan #" . $loan->id,
+            $link)) {
             $this->error = $txHnd->error;
             return false;
         }
+
+        if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
+            $loanex = HpNewVehicleLoan::findOne($loan->id);
+            $total = 0.0;
+            if (isset($loanex->supplier) && $loanex->supplier != 0){
+                $salesCommission = round($loanex->loan_amount * $loanex->sales_commision / 100.0, 2);
+                $supplier = Supplier::findOne($loanex->supplier);
+                if ($supplier != null) {
+                    $total += $salesCommission;
+                    if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+                        $supplier->account,
+                        $salesCommission,
+                        TxType::DISBURSE,
+                        "Sales commission of the loan #" . $loan->id,
+                        $link)) {
+                        $this->error = $txHnd->error;
+                        return false;
+                    }
+                }
+            }
+
+            if (isset($loanex->canvassed) && $loanex->canvassed != 0){
+                $canvassingCommission = round($loanex->loan_amount * $loanex->canvassing_commision / 100.0, 2);
+                $canvasser = Canvasser::findOne($loanex->supplier);
+                if ($canvasser != null) {
+                    $total += $canvassingCommission;
+                    if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+                        $canvasser->account,
+                        $canvassingCommission,
+                        TxType::DISBURSE,
+                        "Canvassing commission of the loan #" . $loan->id,
+                        $link)) {
+                        $this->error = $txHnd->error;
+                        return false;
+                    }
+                }
+            }
+
+            if ($total != $loan->charges) {
+                $this->error = "Charges not matching";
+                return false;
+            }
+
+        } else {
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+                GeneralAccounts::PAYABLE,
+                $loan->charges,
+                TxType::DISBURSE,
+                "Disbursement charges of the loan #" . $loan->id,
+                $link)) {
+                $this->error = $txHnd->error;
+                return false;
+            }
+        }
+
         return true;
     }
 }

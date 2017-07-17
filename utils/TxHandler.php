@@ -28,11 +28,18 @@ class TxHandler
         return $this->txid;
     }
 
+    public function createLink() {
+        return uniqid();
+    }
 
-    public function createTransaction($cr, $dr, $amount, $type, $description)
+    public function createTransaction($cr, $dr, $amount, $type, $description, $link = null)
     {
         if($amount == 0) {
             return true;
+        }
+
+        if($link == null) {
+            $link = uniqid();
         }
         //$tx = Yii::$app->getDb()->beginTransaction();
         $crAccount = Account::find()->where(["id" => $cr])->one();
@@ -57,6 +64,7 @@ class TxHandler
         $transaction->amount = $amount;
         $transaction->type = $type;
         $transaction->description = $description;
+        $transaction->txlink = $link;
         $transaction->save();
         $this->txid = $transaction->getPrimaryKey();
 

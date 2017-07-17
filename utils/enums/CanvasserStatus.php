@@ -11,15 +11,15 @@ namespace app\utils\enums;
 
 use Zelenin\yii\SemanticUI\Elements;
 
-class SupplierStatus
+class CanvasserStatus
 {
     const ACTIVE = 'ACTIVE';
     const INACTIVE = 'INACTIVE';
 
-    const colors  = [SupplierStatus::ACTIVE => 'green', SupplierStatus::INACTIVE => 'gray'];
+    const colors  = [CanvasserStatus::ACTIVE => 'green', CanvasserStatus::INACTIVE => 'gray'];
 
     public static function label($status) {
 
-        return Elements::label($status, ['class' => SupplierStatus::colors[$status]]);
+        return Elements::label($status, ['class' => CanvasserStatus::colors[$status]]);
     }
 }

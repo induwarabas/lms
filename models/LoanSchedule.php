@@ -11,14 +11,14 @@ use Yii;
  * @property integer $installment_id
  * @property string $status
  * @property string $demand_date
- * @property string $principal
- * @property string $interest
- * @property string $charges
+ * @property number $principal
+ * @property number $interest
+ * @property number $charges
  * @property integer $arrears
  * @property number $penalty
- * @property string $paid
+ * @property number $paid
  * @property number $due
- * @property string $balance
+ * @property number $balance
  */
 class LoanSchedule extends \yii\db\ActiveRecord
 {

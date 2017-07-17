@@ -25,6 +25,8 @@ class LoanRecovery
 {
     public $error = null;
 
+    public $linkId = "";
+
     private function getAmountToPay($schedule) {
         return $schedule->principal + $schedule->interest + $schedule->charges;
     }
@@ -133,7 +135,7 @@ class LoanRecovery
 
             if ($amount > 0) {
                 $txHnd = new TxHandler();
-                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, "Penalty charge for loan #" . $loanId)) {
+                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, "Penalty charge for loan #" . $loanId, $this->linkId)) {
                     $tx->rollBack();
                     $this->error = $txHnd->error;
                     return false;
@@ -167,29 +169,36 @@ class LoanRecovery
             $schedule->paid += $schedule->due;
             $remain -= $schedule->due;
             $txHnd = new TxHandler();
-            if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $schedule->due, TxType::RECOVERY, "Installment recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+
+            if ($schedule->due != $schedule->principal + $schedule->charges + $schedule->interest) {
+                $tx->rollBack();
+                $this->error = "Fail to reconcile";
+                return false;
+            }
+
+            if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $schedule->due, TxType::RECOVERY, "Installment recovery of loan #" . $loanId . " for " . $schedule->demand_date, $this->linkId)) {
                 $tx->rollBack();
                 $this->error = $txHnd->error;
                 return false;
             }
 
-            if (!$txHnd->createTransaction(GeneralAccounts::PARK, $loan->loan_account, $schedule->principal, TxType::CAPITAL_RECOVERY, "Capital recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK, $loan->loan_account, $schedule->principal + $schedule->charges, TxType::CAPITAL_RECOVERY, "Capital recovery of loan #" . $loanId . " for " . $schedule->demand_date, $this->linkId)) {
                 $tx->rollBack();
                 $this->error = $txHnd->error;
                 return false;
             }
 
-            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::INTEREST, $schedule->interest, TxType::INTEREST_RECOVERY, "Interest recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::INTEREST, $schedule->interest, TxType::INTEREST_RECOVERY, "Interest recovery of loan #" . $loanId . " for " . $schedule->demand_date, $this->linkId)) {
                 $tx->rollBack();
                 $this->error = $txHnd->error;
                 return false;
             }
 
-            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::COMMISSION, $schedule->interest, TxType::CHARGES_RECOVERY, "Charges recovery of loan #" . $loanId . " for " . $schedule->demand_date)) {
-                $tx->rollBack();
-                $this->error = $txHnd->error;
-                return false;
-            }
+//            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::COMMISSION, $schedule->interest, TxType::CHARGES_RECOVERY, "Charges recovery of loan #" . $loanId . " for " . $schedule->demand_date, $this->linkId)) {
+//                $tx->rollBack();
+//                $this->error = $txHnd->error;
+//                return false;
+//            }
             $schedule->due = 0.0;
             $schedule->status = LoanScheduleStatus::PAYED;
             $schedule->save();
@@ -200,6 +209,7 @@ class LoanRecovery
 
     public function recover($loanId, $date)
     {
+        $this->linkId = uniqid();
         if (!$this->updateSchedule($loanId, $date)) {
             return false;
         }

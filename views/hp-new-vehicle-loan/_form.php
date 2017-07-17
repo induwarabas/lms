@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Canvasser;
 use app\models\CollectionMethod;
 use app\models\Supplier;
 use app\models\VehicleBrand;
@@ -74,7 +75,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= Elements::divider() ?>
         <?= $form->field($model, 'supplier')->dropDownList(array_merge([0 => '-- No supplier --'], ArrayHelper::map(Supplier::find()->all(), 'id', 'name'))) ?>
         <?= $form->field($model, 'sales_commision')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($model, 'canvassed')->textInput() ?>
+        <?= $form->field($model, 'canvassed')->dropDownList(array_merge([0 => '-- No canvasser --'], ArrayHelper::map(Canvasser::find()->all(), 'id', 'name'))) ?>
         <?= $form->field($model, 'canvassing_commision')->textInput(['maxlength' => true]) ?>
 
     </div>

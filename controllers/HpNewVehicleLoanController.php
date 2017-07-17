@@ -77,7 +77,7 @@ class HpNewVehicleLoanController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post())) {
             $loan->amount = $model->loan_amount;
-            $loan->charges = round($model->loan_amount * ($model->sales_commision + $model->canvassing_commision) / 100.0, 2);
+            $loan->charges = round($model->loan_amount * $model->sales_commision / 100.0, 2) + round($model->loan_amount * $model->canvassing_commision / 100.0, 2);
             if ($model->validate() && $loan->validate()) {
                 $tx = Yii::$app->getDb()->beginTransaction();
                 $loanCreator = new LoanCreator();

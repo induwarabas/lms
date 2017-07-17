@@ -15,11 +15,13 @@ class Account extends \yii\db\ActiveRecord
     const TYPE_SAVING = 'SAVING';
     const TYPE_LOAN = 'LOAN';
     const TYPE_SUPPLIER = 'SUPPLIER';
+    const TYPE_CANVASSER = 'CANVASSER';
     const TYPE_GENERAL = 'GENERAL';
     const TYPE_IDS = [
         Account::TYPE_SAVING => '1',
         Account::TYPE_LOAN => '2',
         Account::TYPE_SUPPLIER => '3',
+        Account::TYPE_CANVASSER => '4',
         Account::TYPE_GENERAL => '9',
     ];
 

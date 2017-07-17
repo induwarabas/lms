@@ -1,19 +1,19 @@
 <?php
 
 use app\models\Bank;
-use app\utils\enums\LoanStatus;
+use app\utils\enums\CanvasserStatus;
 use app\utils\PhoneNoFormatter;
 use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Supplier */
+/* @var $model app\models\Canvasser */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Suppliers', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Canvassers', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="supplier-view">
+<div class="canvasser-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -28,8 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'account',
-            ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return LoanStatus::label($data->status);}],
-            'contact',
+            ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return CanvasserStatus::label($data->status);}],
             'address:ntext',
             ['attribute'=>'phone', 'value'=> function($data) {return PhoneNoFormatter::format($data->phone);}],
             ['attribute'=>'mobile', 'value'=> function($data) {return PhoneNoFormatter::format($data->mobile);}],

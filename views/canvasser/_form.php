@@ -6,27 +6,25 @@ use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Supplier */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $model app\models\Canvasser */
+/* @var $form Zelenin\yii\SemanticUI\widgets\ActiveForm */
 ?>
 
-<div class="supplier-form">
+<div class="canvasser-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'status')->dropDownList([ 'ACTIVE' => 'ACTIVE', 'INACTIVE' => 'INACTIVE', ], ['prompt' => '']) ?>
-
-    <?= $form->field($model, 'contact')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'address')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'mobile')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'address')->textarea(['rows' => 6]) ?>
+
+    <?= $form->field($model, 'status')->dropDownList(['ACTIVE' => 'ACTIVE', 'INACTIVE' => 'INACTIVE',], ['prompt' => 'ACTIVE']) ?>
 
     <?= $form->field($model, 'bank')->dropDownList(ArrayHelper::map(Bank::find()->all(), 'id', 'name')) ?>
 
