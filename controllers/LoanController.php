@@ -43,11 +43,11 @@ class LoanController extends LmsController
     {
         $loan = $this->findModel($id);
         if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
-            return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id]);
+            return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
         }
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'error' => null
+            'error' => Yii::$app->request->getQueryParam("error")
         ]);
     }
 
@@ -224,7 +224,7 @@ class LoanController extends LmsController
         } else {
             $tx->rollBack();
         }
-        $this->redirect(['view', 'id' => $id]);
+        $this->redirect(['view', 'id' => $id, 'error'=>$disbursement->error]);
     }
 
     public function actionRecover($id)

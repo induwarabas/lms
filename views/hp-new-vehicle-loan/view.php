@@ -6,8 +6,12 @@ use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
 use app\utils\enums\LoanStatus;
+use app\utils\widgets\CanvasserView;
+use app\utils\widgets\CommissionView;
 use app\utils\widgets\CustomerView;
+use app\utils\widgets\SupplierView;
 use webvimark\modules\UserManagement\models\User;
+use yii\bootstrap\Alert;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -22,6 +26,7 @@ use Zelenin\yii\SemanticUI\helpers\Size;
 /* @var $guarantor1 app\models\Customer */
 /* @var $guarantor2 app\models\Customer */
 /* @var $guarantor3 app\models\Customer */
+/* @var $error string */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Loans', 'url' => ['loan/index']];
@@ -33,6 +38,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
+    if ($error != null && $error != '') {
+        echo Alert::widget([
+            'options' => [
+                'class' => 'alert-danger',
+            ],
+            'body' => '<b>Error:</b> '.$error,
+        ]);
+    }
     if (User::hasPermission('authorizeLoan')) {
         echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
         if ($loan->status == 'ACTIVE') {
@@ -123,10 +136,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute'=>'supplier', 'value'=> function($data) {return Supplier::findOne($data->supplier)->name;}],
-                ['attribute' => 'sales_commision', 'format' => 'html','value' => function($data) {return isset($data->sales_commision)? $data->sales_commision.' %' : '<span class="not-set">(not set)</span>';}],
-                ['attribute'=>'canvassed', 'value'=> function($data) {return Canvasser::findOne($data->canvassed)->name;}],
-                ['attribute' => 'canvassing_commision', 'format' => 'html','value' => function($data) {return isset($data->canvassing_commision)? $data->canvassing_commision.' %' : '<span class="not-set">(not set)</span>';}],
+                ['attribute'=>'supplier', 'format' => 'html','value'=> SupplierView::widget(['supplier' => $model->supplier])],
+                ['attribute' => 'sales_commision', 'format' => 'html','value' => CommissionView::widget(['model' => $model, 'type' => 'sales', 'owner' => 'supplier'])],
+                ['attribute'=>'canvassed', 'format' => 'html','value'=> CanvasserView::widget(['canvasser' => $model->canvassed])],
+                ['attribute' => 'canvassing_commision', 'format' => 'html','value' => CommissionView::widget(['model' => $model, 'type' => 'canvassing', 'owner' => 'canvassed'])],
             ],
         ]) ?>
     </div>

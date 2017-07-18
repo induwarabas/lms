@@ -46,8 +46,6 @@ AppAsset::register($this);
                 ]
             ],
             ['label' => 'Loans', 'url' => ['/loan/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
             [
                 'label' => 'Backend routes',
                 'items' => [

@@ -47,6 +47,7 @@ class HpNewVehicleLoanController extends LmsController
             'guarantor1' => $guarantor1,
             'guarantor2' => $guarantor2,
             'guarantor3' => $guarantor3,
+            'error' => Yii::$app->request->getQueryParam("error")
         ]);
     }
 
@@ -77,7 +78,7 @@ class HpNewVehicleLoanController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post())) {
             $loan->amount = $model->loan_amount;
-            $loan->charges = round($model->loan_amount * $model->sales_commision / 100.0, 2) + round($model->loan_amount * $model->canvassing_commision / 100.0, 2);
+            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission();
             if ($model->validate() && $loan->validate()) {
                 $tx = Yii::$app->getDb()->beginTransaction();
                 $loanCreator = new LoanCreator();
@@ -160,7 +161,7 @@ class HpNewVehicleLoanController extends LmsController
         }
 
         $loan->amount = $model->loan_amount;
-        $loan->charges = $model->sales_commision + $model->canvassing_commision;
+        $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission();
         $loan->penalty = 0.0;
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post()) && $model->validate() && $loan->validate()) {

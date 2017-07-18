@@ -17,8 +17,10 @@ use Yii;
  * @property integer $supplier
  * @property number $price
  * @property number $loan_amount
+ * @property string $sales_commision_type
  * @property number $sales_commision
  * @property integer $canvassed
+ * @property string $canvassing_commision_type
  * @property number $canvassing_commision
  * @property number $insurance
  * @property string $rmv_sent_date
@@ -44,7 +46,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance'], 'required'],
+            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
             [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
             [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance'], 'number'],
             [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
@@ -69,9 +71,11 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             'supplier' => 'Supplier',
             'price' => 'Selling Price',
             'loan_amount' => 'Loan Amount',
-            'sales_commision' => 'Sales Commission (%)',
+            'sales_commision_type' => 'Sales Commission Type',
+            'sales_commision' => 'Sales Commission',
             'canvassed' => 'Canvassed By',
-            'canvassing_commision' => 'Canvassing Commission (%)',
+            'canvassing_commision_type' => 'Canvassing Commission Type',
+            'canvassing_commision' => 'Canvassing Commission',
             'insurance' => 'Insurance Premium',
             'rmv_sent_date' => 'RMV Sent Date',
             'rmv_sent_agent' => 'RMV Sent Agent',
@@ -89,5 +93,33 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
     public static function find()
     {
         return new HpNewVehicleLoanQuery(get_called_class());
+    }
+
+    /**
+     * Gets the sales commission
+     * @return number the active query used by this AR class.
+     */
+    public function getSalesCommission() {
+        if (isset($this->supplier) && $this->supplier != 0 && isset($this->sales_commision) && $this->sales_commision > 0.0) {
+            if ($this->sales_commision_type == 'Percentage') {
+                return round($this->loan_amount * $this->sales_commision / 100, 2);
+            }
+            return $this->sales_commision;
+        }
+        return 0.0;
+    }
+
+    /**
+     * Gets the canvassing commission
+     * @return number the active query used by this AR class.
+     */
+    public function getCanvassingCommission() {
+        if (isset($this->canvassed) && $this->canvassed != 0 && isset($this->canvassing_commision) && $this->canvassing_commision > 0.0) {
+            if ($this->canvassing_commision_type == 'Percentage') {
+                return round($this->loan_amount * $this->canvassing_commision / 100, 2);
+            }
+            return $this->canvassing_commision;
+        }
+        return 0.0;
     }
 }

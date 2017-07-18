@@ -5,6 +5,7 @@ use app\models\CollectionMethod;
 use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
+use app\utils\widgets\CommissionSelector;
 use app\utils\widgets\CustomerSelector;
 use dosamigos\datepicker\DatePicker;
 use yii\helpers\ArrayHelper;
@@ -74,9 +75,9 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= Elements::header(Elements::icon('briefcase') . '<div class="content">Charges<div class="sub header">Manage charges details.</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>
         <?= $form->field($model, 'supplier')->dropDownList(array_merge([0 => '-- No supplier --'], ArrayHelper::map(Supplier::find()->all(), 'id', 'name'))) ?>
-        <?= $form->field($model, 'sales_commision')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'sales_commision')->widget(CommissionSelector::class, ['type_attr' => 'sales_commision_type']) ?>
         <?= $form->field($model, 'canvassed')->dropDownList(array_merge([0 => '-- No canvasser --'], ArrayHelper::map(Canvasser::find()->all(), 'id', 'name'))) ?>
-        <?= $form->field($model, 'canvassing_commision')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'canvassing_commision')->widget(CommissionSelector::class, ['type_attr' => 'canvassing_commision_type']) ?>
 
     </div>
     <div class="ui segment">

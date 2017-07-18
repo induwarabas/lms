@@ -114,7 +114,7 @@ class LoanDisbursement
             $loanex = HpNewVehicleLoan::findOne($loan->id);
             $total = 0.0;
             if (isset($loanex->supplier) && $loanex->supplier != 0){
-                $salesCommission = round($loanex->loan_amount * $loanex->sales_commision / 100.0, 2);
+                $salesCommission = $loanex->getSalesCommission();
                 $supplier = Supplier::findOne($loanex->supplier);
                 if ($supplier != null) {
                     $total += $salesCommission;
@@ -131,7 +131,7 @@ class LoanDisbursement
             }
 
             if (isset($loanex->canvassed) && $loanex->canvassed != 0){
-                $canvassingCommission = round($loanex->loan_amount * $loanex->canvassing_commision / 100.0, 2);
+                $canvassingCommission = $loanex->getCanvassingCommission();
                 $canvasser = Canvasser::findOne($loanex->supplier);
                 if ($canvasser != null) {
                     $total += $canvassingCommission;
