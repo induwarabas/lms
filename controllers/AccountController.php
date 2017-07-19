@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Customer;
 use app\models\Loan;
 use app\models\Transaction;
+use app\utils\GeneralAccounts;
 use Yii;
 use app\models\Account;
 use app\models\AccountSearch;
@@ -95,10 +96,12 @@ class AccountController extends LmsController
             $customer = Customer::findOne($loan->customer_id);
             $accountName = $customer->name;
             $accountNameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
+        } else {
+            $accountName = GeneralAccounts::names[$id];
         }
 
         return $this->render('ledger', [
-            'accountId' => $id,
+            'account' => $account,
             'dataProvider' => $dataProvider,
             'accountName' => $accountName,
             'accountNameUrl' => $accountNameUrl,
