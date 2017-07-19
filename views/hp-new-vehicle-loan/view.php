@@ -56,6 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
         }
     }
+    echo Html::a('View Schedule', ['loan/schedule', 'id' => $model->id], ['class' => 'ui button brown']);
     ?>
 
     <?php if ($loan->status == 'PENDING' && User::hasPermission('authorizeLoan')) {?>

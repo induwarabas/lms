@@ -3,12 +3,15 @@
 namespace app\controllers;
 
 use app\models\Loan;
+use app\models\LoanSchedule;
 use app\models\LoanSearch;
 use app\utils\enums\LoanTypes;
 use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanDisbursement;
 use app\utils\loan\LoanRecovery;
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\data\SqlDataProvider;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -197,14 +200,28 @@ class LoanController extends LmsController
         }
     }
 
-    public function actionSchedule($amount, $interest, $terms, $charges)
+    public function actionSchedulex($amount, $interest, $terms, $charges)
     {
         $calc = new AmortizationCalculator();
 
         $schedule = $calc->calculate($amount, $interest, $terms, 12, $charges);
 
-        return $this->render('schedule', [
+        return $this->render('schedulex', [
             'schedule' => $schedule,
+        ]);
+    }
+
+    public function actionSchedule($id)
+    {
+        $query = LoanSchedule::find()->andFilterWhere(['loan_id' => $id])->orderBy('installment_id');
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        $dataProvider->pagination = array(
+            'pageSize' => 0,
+        );
+        return $this->render('schedule', [
+            'dataProvider' => $dataProvider,
         ]);
     }
 

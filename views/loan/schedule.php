@@ -1,13 +1,12 @@
 <?php
 
-use yii\data\ArrayDataProvider;
-use yii\grid\GridView;
+use app\utils\enums\LoanScheduleStatus;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 use yii\widgets\Pjax;
+use Zelenin\yii\SemanticUI\widgets\GridView;
 
 /* @var $this yii\web\View */
-/* @var $schedule \app\utils\loan\AmortizationSchedule */
+/* @var $dataProvider \yii\data\ActiveDataProvider */
 
 $this->title = "Schedule";
 $this->params['breadcrumbs'][] = ['label' => 'Loans', 'url' => ['index']];
@@ -16,32 +15,23 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="loan-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <div style="max-width: 300px">
-    <?= DetailView::widget([
-        'model' => $schedule,
-        'attributes' => [
-            ['attribute' => "amount", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "payment", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "totalInterest", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "totalPayment", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "charges", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "terms", 'contentOptions'=>array('style' => 'text-align: right;')],
-            ['attribute' => "payment", 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-        ],
-    ]) ?>
-    </div>
     <?php Pjax::begin(); ?>  <?=  GridView::widget([
-        'dataProvider' => new ArrayDataProvider([
-            'allModels' => $schedule->schedule,
-            'pagination' => [ 'pageSize' => 12 ],
-        ]),
+        'dataProvider' => $dataProvider,
+        'tableOptions' => ['class' => 'ui table table-striped table-hover table-bordered'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            ['attribute' => "Amount", 'value' => 'amount', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "Interest", 'value' => 'interest', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "Principal", 'value' => 'principal', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "Charges", 'value' => 'charges', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "Balance", 'value' => 'balance', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            'demand_date',
+            ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return LoanScheduleStatus::label($data->status);}],
+            //['attribute' => "Amount", 'value' => 'amount', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "principal", 'value' => 'interest', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "interest", 'value' => 'principal', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "charges", 'value' => 'charges', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "balance", 'value' => 'balance', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            'arrears',
+            ['attribute' => "penalty", 'value' => 'penalty', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "paid", 'value' => 'paid', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "due", 'value' => 'due', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
+            ['attribute' => "balance", 'value' => 'balance', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
         ]
     ]) ?><?php Pjax::end(); ?>
 
