@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Customer;
+use app\models\Loan;
 use app\models\Transaction;
 use Yii;
 use app\models\Account;
@@ -75,9 +77,33 @@ class AccountController extends LmsController
             'pagination' => false,
         ]);
 
+        $account = Account::findOne($id);
+        $accountName = 'General';
+        $accountNameUrl = '';
+        $loanId = 0;
+        $balance = $account->balance;
+
+        if ($account->type == Account::TYPE_SAVING) {
+            $loan = Loan::find()->where("saving_account = :id", [':id' => $id])->one();
+            $loanId = $loan->id;
+            $customer = Customer::findOne($loan->customer_id);
+            $accountName = $customer->name;
+            $accountNameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
+        }else if ($account->type == Account::TYPE_LOAN) {
+            $loan = Loan::find()->where("loan_account = :id", [':id' => $id])->one();
+            $loanId = $loan->id;
+            $customer = Customer::findOne($loan->customer_id);
+            $accountName = $customer->name;
+            $accountNameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
+        }
+
         return $this->render('ledger', [
             'accountId' => $id,
             'dataProvider' => $dataProvider,
+            'accountName' => $accountName,
+            'accountNameUrl' => $accountNameUrl,
+            'loanId' => $loanId,
+            'balance' => $balance
         ]);
     }
 
