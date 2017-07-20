@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Customer;
 use app\models\Loan;
 use app\models\Transaction;
+use app\utils\AccountDetails;
 use app\utils\GeneralAccounts;
 use Yii;
 use app\models\Account;
@@ -65,6 +66,37 @@ class AccountController extends LmsController
     }
 
     /**
+     * Get account details
+     * @param string $id
+     * @return \app\utils\AccountDetails
+     */
+    private function getAccountDetails($id) {
+        $account = Account::findOne($id);
+
+        $details = new AccountDetails();
+        $details->account = $account;
+
+        if ($account->type == Account::TYPE_SAVING || $account->type == Account::TYPE_LOAN) {
+            if ($account->type == Account::TYPE_SAVING)
+                $loan = Loan::find()->where("saving_account = :id", [':id' => $id])->one();
+            else
+                $loan = Loan::find()->where("loan_account = :id", [':id' => $id])->one();
+
+            $customer = Customer::findOne($loan->customer_id);
+            $details->name = $customer->name;
+            $details->nameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
+            $details->descriptionTitle = "Loan";
+            $details->description = "#".$loan->id;
+            $details->descriptionUrl = Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id]);
+        } else if ($account->type == Account::TYPE_GENERAL) {
+            $details->name = GeneralAccounts::names[$id];
+            $details->descriptionTitle = 'Purpose';
+            $details->description = GeneralAccounts::purpose[$id];
+        }
+        return $details;
+    }
+
+    /**
      * View account ledger
      * @param string $id
      * @return mixed
@@ -78,35 +110,36 @@ class AccountController extends LmsController
             'pagination' => false,
         ]);
 
-        $account = Account::findOne($id);
-        $accountName = 'General';
-        $accountNameUrl = '';
-        $loanId = 0;
-        $balance = $account->balance;
+        return $this->render('ledger', [
+            'details' => $this->getAccountDetails($id),
+            'dataProvider' => $dataProvider,
+            'history' => null
+        ]);
+    }
 
-        if ($account->type == Account::TYPE_SAVING) {
-            $loan = Loan::find()->where("saving_account = :id", [':id' => $id])->one();
-            $loanId = $loan->id;
-            $customer = Customer::findOne($loan->customer_id);
-            $accountName = $customer->name;
-            $accountNameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
-        }else if ($account->type == Account::TYPE_LOAN) {
-            $loan = Loan::find()->where("loan_account = :id", [':id' => $id])->one();
-            $loanId = $loan->id;
-            $customer = Customer::findOne($loan->customer_id);
-            $accountName = $customer->name;
-            $accountNameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
-        } else {
-            $accountName = GeneralAccounts::names[$id];
+    /**
+     * View account ledger
+     * @param string $id
+     * @return mixed
+     */
+    public function actionHistory($id)
+    {
+        $from = Yii::$app->request->getQueryParam("from", null);
+        $to = Yii::$app->request->getQueryParam("to", null);
+        if ($from == null && $to == null) {
+            $to = date('Y-m-d');
+            $from = date('Y-m-d', strtotime("-1 month"));
         }
 
+        $query = Transaction::find()->where("(cr_account = :acc or dr_account = :acc) and timestamp >= :from and timestamp <= :to", [":acc" => $id, ':from' => $from, ':to' => $to]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query
+        ]);
+
         return $this->render('ledger', [
-            'account' => $account,
+            'details' => $this->getAccountDetails($id),
             'dataProvider' => $dataProvider,
-            'accountName' => $accountName,
-            'accountNameUrl' => $accountNameUrl,
-            'loanId' => $loanId,
-            'balance' => $balance
+            'history' => ['from' => $from, 'to' => $to],
         ]);
     }
 

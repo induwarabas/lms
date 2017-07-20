@@ -24,4 +24,12 @@ class GeneralAccounts
         GeneralAccounts::PENALTY => 'PENALTY',
         GeneralAccounts::PARK => 'PARK',
     ];
+
+    const purpose = [
+        GeneralAccounts::PAYABLE => 'Keep payable amount',
+        GeneralAccounts::COMMISSION => 'Keep commission (Deprecated)',
+        GeneralAccounts::INTEREST => 'Transfer interest at loan recovery',
+        GeneralAccounts::PENALTY => 'Transfer penalty at loan recovery',
+        GeneralAccounts::PARK => 'Intermediate account to divide or merge transaction',
+    ];
 }

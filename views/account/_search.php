@@ -1,32 +1,55 @@
 <?php
 
+use dosamigos\datepicker\DatePicker;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AccountSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="account-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['index'],
+        'action' => ['history'],
         'method' => 'get',
-    ]); ?>
+    ]);
+    echo Html::hiddenInput('id', $id);
+    ?>
 
-    <?= $form->field($model, 'id') ?>
+    <table class="ui table">
+        <tr>
+            <td style="padding-right: 10px;padding-left: 40px;width: 1%;white-space:nowrap;">
+                <div class="field field-from">
+                    <label for="from">From</label>
+                </div>
+            </td>
+            <td>
+                <div class="field field-from">
+                    <?= DatePicker::widget(['name' => 'from', 'value' => $history['from'],'clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
+                </div>
+            </td>
+            <td style="padding-right: 10px;padding-left: 40px;width: 1%;white-space:nowrap;">
+                <div class="field field-from">
+                    <label for="to">To</label>
+                </div>
+            </td>
+            <td>
+                <div class="field field-from">
+                    <?= DatePicker::widget(['name' => 'to', 'value' => $history['to'],'clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                    <?= Html::submitButton('Filter', ['class' => 'ui button blue']) ?>
+                </div>
+            </td>
+        </tr>
+    </table>
 
-    <?= $form->field($model, 'type') ?>
 
-    <?= $form->field($model, 'balance') ?>
 
-    <?= $form->field($model, 'protection') ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
-    </div>
 
     <?php ActiveForm::end(); ?>
 
