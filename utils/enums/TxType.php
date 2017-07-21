@@ -13,6 +13,7 @@ class TxType
 {
     const DISBURSE = "DISBURSE";
     const CHARGES = "CHARGES";
+    const PAYMENT = "PAYMENT";
     const PENALTY = "PENALTY";
     const RECOVERY = "RECOVERY";
     const CAPITAL_RECOVERY = "CAPITAL";

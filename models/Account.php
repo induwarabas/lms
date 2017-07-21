@@ -16,12 +16,14 @@ class Account extends \yii\db\ActiveRecord
     const TYPE_LOAN = 'LOAN';
     const TYPE_SUPPLIER = 'SUPPLIER';
     const TYPE_CANVASSER = 'CANVASSER';
+    const TYPE_TELLER = 'TELLER';
     const TYPE_GENERAL = 'GENERAL';
     const TYPE_IDS = [
         Account::TYPE_SAVING => '1',
         Account::TYPE_LOAN => '2',
         Account::TYPE_SUPPLIER => '3',
         Account::TYPE_CANVASSER => '4',
+        Account::TYPE_TELLER => '8',
         Account::TYPE_GENERAL => '9',
     ];
 
@@ -81,5 +83,25 @@ class Account extends \yii\db\ActiveRecord
     public static function createAccountId($type, $id)
     {
         return Account::TYPE_IDS[$type] . str_pad($id, 9, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get the teller account
+     * @return \app\models\Account
+     */
+    public static function getTellerAccount() {
+        $accountID = Account::createAccountId(Account::TYPE_TELLER, \Yii::$app->getUser()->id);
+        $account = Account::findOne($accountID);
+        if ($account == null) {
+            $account = new Account();
+            $account->id = $accountID;
+            $account->type = Account::TYPE_TELLER;
+            $account->balance = 0.0;
+            $account->protection = Account::PROTECTION_MINUS;
+            if ($account->save()) {
+                return $account;
+            }
+        }
+        return $account;
     }
 }

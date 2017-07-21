@@ -19,6 +19,9 @@ class CustomerView extends Widget
     public $customer;
 
     /* @var boolean */
+    public $target = '';
+
+    /* @var string */
     public $fullname = false;
 
     public function init()
@@ -38,7 +41,11 @@ class CustomerView extends Widget
             $name = $this->customer->full_name;
         }
         $customerUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $this->customer->id]);
-        $out = '<a href="'.$customerUrl.'" style="color: #1e70bf; margin-right: 20px;"><b>'.$name . " (" . $this->customer->nic . ")".'</b></a>';
+        $target = '';
+        if ($this->target != '') {
+            $target = ' target="'.$this->target.'"';
+        }
+        $out = '<a href="'.$customerUrl.'" '.$target.' style="color: #1e70bf; margin-right: 20px;"><b>'.$name . " (" . $this->customer->nic . ")".'</b></a>';
         return $out;
     }
 
