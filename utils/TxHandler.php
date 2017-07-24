@@ -11,6 +11,7 @@ namespace app\utils;
 
 use app\models\Account;
 use app\models\Transaction;
+use app\utils\enums\PaymentType;
 use Yii;
 
 class TxHandler
@@ -32,7 +33,7 @@ class TxHandler
         return uniqid();
     }
 
-    public function createTransaction($cr, $dr, $amount, $type, $description, $link = null)
+    public function createTransaction($cr, $dr, $amount, $type, $payment, $description, $link = null, $cheque = null)
     {
         if($amount == 0) {
             return true;
@@ -56,6 +57,11 @@ class TxHandler
             return false;
         }
 
+        if ($payment == PaymentType::CHEQUE && ($cheque == null || $cheque == '')) {
+            $this->error = "Cheque number not given";
+            return false;
+        }
+
         $transaction = new Transaction;
         $transaction->cr_account = $cr;
         $transaction->dr_account = $dr;
@@ -65,14 +71,34 @@ class TxHandler
         $transaction->type = $type;
         $transaction->description = $description;
         $transaction->txlink = $link;
-        $transaction->save();
+        $transaction->payment = $payment;
+        $transaction->cheque = $cheque;
+        $transaction->txlink = $link;
+        if (!$transaction->save()) {
+            foreach ($transaction->errors as $key => $value) {
+                $this->error = $value[0];
+                return false;
+            }
+        }
+
         $this->txid = $transaction->getPrimaryKey();
 
         $crAccount->balance = $transaction->cr_balance;
-        $crAccount->save();
+        if (!$crAccount->save()) {
+            foreach ($crAccount->errors as $key => $value) {
+                $this->error = $value[0];
+                return false;
+            }
+        }
 
         $drAccount->balance = $transaction->dr_balance;
         $drAccount->save();
+        if (!$drAccount->save()) {
+            foreach ($drAccount->errors as $key => $value) {
+                $this->error = $value[0];
+                return false;
+            }
+        }
 
         //$tx->commit();
         return true;

@@ -17,7 +17,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 /* @var $balance double */
 /* @var $error string */
 
-$this->title = 'Loan Payment';
+$this->title = 'Loan Receipt';
 $this->params['breadcrumbs'][] = ['label' => 'Teller', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -73,8 +73,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php if ($model->stage == 3) { ?>
             <tr>
                 <td>Payment type</td>
-                <td>CASH</td>
+                <td><?= $model->payment ?></td>
             </tr>
+            <?php if ($model->payment == PaymentType::CHEQUE) { ?>
+                <tr>
+                    <td>Cheque number</td>
+                    <td><?= $model->cheque ?></td>
+                </tr>
+            <?php } ?>
             <tr>
                 <td>Amount Payed</td>
                 <td><?= number_format($model->amount, 2) ?></td>
@@ -93,14 +99,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>
 
-            <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01', 'readonly' =>true]) ?>
+            <?= $form->field($model, 'payment')->dropDownList(['CASH' => 'CASH', 'CHEQUE' => 'CHEQUE']) ?>
+            <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
 
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
             <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
 
             <div class="form-group">
-                <?= Html::submitButton('Pay', ['class' => 'btn btn-success']) ?>
+                <?= Html::submitButton('Receipt', ['class' => 'btn btn-success']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>

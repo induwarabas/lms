@@ -7,7 +7,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\TellerReceipt */
 
-$this->title = 'Loan Payment';
+$this->title = 'Loan Receipt';
 $this->params['breadcrumbs'][] = ['label' => 'Teller', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
 
         <div class="form-group">
-            <?= Html::submitButton('Pay', ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton('Receipt', ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

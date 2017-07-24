@@ -18,18 +18,23 @@ class Account extends \yii\db\ActiveRecord
     const TYPE_CANVASSER = 'CANVASSER';
     const TYPE_TELLER = 'TELLER';
     const TYPE_GENERAL = 'GENERAL';
-    const TYPE_IDS = [
-        Account::TYPE_SAVING => '1',
-        Account::TYPE_LOAN => '2',
-        Account::TYPE_SUPPLIER => '3',
-        Account::TYPE_CANVASSER => '4',
-        Account::TYPE_TELLER => '8',
-        Account::TYPE_GENERAL => '9',
-    ];
+
 
     const PROTECTION_NONE = 'NONE';
     const PROTECTION_PLUS = 'PLUS';
     const PROTECTION_MINUS = 'MINUS';
+
+    public static function getTypeId($type) {
+        static $TYPE_IDS = [
+            Account::TYPE_SAVING => '1',
+            Account::TYPE_LOAN => '2',
+            Account::TYPE_SUPPLIER => '3',
+            Account::TYPE_CANVASSER => '4',
+            Account::TYPE_TELLER => '8',
+            Account::TYPE_GENERAL => '9',
+        ];
+        return $TYPE_IDS[$type];
+    }
 
     /**
      * @inheritdoc
@@ -82,7 +87,7 @@ class Account extends \yii\db\ActiveRecord
      */
     public static function createAccountId($type, $id)
     {
-        return Account::TYPE_IDS[$type] . str_pad($id, 9, '0', STR_PAD_LEFT);
+        return Account::getTypeId($type) . str_pad($id, 9, '0', STR_PAD_LEFT);
     }
 
     /**

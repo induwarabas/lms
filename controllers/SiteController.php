@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\utils\enums\PaymentType;
 use app\utils\TxHandler;
 use Yii;
 use yii\filters\AccessControl;
@@ -105,7 +106,7 @@ class SiteController extends LmsController
     public function actionContact()
     {
         $tx = new TxHandler();
-        if ($tx->createTransaction("9000000001", "9000000002", 1000, "CAPITAL", "Initial transfer")) {
+        if ($tx->createTransaction("9000000001", "9000000002", 1000, "CAPITAL", PaymentType::INTERNAL,"Initial transfer")) {
             echo $tx->getTransactionID();
         } else {
             echo $tx->getError();

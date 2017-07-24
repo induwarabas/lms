@@ -16,6 +16,7 @@ use app\models\Supplier;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
+use app\utils\enums\PaymentType;
 use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
@@ -94,6 +95,7 @@ class LoanDisbursement
             GeneralAccounts::PARK,
             $loan->amount + $loan->charges,
             TxType::DISBURSE,
+            PaymentType::INTERNAL,
             "Disbursement of the loan #" . $loan->id,
             $link)) {
             $this->error = $txHnd->error;
@@ -104,6 +106,7 @@ class LoanDisbursement
             GeneralAccounts::PAYABLE,
             $loan->amount,
             TxType::DISBURSE,
+            PaymentType::INTERNAL,
             "Disbursement of the loan #" . $loan->id,
             $link)) {
             $this->error = $txHnd->error;
@@ -122,6 +125,7 @@ class LoanDisbursement
                         $supplier->account,
                         $salesCommission,
                         TxType::DISBURSE,
+                        PaymentType::INTERNAL,
                         "Sales commission of the loan #" . $loan->id,
                         $link)) {
                         $this->error = $txHnd->error;
@@ -139,6 +143,7 @@ class LoanDisbursement
                         $canvasser->account,
                         $canvassingCommission,
                         TxType::DISBURSE,
+                        PaymentType::INTERNAL,
                         "Canvassing commission of the loan #" . $loan->id,
                         $link)) {
                         $this->error = $txHnd->error;
@@ -157,6 +162,7 @@ class LoanDisbursement
                 GeneralAccounts::PAYABLE,
                 $loan->charges,
                 TxType::DISBURSE,
+                PaymentType::INTERNAL,
                 "Disbursement charges of the loan #" . $loan->id,
                 $link)) {
                 $this->error = $txHnd->error;
