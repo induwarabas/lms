@@ -28,6 +28,7 @@ use Yii;
  * @property string $guarantor_1
  * @property string $guarantor_2
  * @property string $guarantor_3
+ * @property integer $paid
  *
  * @property CollectionMethod $collectionMethod
  * @property LoanType $type0
@@ -49,7 +50,7 @@ class Loan extends \yii\db\ActiveRecord
     {
         return [
             [['type', 'customer_id', 'amount', 'interest', 'penalty', 'charges', 'collection_method', 'period'], 'required'],
-            [['type', 'customer_id', 'collection_method', 'period'], 'integer'],
+            [['type', 'customer_id', 'collection_method', 'period', 'paid'], 'integer'],
             [['amount', 'interest', 'penalty', 'charges', 'installment', 'total_interest', 'total_payment', 'guarantor_1', 'guarantor_2', 'guarantor_3'], 'number'],
             [['status'], 'string'],
             [['disbursed_date', 'closed_date'], 'safe'],
@@ -86,6 +87,7 @@ class Loan extends \yii\db\ActiveRecord
             'guarantor_1' => 'Guarantor 1',
             'guarantor_2' => 'Guarantor 2',
             'guarantor_3' => 'Guarantor 3',
+            'paid' => 'Paid',
         ];
     }
 

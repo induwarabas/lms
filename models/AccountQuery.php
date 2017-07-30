@@ -23,6 +23,7 @@ class AccountQuery extends \yii\db\ActiveQuery
         return parent::all($db);
     }
 
+
     /**
      * @inheritdoc
      * @return Account|array|null

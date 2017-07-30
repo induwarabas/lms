@@ -38,6 +38,13 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             [
+                'label' => 'Teller',
+                'items' => [
+                    ['label' => 'Receipt', 'url' => ['/teller/receipt']],
+                    ['label' => 'Payment', 'url' => ['/teller/payment']],
+                ]
+            ],
+            [
                 'label' => 'Partners',
                 'items' => [
                     ['label' => 'Customers', 'url' => ['/customer/index']],

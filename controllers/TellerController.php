@@ -47,23 +47,22 @@ class TellerController extends LmsController
             }
 
             if ($model->description == null || $model->description == '') {
-                $model->description = 'Loan receipt #'.$loan->id;
+                $model->description = 'Loan receipt #' . $loan->id;
             }
 
             if ($model->stage == 2 && $model->validate()) {
-                if ($model->amount ==0) {
+                if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
                 } else if ($model->payment == PaymentType::CHEQUE && ($model->cheque == null || $model->cheque == '')) {
                     $model->addError('cheque', 'Cheque number required for cheque transactions');
                 } else {
-                    if (Transaction::findOne(['txlink' => $model->link]) != null)
-                    {
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
                         $error = "Transaction is already done.";
                         $model->stage = 3;
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
-                        if ($txHnd->createTransaction($teller->id, $loan->saving_account, $model->amount, TxType::PAYMENT, $model->description, $model->link, $model->cheque)) {
+                        if ($txHnd->createTransaction($teller->id, $loan->saving_account, $model->amount, TxType::RECEIPT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $tx->commit();
                             $model->stage = 3;
                             $rec = new LoanRecovery();
@@ -78,7 +77,6 @@ class TellerController extends LmsController
             } else {
                 $model->stage = 2;
             }
-
 
 
             $customer = Customer::findOne($loan->customer_id);
@@ -129,6 +127,7 @@ class TellerController extends LmsController
                 $model->addError('loanId', "Invalid loan id.");
                 return $this->render('payment-account', [
                     'model' => $model,
+                    'error' => null
                 ]);
             }
 
@@ -136,29 +135,43 @@ class TellerController extends LmsController
                 $model->addError('loanId', "Loan is not active.");
                 return $this->render('payment-account', [
                     'model' => $model,
+                    'error' => null
+                ]);
+            }
+
+            if ($loan->paid != 0) {
+                $error = "Payment already done for this loan with the transaction #" . $loan->paid;
+                return $this->render('payment-account', [
+                    'model' => $model,
+                    'error' => $error
                 ]);
             }
 
             if ($model->description == null || $model->description == '') {
-                $model->description = 'Loan payment #'.$loan->id;
+                $model->description = 'Loan payment #' . $loan->id;
             }
 
             $model->amount = $loan->amount;
 
             if ($model->stage == 2 && $model->validate()) {
-                if ($model->amount ==0) {
+                if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
                 } else {
-                    if (Transaction::findOne(['txlink' => $model->link]) != null)
-                    {
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
                         $error = "Transaction is already done.";
                         $model->stage = 3;
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
-                        if ($txHnd->createTransaction(GeneralAccounts::PAYABLE, $teller->id, $model->amount, TxType::PAYMENT, PaymentType::CASH,$model->description, $model->link)) {
-                            $tx->commit();
-                            $model->stage = 3;
+                        if ($txHnd->createTransaction(GeneralAccounts::PAYABLE, $teller->id, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                            $loan->paid = $txHnd->txid;
+                            if ($loan->save()) {
+                                $tx->commit();
+                                $model->stage = 3;
+                            } else {
+                                $tx->rollBack();
+                                $error = "Service error.";
+                            }
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
                         } else {
                             $tx->rollBack();
@@ -169,7 +182,6 @@ class TellerController extends LmsController
             } else {
                 $model->stage = 2;
             }
-
 
 
             $customer = Customer::findOne($loan->customer_id);
@@ -204,6 +216,7 @@ class TellerController extends LmsController
             $model->link = uniqid();
             return $this->render('payment-account', [
                 'model' => $model,
+                'error' => null
             ]);
         }
     }

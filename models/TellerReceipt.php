@@ -8,7 +8,7 @@ use app\utils\validators\SavingAccountValidator;
  *
  * @property string $loanId
  * @property double $amount
- * @property double $payment
+ * @property string $payment
  * @property double $cheque
  * @property string $description
  * @property integer $stage
