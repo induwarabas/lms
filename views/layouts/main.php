@@ -58,6 +58,15 @@ AppAsset::register($this);
             ],
             ['label' => 'Loans', 'url' => ['/loan/index']],
             [
+                'label' => 'Configure',
+                'items' => [
+                    ['label' => 'Areas', 'url' => ['/area/index']],
+                    ['label' => 'Banks', 'url' => ['/bank/index']],
+                    ['label' => 'Vehicle Types', 'url' => ['/vehicle-type/index']],
+                    ['label' => 'Vehicle Brands', 'url' => ['/vehicle-brand/index']],
+                ]
+            ],
+            [
                 'label' => 'Backend routes',
                 'items' => [
                     ['label' => 'Users', 'url' => ['/user-management/user/index']],

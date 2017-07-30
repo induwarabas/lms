@@ -2,6 +2,7 @@
 
 use app\models\Canvasser;
 use app\models\CollectionMethod;
+use app\models\DisburseModel;
 use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
@@ -10,6 +11,7 @@ use app\utils\widgets\CanvasserView;
 use app\utils\widgets\CommissionView;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
+use dosamigos\datepicker\DatePicker;
 use webvimark\modules\UserManagement\models\User;
 use yii\bootstrap\Alert;
 use yii\bootstrap\Modal;
@@ -18,6 +20,7 @@ use yii\helpers\Url;
 use yii\widgets\DetailView;
 use Zelenin\yii\SemanticUI\Elements;
 use Zelenin\yii\SemanticUI\helpers\Size;
+use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\HpNewVehicleLoan */
@@ -45,7 +48,31 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'body' => '<b>Error:</b> '.$error,
         ]);
-    }
+    } ?>
+
+    <?php if ($loan->status == 'PENDING' && User::hasPermission('authorizeLoan')) {?>
+        <?php $dsb = new DisburseModel(['date' => date('Y-m-d'), 'loan' => $model->id]); ?>
+        <?php $frm = ActiveForm::begin(['action' => ['loan/disburse']]); ?>
+        <?php $modal = Modal::begin([
+            'size' => Size::TINY,
+            'header' => '<h2>Disburse loan</h2>',
+            'toggleButton' => ['label' => 'Disburse this loan', 'class' => 'ui button red'],
+            'footer' => Html::submitButton(Elements::icon('checkmark')."Disburse", ['class' => 'ui button red'])
+                . Elements::button('Nope', ['class' => 'ui button default', 'data-dismiss' => 'modal'])
+
+        ]); ?>
+        <p class="description">Are you sure you want to disburse this loan?</p>
+        <b>Note:</b> This action cannot be undone.
+        <hr/>
+        <?= $frm->field($dsb, 'date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
+        <?= $frm->field($dsb, 'loan')->hiddenInput()->label(false) ?>
+
+        <?php $modal::end(); ?>
+
+        <?php $frm::end() ?>
+    <?php } ?><hr/>
+
+    <?php
     if (User::hasPermission('authorizeLoan')) {
         echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
         if ($loan->status == 'ACTIVE') {
@@ -59,19 +86,6 @@ $this->params['breadcrumbs'][] = $this->title;
     echo Html::a('View Schedule', ['loan/schedule', 'id' => $model->id], ['class' => 'ui button brown']);
     ?>
 
-    <?php if ($loan->status == 'PENDING' && User::hasPermission('authorizeLoan')) {?>
-    <?php $modal = Modal::begin([
-        'size' => Size::TINY,
-        'header' => '<h2>Disburse loan</h2>',
-        'toggleButton' => ['label' => 'Disburse', 'class' => 'ui button red'],
-        'footer' => Html::a(Elements::icon('checkmark')."Disburse", ['loan/disburse', 'id' => $model->id],['class' => 'ui button red'])
-            . Elements::button('Nope', ['class' => 'ui button default', 'data-dismiss' => 'modal'])
-
-    ]); ?>
-    <p class="description">Are you sure you want to disburse this loan?</p>
-    <b>Note:</b> This action cannot be undone.
-    <?php $modal::end(); ?>
-    <?php } ?>
     <div class="ui segment">
         <?= Elements::header(Elements::icon('users') . '<div class="content">Customer Details<div class="sub header">Involved customer details.</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>

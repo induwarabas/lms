@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\DisburseModel;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanSearch;
@@ -232,16 +233,22 @@ class LoanController extends LmsController
         return $this->redirect(["create"]);
     }
 
-    public function actionDisburse($id)
+    public function actionDisburse()
     {
-        $tx = Yii::$app->getDb()->beginTransaction();
-        $disbursement = new LoanDisbursement();
-        if ($disbursement->disburse($id)) {
-            $tx->commit();
-        } else {
-            $tx->rollBack();
+        $model = new DisburseModel();
+        if ($model->load(Yii::$app->request->post())) {
+            $tx = Yii::$app->getDb()->beginTransaction();
+            $disbursement = new LoanDisbursement();
+            if ($disbursement->disburse($model->loan, $model->date)) {
+                $tx->commit();
+            } else {
+                $tx->rollBack();
+            }
+            $this->redirect(['view', 'id' => $model->loan, 'error'=>$disbursement->error]);
+        }else {
+            $this->redirect(['view', 'id' => $model->loan, 'error'=>'Invalid request']);
         }
-        $this->redirect(['view', 'id' => $id, 'error'=>$disbursement->error]);
+
     }
 
     public function actionRecover($id)

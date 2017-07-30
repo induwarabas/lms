@@ -25,7 +25,7 @@ class LoanDisbursement
 {
     public $error;
 
-    public function disburse($loanId)
+    public function disburse($loanId, $date)
     {
         $loan = Loan::findOne(['id' => $loanId]);
         if ($loan === null) {
@@ -53,7 +53,7 @@ class LoanDisbursement
 
         $schedule = $amortization->calculate($loan->amount, $loan->interest, $loan->period, $interestTerms, $loan->charges);
 
-        $loan->disbursed_date = date("Y-m-d");
+        $loan->disbursed_date = $date;
 
         $dt = $loan->disbursed_date;
 
@@ -136,7 +136,7 @@ class LoanDisbursement
 
             if (isset($loanex->canvassed) && $loanex->canvassed != 0){
                 $canvassingCommission = $loanex->getCanvassingCommission();
-                $canvasser = Canvasser::findOne($loanex->supplier);
+                $canvasser = Canvasser::findOne($loanex->canvassed);
                 if ($canvasser != null) {
                     $total += $canvassingCommission;
                     if (!$txHnd->createTransaction(GeneralAccounts::PARK,
