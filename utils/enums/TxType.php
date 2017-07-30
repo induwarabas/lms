@@ -22,6 +22,9 @@ class TxType
     const CHARGES_RECOVERY = "CHARGES";
     const EXPENSE = "EXPENSE";
     const MANUAL = "MANUAL";
+    const INVESTMENT = "INVESTMENT";
+    const INTENAL = "INTENAL";
+    const BANK = "BANK";
 
     public static function items() {
         return [
@@ -36,6 +39,9 @@ class TxType
             TxType::CHARGES_RECOVERY => TxType::CHARGES_RECOVERY,
             TxType::EXPENSE => TxType::EXPENSE,
             TxType::MANUAL => TxType::MANUAL,
+            TxType::INVESTMENT => TxType::INVESTMENT,
+            TxType::INTENAL => TxType::INTENAL,
+            TxType::BANK => TxType::BANK,
         ];
     }
 }

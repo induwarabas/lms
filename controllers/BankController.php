@@ -15,21 +15,6 @@ use yii\filters\VerbFilter;
 class BankController extends LmsController
 {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all Bank models.
      * @return mixed
      */

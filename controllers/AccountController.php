@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Customer;
+use app\models\GeneralAccount;
 use app\models\Loan;
 use app\models\Transaction;
 use app\utils\AccountDetails;
@@ -91,7 +92,7 @@ class AccountController extends LmsController
         } else if ($account->type == Account::TYPE_GENERAL) {
             $details->name = GeneralAccounts::names[$id];
             $details->descriptionTitle = 'Purpose';
-            $details->description = GeneralAccounts::purpose[$id];
+            $details->description = GeneralAccount::findOne($id)->description;
         }
         return $details;
     }

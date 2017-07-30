@@ -68,6 +68,11 @@ AppAsset::register($this);
                 'items' => [
                     ['label' => 'General Accounts', 'url' => ['/general-account/index']],
                     ['label' => 'Manual Transaction', 'url' => ['/transaction/manual']],
+                    ['label' => 'Investment', 'url' => ['/transaction/investment']],
+                    ['label' => 'Safe -> Teller', 'url' => ['/transaction/safe-to-teller']],
+                    ['label' => 'Teller -> Safe', 'url' => ['/transaction/teller-to-safe']],
+                    ['label' => 'Safe -> Bank', 'url' => ['/transaction/safe-to-bank']],
+                    ['label' => 'Bank -> Safe', 'url' => ['/transaction/bank-to-safe']],
                 ]
             ],
             [
@@ -75,6 +80,7 @@ AppAsset::register($this);
                 'items' => [
                     ['label' => 'Areas', 'url' => ['/area/index']],
                     ['label' => 'Banks', 'url' => ['/bank/index']],
+                    ['label' => 'Bank Accounts', 'url' => ['/bank-account/index']],
                     ['label' => 'Vehicle Types', 'url' => ['/vehicle-type/index']],
                     ['label' => 'Vehicle Brands', 'url' => ['/vehicle-brand/index']],
                 ]

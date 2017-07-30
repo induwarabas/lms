@@ -2,25 +2,26 @@
 
 namespace app\controllers;
 
+use app\models\Account;
 use Yii;
-use app\models\VehicleType;
-use app\models\VehicleTypeSearch;
+use app\models\BankAccount;
+use app\models\BankAccountSearch;
 use app\controllers\LmsController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * VehicleTypeController implements the CRUD actions for VehicleType model.
+ * BankAccountController implements the CRUD actions for BankAccount model.
  */
-class VehicleTypeController extends LmsController
+class BankAccountController extends LmsController
 {
     /**
-     * Lists all VehicleType models.
+     * Lists all BankAccount models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new VehicleTypeSearch();
+        $searchModel = new BankAccountSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -30,7 +31,7 @@ class VehicleTypeController extends LmsController
     }
 
     /**
-     * Displays a single VehicleType model.
+     * Displays a single BankAccount model.
      * @param integer $id
      * @return mixed
      */
@@ -42,25 +43,38 @@ class VehicleTypeController extends LmsController
     }
 
     /**
-     * Creates a new VehicleType model.
+     * Creates a new BankAccount model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new VehicleType();
+        $model = new BankAccount();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $tx = Yii::$app->getDb()->beginTransaction();
+            if($model->save()) {
+                $acc = new Account();
+                $acc->id = Account::createAccountId(Account::TYPE_BANK, $model->primaryKey);
+                $acc->type = Account::TYPE_BANK;
+                $acc->balance = 0.0;
+                $acc->protection = Account::PROTECTION_NONE;
+                $model->account_id = $acc->id;
+                if ($acc->save() && $model->save()) {
+                    $tx->commit();
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
+            $tx->rollBack();
         }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+
     }
 
     /**
-     * Updates an existing VehicleType model.
+     * Updates an existing BankAccount model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -79,7 +93,7 @@ class VehicleTypeController extends LmsController
     }
 
     /**
-     * Deletes an existing VehicleType model.
+     * Deletes an existing BankAccount model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -92,15 +106,15 @@ class VehicleTypeController extends LmsController
     }
 
     /**
-     * Finds the VehicleType model based on its primary key value.
+     * Finds the BankAccount model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return VehicleType the loaded model
+     * @return BankAccount the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = VehicleType::findOne($id)) !== null) {
+        if (($model = BankAccount::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

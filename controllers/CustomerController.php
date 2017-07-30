@@ -15,21 +15,6 @@ use yii\web\NotFoundHttpException;
 class CustomerController extends LmsController
 {
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Lists all Customer models.
      * @return mixed
      */

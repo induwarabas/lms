@@ -17,6 +17,7 @@ class Account extends \yii\db\ActiveRecord
     const TYPE_LOAN = 'LOAN';
     const TYPE_SUPPLIER = 'SUPPLIER';
     const TYPE_CANVASSER = 'CANVASSER';
+    const TYPE_BANK = 'BANK';
     const TYPE_TELLER = 'TELLER';
     const TYPE_GENERAL = 'GENERAL';
 
@@ -31,6 +32,7 @@ class Account extends \yii\db\ActiveRecord
             Account::TYPE_LOAN => '2',
             Account::TYPE_SUPPLIER => '3',
             Account::TYPE_CANVASSER => '4',
+            Account::TYPE_BANK => '7',
             Account::TYPE_TELLER => '8',
             Account::TYPE_GENERAL => '9',
         ];
@@ -139,6 +141,11 @@ class Account extends \yii\db\ActiveRecord
             $user = \webvimark\modules\UserManagement\models\User::findOne($userid);
             if ($user != null) {
                 return "Teller ".$user->username;
+            }
+        }else if($this->type == Account::TYPE_BANK) {
+            $bankAcc = BankAccount::findOne(['account_id' => $this->id]);
+            if ($bankAcc != null) {
+                return Bank::findOne($bankAcc->bank)->name." ".$bankAcc->bank_account_id;
             }
         }else if($this->type == Account::TYPE_GENERAL) {
             $ga = GeneralAccount::findOne(['id' => $this->id]);

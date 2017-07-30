@@ -17,6 +17,7 @@ class GeneralAccounts
     const PENALTY = '9000000004';
     const PARK = '9000000005';
     const EXPENSES = '9000000006';
+    const INVESTMENT = '9000000007';
 
     const names = [
         GeneralAccounts::PAYABLE => 'PAYABLE',
@@ -25,14 +26,6 @@ class GeneralAccounts
         GeneralAccounts::PENALTY => 'PENALTY',
         GeneralAccounts::PARK => 'PARK',
         GeneralAccounts::EXPENSES => 'EXPENSES',
-    ];
-
-    const purpose = [
-        GeneralAccounts::PAYABLE => 'Keep payable amount',
-        GeneralAccounts::SAFE => 'Main Safe',
-        GeneralAccounts::INTEREST => 'Transfer interest at loan recovery',
-        GeneralAccounts::PENALTY => 'Transfer penalty at loan recovery',
-        GeneralAccounts::PARK => 'Intermediate account to divide or merge transaction',
-        GeneralAccounts::EXPENSES => 'General expenses',
+        GeneralAccounts::INVESTMENT => 'INVESTMENT',
     ];
 }
