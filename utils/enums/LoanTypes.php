@@ -15,4 +15,8 @@ class LoanTypes
     const HP_REG_VEHICLE_REFINANCE = 2;
     const HP_REG_VEHICLE_OTHER = 3;
     const PERSONAL = 4;
+
+    public static function isVehicleLoan($type) {
+        return $type == LoanTypes::HP_NEW_VEHICLE || $type == LoanTypes::HP_REG_VEHICLE_OTHER || $type == LoanTypes::HP_REG_VEHICLE_REFINANCE;
+    }
 }

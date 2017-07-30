@@ -113,7 +113,7 @@ class LoanDisbursement
             return false;
         }
 
-        if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
+        if (LoanTypes::isVehicleLoan($loan->type)) {
             $loanex = HpNewVehicleLoan::findOne($loan->id);
             $total = 0.0;
             if (isset($loanex->supplier) && $loanex->supplier != 0){

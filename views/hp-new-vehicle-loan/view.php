@@ -3,6 +3,7 @@
 use app\models\Canvasser;
 use app\models\CollectionMethod;
 use app\models\DisburseModel;
+use app\models\LoanType;
 use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
@@ -108,6 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $loan,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
+                ['attribute' => 'type', 'value' => function($data) {return LoanType::findOne($data->type)->name;}],
                 ['attribute' => 'status', 'format' => 'html', 'value' => function($data) {return LoanStatus::label($data->status);}],
                 'amount',
                 'charges',

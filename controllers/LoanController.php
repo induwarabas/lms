@@ -46,7 +46,7 @@ class LoanController extends LmsController
     public function actionView($id)
     {
         $loan = $this->findModel($id);
-        if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
+        if (LoanTypes::isVehicleLoan($loan->type)) {
             return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
         }
         return $this->render('view', [
@@ -74,8 +74,8 @@ class LoanController extends LmsController
             }
         }
 
-        if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
-            return $this->redirect(["hp-new-vehicle-loan/create"]);
+        if (LoanTypes::isVehicleLoan($model->type)) {
+            return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -132,11 +132,11 @@ class LoanController extends LmsController
             }
         }
         Yii::$app->getSession()->set("loan", $model);
-        if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
+        if (LoanTypes::isVehicleLoan($model->type)) {
             if (isset($model->id) && $model->id > 0) {
                 return $this->redirect(["hp-new-vehicle-loan/update", 'id' => $model->id]);
             }
-            return $this->redirect(["hp-new-vehicle-loan/create"]);
+            return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -164,8 +164,8 @@ class LoanController extends LmsController
         } else if ($type == "Guarantor 3") {
             $model->guarantor_3 = null;
         }
-        if ($model->type == LoanTypes::HP_NEW_VEHICLE) {
-            return $this->redirect(["hp-new-vehicle-loan/create"]);
+        if (LoanTypes::isVehicleLoan($model->type)) {
+            return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [

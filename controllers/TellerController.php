@@ -85,7 +85,7 @@ class TellerController extends LmsController
             $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
             $savingAccount = Account::findOne($loan->saving_account);
             $balance = $savingAccount->balance - $due;
-            if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
+            if (LoanTypes::isVehicleLoan($loan->type)) {
                 $loanex = HpNewVehicleLoan::findOne($loan->id);
                 if ($loanex->vehicle_no != null && $loanex->vehicle_no != '') {
                     $details .= " / " . $loanex->vehicle_no;
@@ -190,7 +190,7 @@ class TellerController extends LmsController
             $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
             $savingAccount = Account::findOne($loan->saving_account);
             $balance = $savingAccount->balance - $due;
-            if ($loan->type == LoanTypes::HP_NEW_VEHICLE) {
+            if (LoanTypes::isVehicleLoan($loan->type)) {
                 $loanex = HpNewVehicleLoan::findOne($loan->id);
                 if ($loanex->vehicle_no != null && $loanex->vehicle_no != '') {
                     $details .= " / " . $loanex->vehicle_no;

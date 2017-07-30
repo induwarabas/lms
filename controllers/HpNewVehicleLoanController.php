@@ -56,7 +56,7 @@ class HpNewVehicleLoanController extends LmsController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($type)
     {
         $model = Yii::$app->getSession()->get("loanex");
         if ($model == null) {
@@ -66,7 +66,7 @@ class HpNewVehicleLoanController extends LmsController
         $loan = Yii::$app->getSession()->get("loan");
         if ($loan == null) {
             $loan = new Loan();
-            $loan->type = LoanTypes::HP_NEW_VEHICLE;
+            $loan->type = $type;
             $loan->collection_method = 1;
             $loan->period = 36;
             $loan->interest = 12;
