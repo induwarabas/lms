@@ -20,4 +20,5 @@ class TxType
     const CAPITAL_RECOVERY = "CAPITAL";
     const INTEREST_RECOVERY = "INTEREST";
     const CHARGES_RECOVERY = "CHARGES";
+    const EXPENSE = "EXPENSE";
 }

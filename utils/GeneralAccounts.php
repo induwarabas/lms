@@ -16,6 +16,7 @@ class GeneralAccounts
     const INTEREST = '9000000003';
     const PENALTY = '9000000004';
     const PARK = '9000000005';
+    const EXPENSES = '9000000006';
 
     const names = [
         GeneralAccounts::PAYABLE => 'PAYABLE',

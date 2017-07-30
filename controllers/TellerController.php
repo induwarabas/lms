@@ -8,6 +8,7 @@ use app\models\HpNewVehicleLoan;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanType;
+use app\models\TellerGeneralExpence;
 use app\models\TellerPayment;
 use app\models\TellerReceipt;
 use app\models\Transaction;
@@ -217,6 +218,102 @@ class TellerController extends LmsController
             return $this->render('payment-account', [
                 'model' => $model,
                 'error' => null
+            ]);
+        }
+    }
+
+    public function actionExpensePayment()
+    {
+        $model = new TellerGeneralExpence();
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $error = null;
+
+            if ($model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else {
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 0;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+                        if ($txHnd->createTransaction(GeneralAccounts::EXPENSES,  $teller->id,$model->amount, TxType::EXPENSE, PaymentType::CASH, $model->description, $model->link)) {
+                            $tx->commit();
+                            $model->stage = 1;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 0;
+            }
+
+            return $this->render('expense', [
+                'model' => $model,
+                'error' => $error,
+                'title' => "Expense Payment"
+            ]);
+        } else {
+            $model->stage = 0;
+            $model->link = uniqid();
+            return $this->render('expense', [
+                'model' => $model,
+                'error' => null,
+                'title' => "Expense Payment"
+            ]);
+        }
+    }
+
+    public function actionExpenseReceipt()
+    {
+        $model = new TellerGeneralExpence();
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $error = null;
+
+            if ($model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else {
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 0;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::EXPENSES,$model->amount, TxType::EXPENSE, PaymentType::CASH, $model->description, $model->link)) {
+                            $tx->commit();
+                            $model->stage = 1;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 0;
+            }
+
+            return $this->render('expense', [
+                'model' => $model,
+                'error' => $error,
+                'title' => "Expense Receipt"
+            ]);
+        } else {
+            $model->stage = 0;
+            $model->link = uniqid();
+            return $this->render('expense', [
+                'model' => $model,
+                'error' => null,
+                'title' => "Expense Receipt"
             ]);
         }
     }

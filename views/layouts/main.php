@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
 use app\assets\AppAsset;
@@ -39,10 +40,13 @@ AppAsset::register($this);
         'items' => [
             [
                 'label' => 'Teller',
-                'items' => [
-                    ['label' => 'Receipt', 'url' => ['/teller/receipt']],
-                    ['label' => 'Payment', 'url' => ['/teller/payment']],
-                ]
+                'items' =>
+                    [
+                        ['label' => 'Receipt', 'url' => ['/teller/receipt']],
+                        ['label' => 'Payment', 'url' => ['/teller/payment']],
+                        ['label' => 'Expense Payment', 'url' => ['/teller/expense-payment']],
+                        ['label' => 'Expense Receipt', 'url' => ['/teller/expense-receipt']]
+                    ]
             ],
             [
                 'label' => 'Partners',
