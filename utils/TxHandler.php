@@ -44,6 +44,10 @@ class TxHandler
         }
         //$tx = Yii::$app->getDb()->beginTransaction();
         $crAccount = Account::find()->where(["id" => $cr])->one();
+        if ($crAccount == null) {
+            $this->error = $cr . " is not a valid account";
+            return false;
+        }
 
         if ($crAccount->protection == 'PLUS' && $crAccount->balance - $amount < 0.0) {
             $this->error = $cr . " has no funds to do the transaction";
@@ -51,6 +55,11 @@ class TxHandler
         }
 
         $drAccount = Account::find()->where(["id" => $dr])->one();
+
+        if ($drAccount == null) {
+            $this->error = $dr . " is not a valid account";
+            return false;
+        }
 
         if ($drAccount->protection == 'MINUS' && $drAccount->balance + $amount > 0.0) {
             $this->error = $dr . " has no funds to do the transaction";

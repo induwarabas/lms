@@ -33,7 +33,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-        <?= Html::button($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary'], ["onclick" => 'jQuery("#w0").modal("show");']) ?>
+        <?= Html::button($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', "onclick" => 'jQuery("#w0").modal("show");']) ?>
 
     <?php $modal = Modal::begin([
         'size' => Size::LARGE,

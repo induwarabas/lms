@@ -12,7 +12,7 @@ namespace app\utils;
 class GeneralAccounts
 {
     const PAYABLE = '9000000001';
-    const COMMISSION = '9000000002';
+    const SAFE = '9000000002';
     const INTEREST = '9000000003';
     const PENALTY = '9000000004';
     const PARK = '9000000005';
@@ -20,17 +20,19 @@ class GeneralAccounts
 
     const names = [
         GeneralAccounts::PAYABLE => 'PAYABLE',
-        GeneralAccounts::COMMISSION => 'COMMISSION',
+        GeneralAccounts::SAFE => 'SAFE',
         GeneralAccounts::INTEREST => 'INTEREST',
         GeneralAccounts::PENALTY => 'PENALTY',
         GeneralAccounts::PARK => 'PARK',
+        GeneralAccounts::EXPENSES => 'EXPENSES',
     ];
 
     const purpose = [
         GeneralAccounts::PAYABLE => 'Keep payable amount',
-        GeneralAccounts::COMMISSION => 'Keep commission (Deprecated)',
+        GeneralAccounts::SAFE => 'Main Safe',
         GeneralAccounts::INTEREST => 'Transfer interest at loan recovery',
         GeneralAccounts::PENALTY => 'Transfer penalty at loan recovery',
         GeneralAccounts::PARK => 'Intermediate account to divide or merge transaction',
+        GeneralAccounts::EXPENSES => 'General expenses',
     ];
 }

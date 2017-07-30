@@ -56,7 +56,20 @@ AppAsset::register($this);
                     ['label' => 'Canvassers', 'url' => ['/canvasser/index']],
                 ]
             ],
-            ['label' => 'Loans', 'url' => ['/loan/index']],
+            [
+                'label' => 'Loans',
+                'items' => [
+                    ['label' => 'Create', 'url' => ['/loan/create']],
+                    ['label' => 'View', 'url' => ['/loan/index']],
+                ]
+            ],
+            [
+                'label' => 'Advanced',
+                'items' => [
+                    ['label' => 'General Accounts', 'url' => ['/general-account/index']],
+                    ['label' => 'Manual Transaction', 'url' => ['/transaction/manual']],
+                ]
+            ],
             [
                 'label' => 'Configure',
                 'items' => [

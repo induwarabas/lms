@@ -131,7 +131,9 @@ class AccountController extends LmsController
             $from = date('Y-m-d', strtotime("-1 month"));
         }
 
-        $query = Transaction::find()->where("(cr_account = :acc or dr_account = :acc) and timestamp >= :from and timestamp <= :to", [":acc" => $id, ':from' => $from, ':to' => $to]);
+        $tox = date('Y-m-d', strtotime("+1 day", strtotime($to)));
+
+        $query = Transaction::find()->where("(cr_account = :acc or dr_account = :acc) and timestamp >= :from and timestamp <= :to", [":acc" => $id, ':from' => $from, ':to' => $tox]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query
         ]);

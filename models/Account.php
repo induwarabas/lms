@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use app\utils\enums\LoanTypes;
 
 /**
  * This is the model class for table "account".
@@ -108,5 +109,43 @@ class Account extends \yii\db\ActiveRecord
             }
         }
         return $account;
+    }
+
+    public function getAccountName() {
+        if($this->type == Account::TYPE_SAVING) {
+            $loan = Loan::findOne(['saving_account' => $this->id]);
+            if ($loan != null) {
+                $customer = Customer::findOne($loan->customer_id);
+                return "Saving account of ".LoanType::findOne($loan->type)->name. " loan #".$loan->id." of ".$customer->name." (".$customer->nic.")";
+            }
+        } else if ($this->type == Account::TYPE_LOAN) {
+            $loan = Loan::findOne(['loan_account' => $this->id]);
+            if ($loan != null) {
+                $customer = Customer::findOne($loan->customer_id);
+                return "Loan account of ".LoanType::findOne($loan->type)->name. " loan #".$loan->id." of ".$customer->name." (".$customer->nic.")";
+            }
+        } else if($this->type == Account::TYPE_SUPPLIER) {
+            $supplier = Supplier::findOne(['account' => $this->id]);
+            if ($supplier != null) {
+                return "Supplier ".$supplier->name;
+            }
+        } else if($this->type == Account::TYPE_CANVASSER) {
+            $canvasser = Canvasser::findOne(['account' => $this->id]);
+            if ($canvasser != null) {
+                return "Canvasser ".$canvasser->name;
+            }
+        }else if($this->type == Account::TYPE_TELLER) {
+            $userid = intval(substr($this->id, 1));
+            $user = \webvimark\modules\UserManagement\models\User::findOne($userid);
+            if ($user != null) {
+                return "Teller ".$user->username;
+            }
+        }else if($this->type == Account::TYPE_GENERAL) {
+            $ga = GeneralAccount::findOne(['id' => $this->id]);
+            if ($ga != null) {
+                return "General account ".$ga->name. "(".$ga->description.")";
+            }
+        }
+        return "Invalid account";
     }
 }

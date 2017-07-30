@@ -21,4 +21,21 @@ class TxType
     const INTEREST_RECOVERY = "INTEREST";
     const CHARGES_RECOVERY = "CHARGES";
     const EXPENSE = "EXPENSE";
+    const MANUAL = "MANUAL";
+
+    public static function items() {
+        return [
+            TxType::DISBURSE => TxType::DISBURSE,
+            TxType::CHARGES => TxType::CHARGES,
+            TxType::PAYMENT => TxType::PAYMENT,
+            TxType::RECEIPT => TxType::RECEIPT,
+            TxType::PENALTY => TxType::PENALTY,
+            TxType::RECOVERY => TxType::RECOVERY,
+            TxType::CAPITAL_RECOVERY => TxType::CAPITAL_RECOVERY,
+            TxType::INTEREST_RECOVERY => TxType::INTEREST_RECOVERY,
+            TxType::CHARGES_RECOVERY => TxType::CHARGES_RECOVERY,
+            TxType::EXPENSE => TxType::EXPENSE,
+            TxType::MANUAL => TxType::MANUAL,
+        ];
+    }
 }
