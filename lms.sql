@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2017 at 07:01 AM
+-- Generation Time: Jul 31, 2017 at 06:36 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 5.6.30
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `account` (
   `id` varchar(12) NOT NULL COMMENT 'Acocunt ID',
-  `type` enum('SAVING','LOAN','SUPPLIER','CANVASSING','BANK','TELLER','GENERAL') NOT NULL COMMENT 'Type',
+  `type` enum('SAVING','LOAN','SUPPLIER','CANVASSER','BANK','TELLER','GENERAL') NOT NULL COMMENT 'Type',
   `balance` decimal(10,2) NOT NULL COMMENT 'Balance',
   `protection` enum('NONE','PLUS','MINUS','') NOT NULL COMMENT 'Protection'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -38,23 +38,13 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`id`, `type`, `balance`, `protection`) VALUES
-('1000000001', 'SAVING', '0.00', 'PLUS'),
-('1000000002', 'SAVING', '0.00', 'PLUS'),
-('1000000003', 'SAVING', '0.00', 'PLUS'),
-('1000000004', 'SAVING', '0.00', 'PLUS'),
-('1000000005', 'SAVING', '23.71', 'PLUS'),
-('1000000006', 'SAVING', '0.00', 'PLUS'),
-('2000000001', 'LOAN', '0.00', 'MINUS'),
-('2000000002', 'LOAN', '0.00', 'MINUS'),
-('2000000003', 'LOAN', '0.00', 'MINUS'),
-('2000000004', 'LOAN', '0.00', 'MINUS'),
-('2000000005', 'LOAN', '-9506.91', 'MINUS'),
-('2000000006', 'LOAN', '-1111.00', 'MINUS'),
-('9000000001', 'GENERAL', '3322.00', 'PLUS'),
-('9000000002', 'GENERAL', '-1107.25', 'MINUS'),
-('9000000003', 'GENERAL', '103.75', 'PLUS'),
-('9000000004', 'GENERAL', '82.72', 'PLUS'),
-('9000000005', 'GENERAL', '-523.36', 'NONE');
+('9000000001', 'GENERAL', '0.00', 'PLUS'),
+('9000000002', 'GENERAL', '0.00', 'MINUS'),
+('9000000003', 'GENERAL', '0.00', 'PLUS'),
+('9000000004', 'GENERAL', '0.00', 'PLUS'),
+('9000000005', 'GENERAL', '0.00', 'NONE'),
+('9000000006', 'GENERAL', '0.00', 'MINUS'),
+('9000000007', 'GENERAL', '0.00', 'PLUS');
 
 -- --------------------------------------------------------
 
@@ -68,14 +58,6 @@ CREATE TABLE `area` (
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `area`
---
-
-INSERT INTO `area` (`id`, `name`, `description`) VALUES
-(1, 'Colombo', 'Area colombo'),
-(2, 'Kurunegala', 'asdasd');
-
 -- --------------------------------------------------------
 
 --
@@ -87,6 +69,20 @@ CREATE TABLE `auth_assignment` (
   `user_id` int(11) NOT NULL,
   `created_at` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `auth_assignment`
+--
+
+INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
+('advancedtxhandler', 3, 1501474594),
+('common', 3, 1501474431),
+('companydatamanager', 3, 1501474431),
+('loanAuthorizer', 3, 1501438492),
+('loanhandler', 3, 1501474431),
+('teller', 3, 1501438524),
+('teller', 4, 1501438557),
+('usermanager', 3, 1501438492);
 
 -- --------------------------------------------------------
 
@@ -111,28 +107,36 @@ CREATE TABLE `auth_item` (
 
 INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`, `group_code`) VALUES
 ('/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//controller', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//crud', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//extension', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//form', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//model', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('//module', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/account/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/account/create', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/account/history', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/account/index', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/account/ledger', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/account/update', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/account/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
 ('/area/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/area/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/area/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/area/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/area/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/area/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
-('/asset/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/asset/compress', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/asset/template', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/cache/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/cache/flush', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/cache/flush-all', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/cache/flush-schema', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/cache/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/bank-account/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank-account/create', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank-account/delete', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank-account/index', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank-account/update', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank-account/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank/create', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank/delete', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank/index', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank/update', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/bank/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/canvasser/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/canvasser/create', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/canvasser/index', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/canvasser/update', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/canvasser/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
 ('/customer/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/customer/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/customer/createnic', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
@@ -148,9 +152,12 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/debug/default/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/debug/default/toolbar', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/debug/default/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
-('/fixture/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/fixture/load', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/fixture/unload', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
+('/general-account/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/general-account/create', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/general-account/delete', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/general-account/index', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/general-account/update', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/general-account/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
 ('/gii/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/gii/default/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/gii/default/action', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
@@ -158,44 +165,29 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/gii/default/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/gii/default/preview', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/gii/default/view', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/hello/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/hello/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/help/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/help/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/help/list', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/help/list-action-options', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/help/usage', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/hp-new-vehicle-loan/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/hp-new-vehicle-loan/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/hp-new-vehicle-loan/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/hp-new-vehicle-loan/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/set-customer', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
 ('/hp-new-vehicle-loan/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/hp-new-vehicle-loan/updatex', 3, NULL, NULL, NULL, 1500105002, 1500105002, NULL),
 ('/hp-new-vehicle-loan/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/lms/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/loan/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/cancel', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
 ('/loan/create', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/createx', 3, NULL, NULL, NULL, 1500100589, 1500100589, NULL),
+('/loan/customer', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
 ('/loan/delete', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/loan/disburse', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/loan/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/loan/recover', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/remove-customer', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
 ('/loan/schedule', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/loan/schedulex', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
 ('/loan/update', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/loan/view', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
-('/message/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/message/config', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/message/config-template', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/message/extract', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/create', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/down', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/history', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/mark', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/new', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/redo', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/to', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/migrate/up', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/serve/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('/serve/index', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/site/*', 3, NULL, NULL, NULL, 1499834414, 1499834414, NULL),
 ('/site/about', 3, NULL, NULL, NULL, 1499834414, 1499834414, NULL),
 ('/site/captcha', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
@@ -204,6 +196,24 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/site/index', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/site/login', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/site/logout', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
+('/supplier/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/supplier/create', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/supplier/index', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/supplier/update', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/supplier/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/teller/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/teller/expense-payment', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/teller/expense-receipt', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/teller/payment', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/teller/receipt', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/*', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/bank-to-safe', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/investment', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/manual', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/safe-to-bank', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/safe-to-teller', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/teller-to-safe', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
+('/transaction/view', 3, NULL, NULL, NULL, 1501436819, 1501436819, NULL),
 ('/user-management/*', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/auth-item-group/*', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/auth-item-group/bulk-activate', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
@@ -285,16 +295,43 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/user-management/user/toggle-attribute', 3, NULL, NULL, NULL, 1499834415, 1499834415, NULL),
 ('/user-management/user/update', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
 ('/user-management/user/view', 3, NULL, NULL, NULL, 1498749424, 1498749424, NULL),
-('Admin', 1, 'Admin', NULL, NULL, 1498749424, 1498749424, NULL),
+('/vehicle-brand/*', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-brand/create', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-brand/delete', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-brand/index', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-brand/update', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-brand/view', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-type/*', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-type/create', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-type/delete', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-type/index', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-type/update', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('/vehicle-type/view', 3, NULL, NULL, NULL, 1500050541, 1500050541, NULL),
+('advancedtxcreate', 2, 'Advanced Transaction Create', NULL, NULL, 1501474524, 1501474524, 'Admin'),
+('advancedtxhandler', 1, 'Advanced Transaction Handler', NULL, NULL, 1501474565, 1501474565, NULL),
 ('assignRolesToUsers', 2, 'Assign roles to users', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
 ('bindUserToIp', 2, 'Bind user to IP', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
 ('changeOwnPassword', 2, 'Change own password', NULL, NULL, 1498749424, 1498749424, 'userCommonPermissions'),
 ('changeUserPassword', 2, 'Change user password', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
+('common', 1, 'Common', NULL, NULL, 1501438685, 1501438685, NULL),
 ('commonPermission', 2, 'Common permission', NULL, NULL, 1498749424, 1498749424, NULL),
+('companydatamanager', 1, 'Company Data Manager', NULL, NULL, 1501474286, 1501474286, NULL),
 ('createUsers', 2, 'Create users', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
 ('deleteUsers', 2, 'Delete users', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
+('editafterdisburse', 2, 'Edit Loan After Disburse', NULL, NULL, 1501475180, 1501475180, 'loanManagement'),
 ('editUserEmail', 2, 'Edit user email', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
 ('editUsers', 2, 'Edit users', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
+('loanAuthorizer', 1, 'Loan Authorizer', NULL, NULL, 1500101050, 1500101050, NULL),
+('loanbasic', 2, 'Basic loan handling', NULL, NULL, 1501473688, 1501473813, 'loanManagement'),
+('loandisburse', 2, 'Loan Disburse', NULL, NULL, 1501474073, 1501474073, 'loanManagement'),
+('loanhandler', 1, 'Loan Handler', NULL, NULL, 1501474172, 1501474172, NULL),
+('partnerhandling', 2, 'Partner Handling', NULL, NULL, 1501473984, 1501473984, 'loanManagement'),
+('referencedatamanage', 2, 'Reference Data Manage', NULL, NULL, 1501474330, 1501474330, 'Admin'),
+('site', 2, 'Site Permission', NULL, NULL, 1501438628, 1501438628, 'userCommonPermissions'),
+('teller', 1, 'Teller', NULL, NULL, 1500100561, 1500100561, NULL),
+('tellerTransactions', 2, 'Teller Transactions', NULL, NULL, 1501436941, 1501436941, 'teller'),
+('usermanager', 1, 'Usermanager', NULL, NULL, 1501438432, 1501438432, NULL),
+('viewreferencedata', 2, 'Reference Data View', NULL, NULL, 1501473932, 1501473932, 'loanManagement'),
 ('viewRegistrationIp', 2, 'View registration IP', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
 ('viewUserEmail', 2, 'View user email', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
 ('viewUserRoles', 2, 'View user roles', NULL, NULL, 1498749424, 1498749424, 'userManagement'),
@@ -317,13 +354,8 @@ CREATE TABLE `auth_item_child` (
 --
 
 INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
-('Admin', 'assignRolesToUsers'),
-('Admin', 'changeOwnPassword'),
-('Admin', 'changeUserPassword'),
-('Admin', 'createUsers'),
-('Admin', 'deleteUsers'),
-('Admin', 'editUsers'),
-('Admin', 'viewUsers'),
+('advancedtxcreate', '/transaction/*'),
+('advancedtxhandler', 'advancedtxcreate'),
 ('assignRolesToUsers', '/user-management/user-permission/set'),
 ('assignRolesToUsers', '/user-management/user-permission/set-roles'),
 ('assignRolesToUsers', 'viewUserRoles'),
@@ -331,16 +363,89 @@ INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
 ('changeOwnPassword', '/user-management/auth/change-own-password'),
 ('changeUserPassword', '/user-management/user/change-password'),
 ('changeUserPassword', 'viewUsers'),
+('common', 'changeOwnPassword'),
+('common', 'site'),
+('companydatamanager', 'referencedatamanage'),
 ('createUsers', '/user-management/user/create'),
 ('createUsers', 'viewUsers'),
 ('deleteUsers', '/user-management/user/bulk-delete'),
 ('deleteUsers', '/user-management/user/delete'),
 ('deleteUsers', 'viewUsers'),
+('editafterdisburse', '/hp-new-vehicle-loan/updatex'),
 ('editUserEmail', 'viewUserEmail'),
 ('editUsers', '/user-management/user/bulk-activate'),
 ('editUsers', '/user-management/user/bulk-deactivate'),
 ('editUsers', '/user-management/user/update'),
 ('editUsers', 'viewUsers'),
+('loanAuthorizer', 'common'),
+('loanAuthorizer', 'editafterdisburse'),
+('loanAuthorizer', 'loandisburse'),
+('loanAuthorizer', 'loanhandler'),
+('loanbasic', '/hp-new-vehicle-loan/create'),
+('loanbasic', '/hp-new-vehicle-loan/index'),
+('loanbasic', '/hp-new-vehicle-loan/set-customer'),
+('loanbasic', '/hp-new-vehicle-loan/update'),
+('loanbasic', '/hp-new-vehicle-loan/view'),
+('loanbasic', '/loan/create'),
+('loanbasic', '/loan/createx'),
+('loanbasic', '/loan/customer'),
+('loanbasic', '/loan/index'),
+('loanbasic', '/loan/recover'),
+('loanbasic', '/loan/remove-customer'),
+('loanbasic', '/loan/schedule'),
+('loanbasic', '/loan/schedulex'),
+('loanbasic', '/loan/update'),
+('loanbasic', '/loan/view'),
+('loanbasic', 'partnerhandling'),
+('loanbasic', 'viewreferencedata'),
+('loandisburse', '/loan/disburse'),
+('loandisburse', 'loanbasic'),
+('loanhandler', 'loanbasic'),
+('loanhandler', 'partnerhandling'),
+('loanhandler', 'viewreferencedata'),
+('partnerhandling', '/account/*'),
+('partnerhandling', '/canvasser/*'),
+('partnerhandling', '/customer/*'),
+('partnerhandling', '/supplier/*'),
+('referencedatamanage', '/area/*'),
+('referencedatamanage', '/bank-account/*'),
+('referencedatamanage', '/bank/*'),
+('referencedatamanage', '/general-account/index'),
+('referencedatamanage', '/general-account/view'),
+('referencedatamanage', '/vehicle-brand/*'),
+('referencedatamanage', '/vehicle-type/*'),
+('site', '/site/*'),
+('teller', 'common'),
+('teller', 'tellerTransactions'),
+('tellerTransactions', '/teller/*'),
+('tellerTransactions', '/teller/expense-payment'),
+('tellerTransactions', '/teller/expense-receipt'),
+('tellerTransactions', '/teller/payment'),
+('tellerTransactions', '/teller/receipt'),
+('tellerTransactions', '/transaction/view'),
+('usermanager', 'assignRolesToUsers'),
+('usermanager', 'bindUserToIp'),
+('usermanager', 'changeUserPassword'),
+('usermanager', 'common'),
+('usermanager', 'createUsers'),
+('usermanager', 'deleteUsers'),
+('usermanager', 'editUserEmail'),
+('usermanager', 'editUsers'),
+('usermanager', 'viewRegistrationIp'),
+('usermanager', 'viewUserEmail'),
+('usermanager', 'viewUserRoles'),
+('usermanager', 'viewUsers'),
+('usermanager', 'viewVisitLog'),
+('viewreferencedata', '/area/index'),
+('viewreferencedata', '/area/view'),
+('viewreferencedata', '/bank-account/index'),
+('viewreferencedata', '/bank-account/view'),
+('viewreferencedata', '/bank/index'),
+('viewreferencedata', '/bank/view'),
+('viewreferencedata', '/vehicle-brand/index'),
+('viewreferencedata', '/vehicle-brand/view'),
+('viewreferencedata', '/vehicle-type/index'),
+('viewreferencedata', '/vehicle-type/view'),
 ('viewUsers', '/user-management/user/grid-page-size'),
 ('viewUsers', '/user-management/user/index'),
 ('viewUsers', '/user-management/user/view');
@@ -363,6 +468,9 @@ CREATE TABLE `auth_item_group` (
 --
 
 INSERT INTO `auth_item_group` (`code`, `name`, `created_at`, `updated_at`) VALUES
+('Admin', 'Administrator', 1501437330, 1501437330),
+('loanManagement', 'Loan Management', 1500050459, 1500050459),
+('teller', 'Teller', 1501436910, 1501436910),
 ('userCommonPermissions', 'User common permission', 1498749424, 1498749424),
 ('userManagement', 'User management', 1498749424, 1498749424);
 
@@ -378,6 +486,51 @@ CREATE TABLE `auth_rule` (
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bank`
+--
+
+CREATE TABLE `bank` (
+  `id` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bank_account`
+--
+
+CREATE TABLE `bank_account` (
+  `id` int(11) NOT NULL,
+  `bank` int(11) NOT NULL,
+  `bank_account_id` varchar(24) NOT NULL,
+  `account_id` varchar(10) DEFAULT NULL,
+  `description` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `canvasser`
+--
+
+CREATE TABLE `canvasser` (
+  `id` int(11) NOT NULL COMMENT 'ID',
+  `name` varchar(128) NOT NULL COMMENT 'Name',
+  `phone` varchar(16) NOT NULL COMMENT 'Phone',
+  `mobile` varchar(16) DEFAULT NULL COMMENT 'Mobile',
+  `email` varchar(64) DEFAULT NULL COMMENT 'Email',
+  `address` text COMMENT 'Address',
+  `status` enum('ACTIVE','INACTIVE') NOT NULL COMMENT 'Status',
+  `account` varchar(12) DEFAULT NULL COMMENT 'Account No.',
+  `bank` int(11) DEFAULT NULL COMMENT 'Bank',
+  `bank_account_name` varchar(128) DEFAULT NULL COMMENT 'Bank Account Name',
+  `bank_account` varchar(20) DEFAULT NULL COMMENT 'Bank Account No.'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -399,8 +552,8 @@ CREATE TABLE `collection_method` (
 --
 
 INSERT INTO `collection_method` (`id`, `name`, `penal_after`, `penal_after_unit`, `penal`, `enabled`) VALUES
-(1, 'Monthly', 7, 'days', '0.00', 1),
-(2, 'Weekly', 3, 'days', '0.00', 1),
+(1, 'Monthly', 7, 'days', '3.00', 1),
+(2, 'Weekly', 3, 'days', '2.00', 1),
 (3, 'Daily', 1, 'days', '1.00', 0);
 
 -- --------------------------------------------------------
@@ -431,24 +584,30 @@ CREATE TABLE `customer` (
   `spouse_id` int(11) DEFAULT NULL COMMENT 'Spouse ID'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `customer`
+-- Table structure for table `general_account`
 --
 
-INSERT INTO `customer` (`id`, `nic`, `full_name`, `name`, `gender`, `dob`, `area`, `residential_address`, `billing_address`, `phone`, `mobile`, `email`, `occupation`, `work_address`, `work_phone`, `work_email`, `fixed_salary`, `other_incomes`, `spouse_id`) VALUES
-(1, '198636601586', 'sdfsdfssdf sdf sdf sdf', 'A.S. asdasdas', 'Male', '1987-10-09', 2, 'asdadasd\r\nasdasda', 'asdasdas\r\ndad', '+94777777777', '', '', '', 'qdawe', '', '', '123.00', '123.00', 1),
-(2, '85452515', '112', 'sdfsdf', 'Male', '2017-07-17', 1, 'asd', '', '', '', '', '', '', '12321', '', NULL, NULL, NULL),
-(3, '876562123V', 'Rasda', 'asdAEss', 'Female', '1987-06-04', 1, 'asd', '', '12312', '', '', '', '', '', '', NULL, NULL, NULL),
-(4, '200158512511', 'Wssa Eras Ass', 'W.E. Ass', 'Female', '2001-03-25', 1, 'Ad\r\nasdasd\r\nasd\r\nasd', '', '+94777102212', '+94777145555', 'sasd@as.fg', '', '', '+94777888555', 'asd@as.s', NULL, NULL, 2),
-(5, '251451521V', 'EEEEEEEEEE', 'aAAAA', 'Male', '1925-05-24', 2, 'ASDs', '', '+94777848484', '', '', '', '', '', '', NULL, NULL, 2),
-(6, '852852012V', 'EEEEEEEYAAAAAAAAAAA', 'asdas', 'Male', '1985-10-11', 1, 'as', '', '+94919922999', '', '', '', '', '', '', NULL, NULL, 2),
-(7, '865264124V', 'REEEEEE', 'AS', 'Female', '1986-01-26', 1, 'asd', '', '+94777777777', '', '', '', '', '', '', NULL, NULL, 2),
-(8, '852841858V', 'Donkey Monkey', 'D. Monkey', 'Male', '1985-10-10', 1, 'ADAs', '', '+94585454455', '', '', '', '', '', '', NULL, NULL, 9),
-(9, '865841252V', 'Monkey Donkey', 'M. Donkey', 'Female', '1986-03-24', 1, 'Sdf', '', '+94777777777', '', '', '', '', '', '', NULL, NULL, NULL),
-(10, '852123623V', 'AASDasd', 'asdasasd', 'Male', '1985-07-30', 1, 'sadsa', '', '+94777858585', '', '', '', '', '', '', NULL, NULL, 11),
-(11, '896562522V', 'aasdasd', 'asdasdasd', 'Female', '1989-06-04', 1, 'sad', '', '+94777777777', '', '', '', '', '', '', NULL, NULL, 10),
-(12, '925452522V', 'sdf sfd sf sd', 'f sdf sdf', 'Female', '1992-02-14', 1, 'sdf sfd', '', '+94222222222', '', '', '', '', '', '', NULL, NULL, NULL),
-(13, '862841808V', 'Bulath Puwak Hunu Dunkola', 'B.P.H. Dunkola', 'Male', '1986-10-10', 1, 'Kela para,\r\nPadikkama', '', '+94777102102', '', '', '', '', '', '', NULL, NULL, NULL);
+CREATE TABLE `general_account` (
+  `id` varchar(10) NOT NULL COMMENT 'Account ID',
+  `name` varchar(32) NOT NULL COMMENT 'Name',
+  `description` varchar(128) NOT NULL COMMENT 'Description'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `general_account`
+--
+
+INSERT INTO `general_account` (`id`, `name`, `description`) VALUES
+('9000000001', 'PAYABLE', 'Keep payable amount'),
+('9000000002', 'SAFE', 'Main Safe'),
+('9000000003', 'INTEREST', 'Transfer interest at loan recovery'),
+('9000000004', 'PENALTY', 'Transfer penalty at loan recovery'),
+('9000000005', 'PARK', 'Intermediate account to divide or merge transaction'),
+('9000000006', 'EXPENSES', 'General expenses'),
+('9000000007', 'INVESTMENT', 'Company Investment');
 
 -- --------------------------------------------------------
 
@@ -467,8 +626,10 @@ CREATE TABLE `hp_new_vehicle_loan` (
   `supplier` int(11) DEFAULT NULL COMMENT 'Supplier',
   `price` decimal(10,2) NOT NULL COMMENT 'Selling Price',
   `loan_amount` decimal(10,2) NOT NULL COMMENT 'Loan Amount',
+  `sales_commision_type` enum('Percentage','Amount') NOT NULL COMMENT 'Sales Commission Type',
   `sales_commision` decimal(10,2) DEFAULT '0.00' COMMENT 'Sales Commision',
   `canvassed` int(11) DEFAULT NULL COMMENT 'Canvassed By',
+  `canvassing_commision_type` enum('Percentage','Amount') NOT NULL COMMENT 'Canvassing Commission Type',
   `canvassing_commision` decimal(10,2) DEFAULT '0.00' COMMENT 'Canvassing Commision',
   `insurance` decimal(10,2) DEFAULT '0.00' COMMENT 'Insurance Premium',
   `rmv_sent_date` date DEFAULT NULL COMMENT 'RMV Sent Date',
@@ -478,16 +639,6 @@ CREATE TABLE `hp_new_vehicle_loan` (
   `rmv_recv_agent` varchar(64) DEFAULT NULL COMMENT 'RMV Received Agent',
   `rmv_recv_by` varchar(64) DEFAULT NULL COMMENT 'RMV Received By'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `hp_new_vehicle_loan`
---
-
-INSERT INTO `hp_new_vehicle_loan` (`id`, `vehicle_type`, `vehicle_no`, `engine_no`, `chasis_no`, `model`, `make`, `supplier`, `price`, `loan_amount`, `sales_commision`, `canvassed`, `canvassing_commision`, `insurance`, `rmv_sent_date`, `rmv_sent_agent`, `rmv_sent_by`, `rmv_recv_date`, `rmv_recv_agent`, `rmv_recv_by`) VALUES
-(7, 1, '', '12', '1', '1', 1, 12, '111.00', '111.00', NULL, NULL, NULL, '11.00', NULL, NULL, NULL, NULL, NULL, NULL),
-(8, 1, '', '1', '1', 'edas', 2, NULL, '11.00', '10.00', NULL, NULL, NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL),
-(9, 1, '', '1', '1', 'edas', 2, NULL, '1000.00', '560.00', NULL, NULL, NULL, '0.00', '2017-07-25', 'AASD', 'ASD', '2017-07-29', 'dsa', 'ds'),
-(10, 1, '', '1', '1', 'edas', 2, NULL, '11.00', '10.00', NULL, NULL, NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -515,24 +666,9 @@ CREATE TABLE `loan` (
   `total_payment` decimal(10,2) DEFAULT NULL COMMENT 'Total Payment',
   `guarantor_1` int(11) DEFAULT NULL COMMENT 'Guarantor 1',
   `guarantor_2` int(11) DEFAULT NULL COMMENT 'Guarantor 2',
-  `guarantor_3` int(11) DEFAULT NULL COMMENT 'Guarantor 3'
+  `guarantor_3` int(11) DEFAULT NULL COMMENT 'Guarantor 3',
+  `paid` int(11) NOT NULL DEFAULT '0' COMMENT 'Paid'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `loan`
---
-
-INSERT INTO `loan` (`id`, `type`, `customer_id`, `saving_account`, `loan_account`, `amount`, `interest`, `penalty`, `charges`, `collection_method`, `period`, `status`, `disbursed_date`, `closed_date`, `installment`, `total_interest`, `total_payment`, `guarantor_1`, `guarantor_2`, `guarantor_3`) VALUES
-(1, 1, 1, '1000000001', '2000000001', '1000.00', '0.00', '3.00', '0.00', 1, 12, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL, NULL, NULL, NULL),
-(2, 1, 1, '1000000002', '2000000002', '2000.00', '0.00', '5.00', '0.00', 2, 36, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 1, 1, '1000000003', '2000000003', '1000.00', '0.00', '10.00', '0.00', 1, 12, 'PENDING', '0000-00-00', '0000-00-00', NULL, NULL, NULL, NULL, NULL, NULL),
-(4, 1, 1, '1000000004', '2000000004', '1223.00', '12.24', '10.00', '1232.00', 1, 12, 'PENDING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 1, 1, '1000000005', '2000000005', '1000.00', '12.00', '10.00', '100.00', 1, 60, 'ACTIVE', '2017-07-02', NULL, '23.90', '434.40', '1434.40', NULL, NULL, NULL),
-(6, 1, 1, '1000000006', '2000000006', '1111.00', '11.00', '10.00', '11.00', 2, 12, 'ACTIVE', '2017-07-02', NULL, '94.77', '26.32', '1137.32', NULL, NULL, NULL),
-(7, 1, 1, NULL, NULL, '111.00', '11.00', '0.00', '0.00', 1, 36, 'PENDING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(8, 1, 1, NULL, NULL, '10.00', '1.00', '0.00', '0.00', 1, 1, 'PENDING', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(9, 1, 1, NULL, NULL, '560.00', '1.00', '0.00', '0.00', 1, 36, 'PENDING', NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL),
-(10, 1, 1, NULL, NULL, '10.00', '1.00', '0.00', '0.00', 1, 1, 'PENDING', NULL, NULL, NULL, NULL, NULL, 9, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -554,84 +690,6 @@ CREATE TABLE `loan_schedule` (
   `due` decimal(10,2) NOT NULL COMMENT 'Due',
   `balance` decimal(10,2) NOT NULL COMMENT 'Balance'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `loan_schedule`
---
-
-INSERT INTO `loan_schedule` (`loan_id`, `installment_id`, `status`, `demand_date`, `principal`, `interest`, `charges`, `arrears`, `penalty`, `paid`, `due`, `balance`) VALUES
-(5, 1, 'PAYED', '2017-08-02', '12.24', '10.00', '1.66', 0, '0.00', '23.90', '0.00', '987.76'),
-(5, 2, 'PAYED', '2017-09-02', '12.36', '9.88', '1.66', 3, '7.41', '31.31', '0.00', '975.40'),
-(5, 3, 'PAYED', '2017-10-02', '12.49', '9.75', '1.66', 2, '4.78', '28.68', '0.00', '962.91'),
-(5, 4, 'PAYED', '2017-11-02', '12.61', '9.63', '1.66', 1, '2.39', '26.29', '0.00', '950.30'),
-(5, 5, 'PAYED', '2017-12-02', '12.74', '9.50', '1.66', 1, '2.39', '26.29', '0.00', '937.56'),
-(5, 6, 'PAYED', '2018-01-02', '12.86', '9.38', '1.66', 0, '0.00', '23.90', '0.00', '924.70'),
-(5, 7, 'PAYED', '2018-02-02', '12.99', '9.25', '1.66', 0, '0.00', '23.90', '0.00', '911.71'),
-(5, 8, 'PAYED', '2018-03-02', '13.12', '9.12', '1.66', 1, '2.39', '26.29', '0.00', '898.59'),
-(5, 9, 'PAYED', '2018-04-02', '13.25', '8.99', '1.66', 0, '0.00', '23.90', '0.00', '885.34'),
-(5, 10, 'PAYED', '2018-05-02', '13.39', '8.85', '1.66', 2, '0.20', '24.10', '0.00', '871.95'),
-(5, 11, 'ARREARS', '2018-06-02', '13.52', '8.72', '1.66', 1, '2.39', '2.39', '23.90', '858.43'),
-(5, 12, 'PENDING', '2018-07-02', '13.66', '8.58', '1.66', 0, '0.00', '0.00', '0.00', '844.77'),
-(5, 13, 'PENDING', '2018-08-02', '13.79', '8.45', '1.66', 0, '0.00', '0.00', '0.00', '830.98'),
-(5, 14, 'PENDING', '2018-09-02', '13.93', '8.31', '1.66', 0, '0.00', '0.00', '0.00', '817.05'),
-(5, 15, 'PENDING', '2018-10-02', '14.07', '8.17', '1.66', 0, '0.00', '0.00', '0.00', '802.98'),
-(5, 16, 'PENDING', '2018-11-02', '14.21', '8.03', '1.66', 0, '0.00', '0.00', '0.00', '788.77'),
-(5, 17, 'PENDING', '2018-12-02', '14.35', '7.89', '1.66', 0, '0.00', '0.00', '0.00', '774.42'),
-(5, 18, 'PENDING', '2019-01-02', '14.50', '7.74', '1.66', 0, '0.00', '0.00', '0.00', '759.92'),
-(5, 19, 'PENDING', '2019-02-02', '14.64', '7.60', '1.66', 0, '0.00', '0.00', '0.00', '745.28'),
-(5, 20, 'PENDING', '2019-03-02', '14.79', '7.45', '1.66', 0, '0.00', '0.00', '0.00', '730.49'),
-(5, 21, 'PENDING', '2019-04-02', '14.94', '7.30', '1.66', 0, '0.00', '0.00', '0.00', '715.55'),
-(5, 22, 'PENDING', '2019-05-02', '15.08', '7.16', '1.66', 0, '0.00', '0.00', '0.00', '700.47'),
-(5, 23, 'PENDING', '2019-06-02', '15.24', '7.00', '1.66', 0, '0.00', '0.00', '0.00', '685.23'),
-(5, 24, 'PENDING', '2019-07-02', '15.39', '6.85', '1.66', 0, '0.00', '0.00', '0.00', '669.84'),
-(5, 25, 'PENDING', '2019-08-02', '15.54', '6.70', '1.66', 0, '0.00', '0.00', '0.00', '654.30'),
-(5, 26, 'PENDING', '2019-09-02', '15.70', '6.54', '1.66', 0, '0.00', '0.00', '0.00', '638.60'),
-(5, 27, 'PENDING', '2019-10-02', '15.85', '6.39', '1.66', 0, '0.00', '0.00', '0.00', '622.75'),
-(5, 28, 'PENDING', '2019-11-02', '16.01', '6.23', '1.66', 0, '0.00', '0.00', '0.00', '606.74'),
-(5, 29, 'PENDING', '2019-12-02', '16.17', '6.07', '1.66', 0, '0.00', '0.00', '0.00', '590.57'),
-(5, 30, 'PENDING', '2020-01-02', '16.33', '5.91', '1.66', 0, '0.00', '0.00', '0.00', '574.24'),
-(5, 31, 'PENDING', '2020-02-02', '16.50', '5.74', '1.66', 0, '0.00', '0.00', '0.00', '557.74'),
-(5, 32, 'PENDING', '2020-03-02', '16.66', '5.58', '1.66', 0, '0.00', '0.00', '0.00', '541.08'),
-(5, 33, 'PENDING', '2020-04-02', '16.83', '5.41', '1.66', 0, '0.00', '0.00', '0.00', '524.25'),
-(5, 34, 'PENDING', '2020-05-02', '17.00', '5.24', '1.66', 0, '0.00', '0.00', '0.00', '507.25'),
-(5, 35, 'PENDING', '2020-06-02', '17.17', '5.07', '1.66', 0, '0.00', '0.00', '0.00', '490.08'),
-(5, 36, 'PENDING', '2020-07-02', '17.34', '4.90', '1.66', 0, '0.00', '0.00', '0.00', '472.74'),
-(5, 37, 'PENDING', '2020-08-02', '17.51', '4.73', '1.66', 0, '0.00', '0.00', '0.00', '455.23'),
-(5, 38, 'PENDING', '2020-09-02', '17.69', '4.55', '1.66', 0, '0.00', '0.00', '0.00', '437.54'),
-(5, 39, 'PENDING', '2020-10-02', '17.86', '4.38', '1.66', 0, '0.00', '0.00', '0.00', '419.68'),
-(5, 40, 'PENDING', '2020-11-02', '18.04', '4.20', '1.66', 0, '0.00', '0.00', '0.00', '401.64'),
-(5, 41, 'PENDING', '2020-12-02', '18.22', '4.02', '1.66', 0, '0.00', '0.00', '0.00', '383.42'),
-(5, 42, 'PENDING', '2021-01-02', '18.41', '3.83', '1.66', 0, '0.00', '0.00', '0.00', '365.01'),
-(5, 43, 'PENDING', '2021-02-02', '18.59', '3.65', '1.66', 0, '0.00', '0.00', '0.00', '346.42'),
-(5, 44, 'PENDING', '2021-03-02', '18.78', '3.46', '1.66', 0, '0.00', '0.00', '0.00', '327.64'),
-(5, 45, 'PENDING', '2021-04-02', '18.96', '3.28', '1.66', 0, '0.00', '0.00', '0.00', '308.68'),
-(5, 46, 'PENDING', '2021-05-02', '19.15', '3.09', '1.66', 0, '0.00', '0.00', '0.00', '289.53'),
-(5, 47, 'PENDING', '2021-06-02', '19.34', '2.90', '1.66', 0, '0.00', '0.00', '0.00', '270.19'),
-(5, 48, 'PENDING', '2021-07-02', '19.54', '2.70', '1.66', 0, '0.00', '0.00', '0.00', '250.65'),
-(5, 49, 'PENDING', '2021-08-02', '19.73', '2.51', '1.66', 0, '0.00', '0.00', '0.00', '230.92'),
-(5, 50, 'PENDING', '2021-09-02', '19.93', '2.31', '1.66', 0, '0.00', '0.00', '0.00', '210.99'),
-(5, 51, 'PENDING', '2021-10-02', '20.13', '2.11', '1.66', 0, '0.00', '0.00', '0.00', '190.86'),
-(5, 52, 'PENDING', '2021-11-02', '20.33', '1.91', '1.66', 0, '0.00', '0.00', '0.00', '170.53'),
-(5, 53, 'PENDING', '2021-12-02', '20.53', '1.71', '1.66', 0, '0.00', '0.00', '0.00', '150.00'),
-(5, 54, 'PENDING', '2022-01-02', '20.74', '1.50', '1.66', 0, '0.00', '0.00', '0.00', '129.26'),
-(5, 55, 'PENDING', '2022-02-02', '20.95', '1.29', '1.66', 0, '0.00', '0.00', '0.00', '108.31'),
-(5, 56, 'PENDING', '2022-03-02', '21.16', '1.08', '1.66', 0, '0.00', '0.00', '0.00', '87.15'),
-(5, 57, 'PENDING', '2022-04-02', '21.37', '0.87', '1.66', 0, '0.00', '0.00', '0.00', '65.78'),
-(5, 58, 'PENDING', '2022-05-02', '21.58', '0.66', '1.66', 0, '0.00', '0.00', '0.00', '44.20'),
-(5, 59, 'PENDING', '2022-06-02', '21.80', '0.44', '1.66', 0, '0.00', '0.00', '0.00', '22.40'),
-(5, 60, 'PENDING', '2022-07-02', '22.40', '-0.56', '2.06', 0, '0.00', '0.00', '0.00', '0.00'),
-(6, 1, 'PAYED', '2017-07-09', '91.51', '2.35', '0.91', 3, '31.38', '0.00', '0.00', '1019.49'),
-(6, 2, 'PAYED', '2017-07-16', '91.51', '2.35', '0.91', 2, '19.91', '0.00', '0.00', '1019.49'),
-(6, 3, 'PAYED', '2017-07-23', '91.51', '2.35', '0.91', 1, '9.48', '0.00', '0.00', '1019.49'),
-(6, 4, 'PAYED', '2017-07-30', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 5, 'PENDING', '2017-08-06', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 6, 'PENDING', '2017-08-13', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 7, 'PENDING', '2017-08-20', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 8, 'PENDING', '2017-08-27', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 9, 'PENDING', '2017-09-03', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 10, 'PENDING', '2017-09-10', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 11, 'PENDING', '2017-09-17', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49'),
-(6, 12, 'PENDING', '2017-09-24', '91.51', '2.35', '0.91', 0, '0.00', '0.00', '0.00', '1019.49');
 
 -- --------------------------------------------------------
 
@@ -686,6 +744,27 @@ INSERT INTO `migration` (`version`, `apply_time`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `supplier`
+--
+
+CREATE TABLE `supplier` (
+  `id` int(11) NOT NULL COMMENT 'ID',
+  `name` varchar(128) NOT NULL COMMENT 'Name',
+  `account` varchar(12) DEFAULT NULL COMMENT 'Account',
+  `status` enum('ACTIVE','INACTIVE') NOT NULL COMMENT 'Status',
+  `contact` varchar(128) DEFAULT NULL COMMENT 'Contact Person',
+  `address` text NOT NULL COMMENT 'Address',
+  `phone` varchar(16) NOT NULL COMMENT 'Phone',
+  `mobile` varchar(16) DEFAULT NULL COMMENT 'Mobile',
+  `email` varchar(64) DEFAULT NULL COMMENT 'Email',
+  `bank` int(11) DEFAULT NULL COMMENT 'Bank',
+  `bank_account_name` varchar(128) DEFAULT NULL,
+  `bank_account` varchar(20) DEFAULT NULL COMMENT 'Bank Account'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `transaction`
 --
 
@@ -698,83 +777,11 @@ CREATE TABLE `transaction` (
   `dr_balance` decimal(10,2) NOT NULL COMMENT 'Debit Balance',
   `amount` decimal(10,2) NOT NULL COMMENT 'Amount',
   `type` varchar(10) NOT NULL COMMENT 'Transaction Type',
+  `payment` enum('CASH','CHEQUE','INTERNAL') NOT NULL DEFAULT 'CASH',
+  `cheque` varchar(32) DEFAULT NULL,
+  `txlink` varchar(20) NOT NULL COMMENT 'Link',
   `description` varchar(128) NOT NULL COMMENT 'Description'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `transaction`
---
-
-INSERT INTO `transaction` (`txid`, `timestamp`, `cr_account`, `dr_account`, `cr_balance`, `dr_balance`, `amount`, `type`, `description`) VALUES
-(2, '2017-06-29 19:22:51', '9000000002', '9000000001', '-1000.00', '1000.00', '1000.00', 'CAPITAL', 'Initial transfer'),
-(3, '2017-06-29 19:23:49', '9000000001', '9000000002', '0.00', '0.00', '1000.00', 'CAPITAL', 'Initial transfer'),
-(4, '2017-07-02 12:39:48', '2000000006', '9000000001', '-1111.00', '1111.00', '1111.00', 'DISBURSE', 'Disbursement of the loan #6'),
-(5, '2017-07-02 12:39:48', '9000000002', '9000000001', '-1111.00', '2222.00', '1111.00', 'CHARGES', 'Disbursement charges of the loan #6'),
-(6, '2017-07-02 13:09:11', '2000000005', '9000000001', '-1000.00', '3222.00', '1000.00', 'DISBURSE', 'Disbursement of the loan #5'),
-(7, '2017-07-02 13:09:11', '9000000002', '9000000001', '-1211.00', '3322.00', '100.00', 'CHARGES', 'Disbursement charges of the loan #5'),
-(8, '2017-07-03 18:36:48', '1000000005', '9000000004', '0.00', '25.00', '25.00', 'PENALTY', 'Penalty charge for loan #5'),
-(9, '2017-07-03 18:39:07', '1000000005', '9000000004', '64.23', '60.77', '35.77', 'PENALTY', 'Penalty charge for loan #5'),
-(10, '2017-07-03 18:39:13', '1000000005', '9000000005', '40.33', '23.90', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2017-08-02'),
-(11, '2017-07-03 18:39:13', '9000000005', '2000000005', '11.66', '-9988.76', '12.24', 'CAPITAL', 'Capital recovery of loan #5 for 2017-08-02'),
-(12, '2017-07-03 18:39:13', '9000000005', '9000000003', '1.66', '10.00', '10.00', 'INTEREST', 'Interest recovery of loan #5 for 2017-08-02'),
-(13, '2017-07-03 18:39:13', '9000000005', '9000000002', '-8.34', '-1201.00', '10.00', 'CHARGES', 'Charges recovery of loan #5 for 2017-08-02'),
-(14, '2017-07-03 18:39:14', '1000000005', '9000000005', '71.71', '-39.72', '-31.38', 'RECOVERY', 'Installment recovery of loan #5 for 2017-07-09'),
-(15, '2017-07-03 18:39:14', '9000000005', '2000000005', '-131.23', '-9897.25', '91.51', 'CAPITAL', 'Capital recovery of loan #5 for 2017-07-09'),
-(16, '2017-07-03 18:39:14', '9000000005', '9000000003', '-133.58', '12.35', '2.35', 'INTEREST', 'Interest recovery of loan #5 for 2017-07-09'),
-(17, '2017-07-03 18:39:14', '9000000005', '9000000002', '-135.93', '-1198.65', '2.35', 'CHARGES', 'Charges recovery of loan #5 for 2017-07-09'),
-(18, '2017-07-03 18:39:14', '1000000005', '9000000005', '91.62', '-155.84', '-19.91', 'RECOVERY', 'Installment recovery of loan #5 for 2017-07-16'),
-(19, '2017-07-03 18:39:14', '9000000005', '2000000005', '-247.35', '-9805.74', '91.51', 'CAPITAL', 'Capital recovery of loan #5 for 2017-07-16'),
-(20, '2017-07-03 18:39:14', '9000000005', '9000000003', '-249.70', '14.70', '2.35', 'INTEREST', 'Interest recovery of loan #5 for 2017-07-16'),
-(21, '2017-07-03 18:39:14', '9000000005', '9000000002', '-252.05', '-1196.30', '2.35', 'CHARGES', 'Charges recovery of loan #5 for 2017-07-16'),
-(22, '2017-07-03 18:39:14', '1000000005', '9000000005', '101.10', '-261.53', '-9.48', 'RECOVERY', 'Installment recovery of loan #5 for 2017-07-23'),
-(23, '2017-07-03 18:39:14', '9000000005', '2000000005', '-353.04', '-9714.23', '91.51', 'CAPITAL', 'Capital recovery of loan #5 for 2017-07-23'),
-(24, '2017-07-03 18:39:14', '9000000005', '9000000003', '-355.39', '17.05', '2.35', 'INTEREST', 'Interest recovery of loan #5 for 2017-07-23'),
-(25, '2017-07-03 18:39:15', '9000000005', '9000000002', '-357.74', '-1193.95', '2.35', 'CHARGES', 'Charges recovery of loan #5 for 2017-07-23'),
-(26, '2017-07-03 18:39:15', '9000000005', '2000000005', '-449.25', '-9622.72', '91.51', 'CAPITAL', 'Capital recovery of loan #5 for 2017-07-30'),
-(27, '2017-07-03 18:39:15', '9000000005', '9000000003', '-451.60', '19.40', '2.35', 'INTEREST', 'Interest recovery of loan #5 for 2017-07-30'),
-(28, '2017-07-03 18:39:15', '9000000005', '9000000002', '-453.95', '-1191.60', '2.35', 'CHARGES', 'Charges recovery of loan #5 for 2017-07-30'),
-(29, '2017-07-05 17:31:07', '1000000005', '9000000004', '17.59', '68.18', '7.41', 'PENALTY', 'Penalty charge for loan #5'),
-(30, '2017-07-05 17:32:43', '1000000005', '9000000004', '10.42', '75.35', '7.17', 'PENALTY', 'Penalty charge for loan #5'),
-(31, '2017-07-05 17:33:38', '1000000005', '9000000005', '16.10', '-430.05', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2017-09-02'),
-(32, '2017-07-05 17:33:38', '9000000005', '2000000005', '-442.41', '-9610.36', '12.36', 'CAPITAL', 'Capital recovery of loan #5 for 2017-09-02'),
-(33, '2017-07-05 17:33:38', '9000000005', '9000000003', '-452.29', '29.28', '9.88', 'INTEREST', 'Interest recovery of loan #5 for 2017-09-02'),
-(34, '2017-07-05 17:33:38', '9000000005', '9000000002', '-462.17', '-1181.72', '9.88', 'CHARGES', 'Charges recovery of loan #5 for 2017-09-02'),
-(35, '2017-07-05 17:34:07', '1000000005', '9000000005', '76.10', '-438.27', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2017-10-02'),
-(36, '2017-07-05 17:34:07', '9000000005', '2000000005', '-450.76', '-9597.87', '12.49', 'CAPITAL', 'Capital recovery of loan #5 for 2017-10-02'),
-(37, '2017-07-05 17:34:07', '9000000005', '9000000003', '-460.51', '39.03', '9.75', 'INTEREST', 'Interest recovery of loan #5 for 2017-10-02'),
-(38, '2017-07-05 17:34:07', '9000000005', '9000000002', '-470.26', '-1171.97', '9.75', 'CHARGES', 'Charges recovery of loan #5 for 2017-10-02'),
-(39, '2017-07-05 17:34:07', '1000000005', '9000000005', '52.20', '-446.36', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2017-11-02'),
-(40, '2017-07-05 17:34:07', '9000000005', '2000000005', '-458.97', '-9585.26', '12.61', 'CAPITAL', 'Capital recovery of loan #5 for 2017-11-02'),
-(41, '2017-07-05 17:34:07', '9000000005', '9000000003', '-468.60', '48.66', '9.63', 'INTEREST', 'Interest recovery of loan #5 for 2017-11-02'),
-(42, '2017-07-05 17:34:07', '9000000005', '9000000002', '-478.23', '-1162.34', '9.63', 'CHARGES', 'Charges recovery of loan #5 for 2017-11-02'),
-(43, '2017-07-05 17:34:50', '1000000005', '9000000004', '49.81', '77.74', '2.39', 'PENALTY', 'Penalty charge for loan #5'),
-(44, '2017-07-05 17:34:50', '1000000005', '9000000005', '25.91', '-454.33', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2017-12-02'),
-(45, '2017-07-05 17:34:50', '9000000005', '2000000005', '-467.07', '-9572.52', '12.74', 'CAPITAL', 'Capital recovery of loan #5 for 2017-12-02'),
-(46, '2017-07-05 17:34:50', '9000000005', '9000000003', '-476.57', '58.16', '9.50', 'INTEREST', 'Interest recovery of loan #5 for 2017-12-02'),
-(47, '2017-07-05 17:34:50', '9000000005', '9000000002', '-486.07', '-1152.84', '9.50', 'CHARGES', 'Charges recovery of loan #5 for 2017-12-02'),
-(48, '2017-07-05 17:34:50', '1000000005', '9000000005', '2.01', '-462.17', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2018-01-02'),
-(49, '2017-07-05 17:34:50', '9000000005', '2000000005', '-475.03', '-9559.66', '12.86', 'CAPITAL', 'Capital recovery of loan #5 for 2018-01-02'),
-(50, '2017-07-05 17:34:50', '9000000005', '9000000003', '-484.41', '67.54', '9.38', 'INTEREST', 'Interest recovery of loan #5 for 2018-01-02'),
-(51, '2017-07-05 17:34:50', '9000000005', '9000000002', '-493.79', '-1143.46', '9.38', 'CHARGES', 'Charges recovery of loan #5 for 2018-01-02'),
-(52, '2017-07-05 17:37:38', '1000000005', '9000000005', '26.10', '-469.89', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2018-02-02'),
-(53, '2017-07-05 17:37:38', '9000000005', '2000000005', '-482.88', '-9546.67', '12.99', 'CAPITAL', 'Capital recovery of loan #5 for 2018-02-02'),
-(54, '2017-07-05 17:37:38', '9000000005', '9000000003', '-492.13', '76.79', '9.25', 'INTEREST', 'Interest recovery of loan #5 for 2018-02-02'),
-(55, '2017-07-05 17:37:38', '9000000005', '9000000002', '-501.38', '-1134.21', '9.25', 'CHARGES', 'Charges recovery of loan #5 for 2018-02-02'),
-(56, '2017-07-05 17:44:54', '1000000005', '9000000004', '23.71', '80.13', '2.39', 'PENALTY', 'Penalty charge for loan #5'),
-(57, '2017-07-05 17:45:35', '1000000005', '9000000005', '24.10', '-477.48', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2018-03-02'),
-(58, '2017-07-05 17:45:35', '9000000005', '2000000005', '-490.60', '-9533.55', '13.12', 'CAPITAL', 'Capital recovery of loan #5 for 2018-03-02'),
-(59, '2017-07-05 17:45:35', '9000000005', '9000000003', '-499.72', '85.91', '9.12', 'INTEREST', 'Interest recovery of loan #5 for 2018-03-02'),
-(60, '2017-07-05 17:45:35', '9000000005', '9000000002', '-508.84', '-1125.09', '9.12', 'CHARGES', 'Charges recovery of loan #5 for 2018-03-02'),
-(61, '2017-07-05 17:45:35', '1000000005', '9000000005', '0.20', '-484.94', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2018-04-02'),
-(62, '2017-07-05 17:45:35', '9000000005', '2000000005', '-498.19', '-9520.30', '13.25', 'CAPITAL', 'Capital recovery of loan #5 for 2018-04-02'),
-(63, '2017-07-05 17:45:35', '9000000005', '9000000003', '-507.18', '94.90', '8.99', 'INTEREST', 'Interest recovery of loan #5 for 2018-04-02'),
-(64, '2017-07-05 17:45:35', '9000000005', '9000000002', '-516.17', '-1116.10', '8.99', 'CHARGES', 'Charges recovery of loan #5 for 2018-04-02'),
-(65, '2017-07-05 17:46:18', '1000000005', '9000000004', '0.00', '80.33', '0.20', 'PENALTY', 'Penalty charge for loan #5'),
-(66, '2017-07-05 17:48:56', '1000000005', '9000000004', '47.61', '82.72', '2.39', 'PENALTY', 'Penalty charge for loan #5'),
-(67, '2017-07-05 17:48:56', '1000000005', '9000000005', '23.71', '-492.27', '23.90', 'RECOVERY', 'Installment recovery of loan #5 for 2018-05-02'),
-(68, '2017-07-05 17:48:56', '9000000005', '2000000005', '-505.66', '-9506.91', '13.39', 'CAPITAL', 'Capital recovery of loan #5 for 2018-05-02'),
-(69, '2017-07-05 17:48:56', '9000000005', '9000000003', '-514.51', '103.75', '8.85', 'INTEREST', 'Interest recovery of loan #5 for 2018-05-02'),
-(70, '2017-07-05 17:48:56', '9000000005', '9000000002', '-523.36', '-1107.25', '8.85', 'CHARGES', 'Charges recovery of loan #5 for 2018-05-02');
 
 -- --------------------------------------------------------
 
@@ -803,7 +810,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `auth_key`, `password_hash`, `confirmation_token`, `status`, `superadmin`, `created_at`, `updated_at`, `registration_ip`, `bind_to_ip`, `email`, `email_confirmed`) VALUES
-(1, 'superadmin', '9dg8QDmu8FWCXm1fS-909fs4II7MACVC', '$2y$13$E8vLRFzFDfSgBnuRPscVxedolcGrPebMunTmLx/AQf691owHcTB0O', NULL, 1, 1, 1498749424, 1498749424, NULL, NULL, NULL, 0);
+(1, 'superadmin', '9dg8QDmu8FWCXm1fS-909fs4II7MACVC', '$2y$13$E8vLRFzFDfSgBnuRPscVxedolcGrPebMunTmLx/AQf691owHcTB0O', NULL, 1, 1, 1498749424, 1498749424, NULL, NULL, NULL, 0),
+(2, 'teller1', '85WqMZGGbb4rUhrGtOA9UAzbuWgDxV-6', '$2y$13$HDKtwrmVvHA1U7SapXmHM.HTsy9.o2Iv.pDZDif9VBG0IzCG38IGu', NULL, 1, 0, 1500100519, 1500100519, '::1', '', '', 0),
+(3, 'admin', 'maBgtzMu1bua2MdCssJQA-WQ1Dr6wspI', '$2y$13$fYOG/tyD0N9p4/Q0meIe8O5NRRuxcMwz24uynQEbuSQ5vo6.GzDEm', NULL, 1, 0, 1501437522, 1501437522, '::1', '', '', 0),
+(4, 'teller2', 'xSSVPS4OVLSz6b1JRrQz390wcqw0Rt2n', '$2y$13$u7GvEFEyIbcCVL.6KBz5mOk5.wPwPK7bohPw2z1kho7U9TxBcOp1u', NULL, 1, 0, 1501438098, 1501438098, '::1', '', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -823,25 +833,6 @@ CREATE TABLE `user_visit_log` (
   `os` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `user_visit_log`
---
-
-INSERT INTO `user_visit_log` (`id`, `token`, `ip`, `language`, `user_agent`, `user_id`, `visit_time`, `browser`, `os`) VALUES
-(1, '59551ba6342e0', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1498749862, 'Chrome', 'Windows'),
-(2, '59551cc12e893', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1498750145, 'Chrome', 'Windows'),
-(3, '59551ccaeb633', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1498750154, 'Chrome', 'Windows'),
-(4, '595737b81b687', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1498888120, 'Chrome', 'Windows'),
-(5, '595902ce166f3', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499005646, 'Chrome', 'Windows'),
-(6, '595a88f5ce770', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499105525, 'Chrome', 'Windows'),
-(7, '595d274c6c28c', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499277132, 'Chrome', 'Windows'),
-(8, '595db509ee920', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499313417, 'Chrome', 'Windows'),
-(9, '59625369c086b', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499616105, 'Chrome', 'Windows'),
-(10, '59659f4a86404', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499832138, 'Chrome', 'Windows'),
-(11, '59663e93678d7', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499872915, 'Chrome', 'Windows'),
-(12, '596646dbb4d2d', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499875035, 'Chrome', 'Windows'),
-(13, '5966e7100640d', '::1', 'en', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36', 1, 1499916048, 'Chrome', 'Windows');
-
 -- --------------------------------------------------------
 
 --
@@ -853,19 +844,6 @@ CREATE TABLE `vehicle_brand` (
   `name` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `vehicle_brand`
---
-
-INSERT INTO `vehicle_brand` (`id`, `name`) VALUES
-(1, 'Yamaha'),
-(2, 'Bajaj'),
-(3, 'Honda'),
-(4, 'Hero Honda'),
-(5, 'Suzuki'),
-(6, 'Toyota'),
-(7, 'Nissan'),
-(8, 'Tata');
 
 -- --------------------------------------------------------
 
@@ -878,13 +856,6 @@ CREATE TABLE `vehicle_type` (
   `name` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `vehicle_type`
---
-
-INSERT INTO `vehicle_type` (`id`, `name`) VALUES
-(1, 'Motor Bike'),
-(2, 'Three Wheller');
 
 --
 -- Indexes for dumped tables
@@ -938,6 +909,24 @@ ALTER TABLE `auth_rule`
   ADD PRIMARY KEY (`name`);
 
 --
+-- Indexes for table `bank`
+--
+ALTER TABLE `bank`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `bank_account`
+--
+ALTER TABLE `bank_account`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `canvasser`
+--
+ALTER TABLE `canvasser`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `collection_method`
 --
 ALTER TABLE `collection_method`
@@ -950,6 +939,12 @@ ALTER TABLE `customer`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UK_NIC` (`nic`) USING BTREE,
   ADD KEY `FK_CUSTOMER_AREA` (`area`);
+
+--
+-- Indexes for table `general_account`
+--
+ALTER TABLE `general_account`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `hp_new_vehicle_loan`
@@ -982,6 +977,13 @@ ALTER TABLE `loan_type`
 --
 ALTER TABLE `migration`
   ADD PRIMARY KEY (`version`);
+
+--
+-- Indexes for table `supplier`
+--
+ALTER TABLE `supplier`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indexes for table `transaction`
@@ -1022,7 +1024,22 @@ ALTER TABLE `vehicle_type`
 -- AUTO_INCREMENT for table `area`
 --
 ALTER TABLE `area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT for table `bank`
+--
+ALTER TABLE `bank`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT for table `bank_account`
+--
+ALTER TABLE `bank_account`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT for table `canvasser`
+--
+ALTER TABLE `canvasser`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `collection_method`
 --
@@ -1032,42 +1049,47 @@ ALTER TABLE `collection_method`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Client ID', AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Client ID', AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `loan`
 --
 ALTER TABLE `loan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Loan ID', AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Loan ID', AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `loan_type`
 --
 ALTER TABLE `loan_type`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
+-- AUTO_INCREMENT for table `supplier`
+--
+ALTER TABLE `supplier`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID', AUTO_INCREMENT=1;
+--
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `txid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Transaction ID', AUTO_INCREMENT=71;
+  MODIFY `txid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Transaction ID', AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `user_visit_log`
 --
 ALTER TABLE `user_visit_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `vehicle_brand`
 --
 ALTER TABLE `vehicle_brand`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `vehicle_type`
 --
 ALTER TABLE `vehicle_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- Constraints for dumped tables
 --
