@@ -49,7 +49,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->cr_account, $model->dr_account, $model->amount, TxType::MANUAL, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::MANUAL, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
                         }
@@ -93,7 +93,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->cr_account, $model->dr_account, $model->amount, TxType::INVESTMENT, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INVESTMENT, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
                         }
@@ -110,8 +110,8 @@ class TransactionController extends LmsController
             }
         } else {
             $model->link = uniqid();
-            $model->cr_account = GeneralAccounts::SAFE;
-            $model->dr_account = GeneralAccounts::INVESTMENT;
+            $model->dr_account = GeneralAccounts::SAFE;
+            $model->cr_account = GeneralAccounts::INVESTMENT;
             $model->payment = PaymentType::INTERNAL;
             $model->stage = 0;
         }
@@ -120,7 +120,7 @@ class TransactionController extends LmsController
         ]);
     }
 
-    public function actionSafeToTeller()
+    public function actionTellerToSafe()
     {
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
@@ -136,7 +136,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->cr_account, $model->dr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
                         }
@@ -157,12 +157,12 @@ class TransactionController extends LmsController
             $model->payment = PaymentType::INTERNAL;
             $model->stage = 0;
         }
-        return $this->render('safe-to-teller', [
+        return $this->render('teller-to-safe', [
             'model' => $model,
         ]);
     }
 
-    public function actionTellerToSafe()
+    public function actionSafeToTeller()
     {
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
@@ -178,7 +178,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->cr_account, $model->dr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
                         }
@@ -199,12 +199,12 @@ class TransactionController extends LmsController
             $model->payment = PaymentType::INTERNAL;
             $model->stage = 0;
         }
-        return $this->render('teller-to-safe', [
+        return $this->render('safe-to-teller', [
             'model' => $model,
         ]);
     }
 
-    public function actionBankToSafe()
+    public function actionSafeToBank()
     {
         $model = new BankTransaction();
         if ($model->load(Yii::$app->request->post())) {
@@ -221,7 +221,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->cr_account, $model->dr_account, $model->amount, TxType::BANK, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::BANK, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
                         }
@@ -242,12 +242,12 @@ class TransactionController extends LmsController
             $model->payment = PaymentType::INTERNAL;
             $model->stage = 0;
         }
-        return $this->render('bank-to-safe', [
+        return $this->render('safe-to-bank', [
             'model' => $model,
         ]);
     }
 
-    public function actionSafeToBank()
+    public function actionBankToSafe()
     {
         $model = new BankTransaction();
         if ($model->load(Yii::$app->request->post())) {
@@ -264,7 +264,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->cr_account, $model->dr_account, $model->amount, TxType::BANK, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::BANK, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
                         }
@@ -285,7 +285,7 @@ class TransactionController extends LmsController
             $model->payment = PaymentType::INTERNAL;
             $model->stage = 0;
         }
-        return $this->render('safe-to-bank', [
+        return $this->render('bank-to-safe', [
             'model' => $model,
         ]);
     }

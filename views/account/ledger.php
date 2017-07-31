@@ -38,17 +38,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'type',
             'description',
             ['attribute' => 'amount', 'format' => 'html', 'value' => function ($data) use ($details) {
-                if ($data->cr_account === $details->account->id) {
+                if ($data->dr_account === $details->account->id) {
                     return number_format($data->amount, 2) . ' ' . Elements::icon('minus square', ['class' => 'red']);
                 } else {
                     return number_format($data->amount, 2) . ' ' . Elements::icon('add square', ['class' => 'green']);
                 }
             }, 'contentOptions' => array('style' => 'text-align: right;')],
             ['attribute' => 'amount', 'label' => 'Balance', 'format' => 'html', 'value' => function ($data) use ($details) {
-                if ($data->cr_account === $details->account->id) {
-                    return number_format($data->cr_balance, 2);
-                } else {
+                if ($data->dr_account === $details->account->id) {
                     return number_format($data->dr_balance, 2);
+                } else {
+                    return number_format($data->cr_balance, 2);
                 }
             }, 'contentOptions' => array('style' => 'text-align: right;')],
         ],

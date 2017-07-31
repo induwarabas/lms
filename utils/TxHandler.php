@@ -33,7 +33,7 @@ class TxHandler
         return uniqid();
     }
 
-    public function createTransaction($cr, $dr, $amount, $type, $payment, $description, $link = null, $cheque = null)
+    public function createTransaction($dr, $cr, $amount, $type, $payment, $description, $link = null, $cheque = null)
     {
         if($amount == 0) {
             return true;
@@ -43,26 +43,26 @@ class TxHandler
             $link = uniqid();
         }
         //$tx = Yii::$app->getDb()->beginTransaction();
-        $crAccount = Account::find()->where(["id" => $cr])->one();
-        if ($crAccount == null) {
-            $this->error = $cr . " is not a valid account";
-            return false;
-        }
-
-        if ($crAccount->protection == 'PLUS' && $crAccount->balance - $amount < 0.0) {
-            $this->error = $cr . " has no funds to do the transaction";
-            return false;
-        }
-
         $drAccount = Account::find()->where(["id" => $dr])->one();
-
         if ($drAccount == null) {
             $this->error = $dr . " is not a valid account";
             return false;
         }
 
-        if ($drAccount->protection == 'MINUS' && $drAccount->balance + $amount > 0.0) {
+        if ($drAccount->protection == 'PLUS' && $drAccount->balance - $amount < 0.0) {
             $this->error = $dr . " has no funds to do the transaction";
+            return false;
+        }
+
+        $crAccount = Account::find()->where(["id" => $cr])->one();
+
+        if ($crAccount == null) {
+            $this->error = $cr . " is not a valid account";
+            return false;
+        }
+
+        if ($crAccount->protection == 'MINUS' && $crAccount->balance + $amount > 0.0) {
+            $this->error = $cr . " has no funds to do the transaction";
             return false;
         }
 
@@ -72,10 +72,10 @@ class TxHandler
         }
 
         $transaction = new Transaction;
-        $transaction->cr_account = $cr;
         $transaction->dr_account = $dr;
-        $transaction->cr_balance = $crAccount->balance - $amount;
-        $transaction->dr_balance = $drAccount->balance + $amount;
+        $transaction->cr_account = $cr;
+        $transaction->dr_balance = $drAccount->balance - $amount;
+        $transaction->cr_balance = $crAccount->balance + $amount;
         $transaction->amount = $amount;
         $transaction->type = $type;
         $transaction->description = $description;
@@ -92,18 +92,18 @@ class TxHandler
 
         $this->txid = $transaction->getPrimaryKey();
 
-        $crAccount->balance = $transaction->cr_balance;
-        if (!$crAccount->save()) {
-            foreach ($crAccount->errors as $key => $value) {
+        $drAccount->balance = $transaction->dr_balance;
+        if (!$drAccount->save()) {
+            foreach ($drAccount->errors as $key => $value) {
                 $this->error = $value[0];
                 return false;
             }
         }
 
-        $drAccount->balance = $transaction->dr_balance;
-        $drAccount->save();
-        if (!$drAccount->save()) {
-            foreach ($drAccount->errors as $key => $value) {
+        $crAccount->balance = $transaction->cr_balance;
+        $crAccount->save();
+        if (!$crAccount->save()) {
+            foreach ($crAccount->errors as $key => $value) {
                 $this->error = $value[0];
                 return false;
             }

@@ -35,8 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
         <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
         <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
         <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
         <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
         <?= $form->field($model, 'amount')->hiddenInput()->label(false) ?>
@@ -47,8 +47,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute' => 'cr_account', 'value' => $model->cr_account." : ".\app\models\Account::findOne($model->cr_account)->getAccountName()],
                 ['attribute' => 'dr_account', 'value' => $model->dr_account." : ".\app\models\Account::findOne($model->dr_account)->getAccountName()],
+                ['attribute' => 'cr_account', 'value' => $model->cr_account." : ".\app\models\Account::findOne($model->cr_account)->getAccountName()],
                 'payment',
                 'cheque',
                 ['attribute' => 'amount', 'value' => number_format($model->amount, 2)],
@@ -70,8 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'dr_account')->textInput(['maxlength' => true])->label("Teller account") ?>
+            <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'cr_account')->textInput(['maxlength' => true])->label("Teller account") ?>
             <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>

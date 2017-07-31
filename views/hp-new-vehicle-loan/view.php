@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
     } ?>
 
-    <?php if ($loan->status == 'PENDING' && User::hasPermission('authorizeLoan')) {?>
+    <?php if ($loan->status == 'PENDING' && User::hasPermission('loandisburse')) {?>
         <?php $dsb = new DisburseModel(['date' => date('Y-m-d'), 'loan' => $model->id]); ?>
         <?php $frm = ActiveForm::begin(['action' => ['loan/disburse']]); ?>
         <?php $modal = Modal::begin([
@@ -74,15 +74,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php } ?><hr/>
 
     <?php
-    if (User::hasPermission('authorizeLoan')) {
+    if (User::hasPermission('editafterdisburse')) {
         echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
-        if ($loan->status == 'ACTIVE') {
-            echo Html::a('Recover', ['loan/recover', 'id' => $model->id], ['class' => 'ui button green']);
-        }
     } else {
         if ($loan->status == 'PENDING') {
             echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
         }
+    }
+    if ($loan->status == 'ACTIVE') {
+        echo Html::a('Recover', ['loan/recover', 'id' => $model->id], ['class' => 'ui button green']);
     }
     echo Html::a('View Schedule', ['loan/schedule', 'id' => $model->id], ['class' => 'ui button brown']);
     ?>
