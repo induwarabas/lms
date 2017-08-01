@@ -13,6 +13,7 @@ use app\models\Account;
 use app\models\CollectionMethod;
 use app\models\Loan;
 use app\models\LoanSchedule;
+use app\utils\Doubles;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\PaymentType;
@@ -171,7 +172,7 @@ class LoanRecovery
             $remain -= $schedule->due;
             $txHnd = new TxHandler();
 
-            if ($schedule->due != $schedule->principal + $schedule->charges + $schedule->interest) {
+            if (Doubles::compare($schedule->due, $schedule->principal + $schedule->charges + $schedule->interest) != 0) {
                 $tx->rollBack();
                 $this->error = "Fail to reconcile";
                 return false;
