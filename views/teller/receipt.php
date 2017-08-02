@@ -37,6 +37,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <table class="ui definition table">
         <tbody>
+        <?php if ($model->stage == 3) { ?>
+            <tr>
+                <td>Receipt No</td>
+                <td><?= $model->txid ?></td>
+            </tr>
+        <?php } ?>
         <tr>
             <td>Customer</td>
             <td><?= CustomerView::widget(['customer' => $customer, 'id' => $customer->id, 'target' => '_blank']) ?></td>
@@ -88,6 +94,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <tr>
                 <td>Description</td>
                 <td><?= $model->description ?></td>
+            </tr>
+            <tr>
+                <td>User</td>
+                <td><?= $model->user ?></td>
             </tr>
         <?php } ?>
         </tbody>

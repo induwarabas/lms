@@ -70,13 +70,21 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= $form->field($loan, 'penalty')->textInput(['maxlength' => true]) ?>
         <?= $form->field($loan, 'collection_method')->dropDownList(ArrayHelper::map(CollectionMethod::find()->all(), 'id', 'name')) ?>
         <?= $form->field($loan, 'period')->textInput(['type' => 'number', 'step' => '1']) ?>
+        <?= $form->field($loan, 'disbursed_date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']])->label("Start Date") ?>
     </div>
     <div class="ui segment">
         <?= Elements::header(Elements::icon('briefcase') . '<div class="content">Charges<div class="sub header">Manage charges details.</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>
-        <?= $form->field($model, 'supplier')->dropDownList(array_merge([0 => '-- No supplier --'], ArrayHelper::map(Supplier::find()->all(), 'id', 'name'))) ?>
+        <?php
+        $supps = ArrayHelper::map(Supplier::find()->all(), 'id', 'name');
+        $supps["0"] = '-- No supplier --';
+        echo $form->field($model, 'supplier')->dropDownList($supps); ?>
         <?= $form->field($model, 'sales_commision')->widget(CommissionSelector::class, ['type_attr' => 'sales_commision_type']) ?>
-        <?= $form->field($model, 'canvassed')->dropDownList(array_merge([0 => '-- No canvasser --'], ArrayHelper::map(Canvasser::find()->all(), 'id', 'name'))) ?>
+        <?php
+        $cnvs = ArrayHelper::map(Canvasser::find()->all(), 'id', 'name');
+        $cnvs["0"] = '-- No canvasser --';
+        echo $form->field($model, 'canvassed')->dropDownList($cnvs);
+        ?>
         <?= $form->field($model, 'canvassing_commision')->widget(CommissionSelector::class, ['type_attr' => 'canvassing_commision_type']) ?>
 
     </div>

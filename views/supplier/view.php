@@ -3,6 +3,7 @@
 use app\models\Bank;
 use app\utils\enums\LoanStatus;
 use app\utils\PhoneNoFormatter;
+use app\utils\widgets\AccountIDView;
 use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\widgets\DetailView;
 
@@ -27,14 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
-            'account',
+            ['attribute' => 'account', 'format' => 'html', 'value' => AccountIDView::widget(['accountId' => $model->account])],
             ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return LoanStatus::label($data->status);}],
             'contact',
             'address:ntext',
             ['attribute'=>'phone', 'value'=> function($data) {return PhoneNoFormatter::format($data->phone);}],
             ['attribute'=>'mobile', 'value'=> function($data) {return PhoneNoFormatter::format($data->mobile);}],
             'email:email',
-            ['attribute'=>'bank', 'value'=> function($data) {return Bank::findOne($data->bank)->name;}],
+            ['attribute'=>'bank', 'value'=> function($data) {$bank = Bank::findOne($data->bank); return $bank != null ? $bank->name: '';}],
             'bank_account_name',
             'bank_account',
         ],

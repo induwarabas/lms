@@ -57,8 +57,11 @@ class TellerController extends LmsController
                 } else if ($model->payment == PaymentType::CHEQUE && ($model->cheque == null || $model->cheque == '')) {
                     $model->addError('cheque', 'Cheque number required for cheque transactions');
                 } else {
-                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                    $currentTx = Transaction::findOne(['txlink' => $model->link]);
+                    if ($currentTx != null) {
                         $error = "Transaction is already done.";
+                        $model->txid = $currentTx->txid;
+                        $model->user = $currentTx->user;
                         $model->stage = 3;
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
@@ -66,6 +69,8 @@ class TellerController extends LmsController
                         if ($txHnd->createTransaction($teller->id, $loan->saving_account, $model->amount, TxType::RECEIPT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $tx->commit();
                             $model->stage = 3;
+                            $model->txid = $txHnd->txid;
+                            $model->user = Yii::$app->getUser()->getIdentity()->username;
                             $rec = new LoanRecovery();
                             $rec->recover($loan->id);
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);

@@ -83,6 +83,7 @@ class TxHandler
         $transaction->payment = $payment;
         $transaction->cheque = $cheque;
         $transaction->txlink = $link;
+        $transaction->user = Yii::$app->getUser()->identity->username;
         if (!$transaction->save()) {
             foreach ($transaction->errors as $key => $value) {
                 $this->error = $value[0];

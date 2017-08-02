@@ -8,6 +8,7 @@ use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
 use app\utils\enums\LoanStatus;
+use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CanvasserView;
 use app\utils\widgets\CommissionView;
 use app\utils\widgets\CustomerView;
@@ -52,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
     } ?>
 
     <?php if ($loan->status == 'PENDING' && User::hasPermission('loandisburse')) {?>
-        <?php $dsb = new DisburseModel(['date' => date('Y-m-d'), 'loan' => $model->id]); ?>
+        <?php $dsb = new DisburseModel(['date' => ($loan->disbursed_date != null && $loan->disbursed_date != '') ? $loan->disbursed_date : date('Y-m-d'), 'loan' => $model->id]); ?>
         <?php $frm = ActiveForm::begin(['action' => ['loan/disburse']]); ?>
         <?php $modal = Modal::begin([
             'size' => Size::TINY,
@@ -118,8 +119,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['attribute' => 'collection_method', 'value' => CollectionMethod::findOne(['id' => $loan->collection_method])->name],
                 'period',
                 'installment',
-                'saving_account',
-                'loan_account',
+                ['attribute' => 'saving_account', 'format' => 'html', 'value' => AccountIDView::widget(['accountId' => $loan->saving_account])],
+                ['attribute' => 'loan_account', 'format' => 'html', 'value' => AccountIDView::widget(['accountId' => $loan->loan_account])],
                 'disbursed_date',
                 'closed_date',
             ],

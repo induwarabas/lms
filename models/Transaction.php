@@ -18,6 +18,7 @@ use Yii;
  * @property string $payment
  * @property string $cheque
  * @property string $txlink
+ * @property string $user
  * @property string $description
  */
 class Transaction extends \yii\db\ActiveRecord
@@ -37,11 +38,11 @@ class Transaction extends \yii\db\ActiveRecord
     {
         return [
             [['timestamp'], 'safe'],
-            [['cr_account', 'dr_account', 'cr_balance', 'dr_balance', 'amount', 'type', 'txlink', 'description','payment'], 'required'],
+            [['cr_account', 'dr_account', 'cr_balance', 'dr_balance', 'amount', 'type', 'txlink', 'description','payment','user'], 'required'],
             [['cr_balance', 'dr_balance', 'amount'], 'number'],
             [['cr_account', 'dr_account'], 'string', 'max' => 12],
             [['type','payment'], 'string', 'max' => 10],
-            [['cheque'], 'string', 'max' => 32],
+            [['cheque', 'user'], 'string', 'max' => 32],
             [['txlink'], 'string', 'max' => 20],
             [['description'], 'string', 'max' => 128],
         ];
@@ -64,6 +65,7 @@ class Transaction extends \yii\db\ActiveRecord
             'payment' => 'Payment Type',
             'cheque' => 'Cheque Number',
             'txlink' => 'Link',
+            'user' => 'User',
             'description' => 'Description',
         ];
     }
