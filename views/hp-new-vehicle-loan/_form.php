@@ -70,6 +70,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= $form->field($loan, 'penalty')->textInput(['maxlength' => true]) ?>
         <?= $form->field($loan, 'collection_method')->dropDownList(ArrayHelper::map(CollectionMethod::find()->all(), 'id', 'name')) ?>
         <?= $form->field($loan, 'period')->textInput(['type' => 'number', 'step' => '1']) ?>
+        <?= $form->field($loan, 'installment')->textInput(['type' => 'number', 'step' => '1', "readonly" => true]) ?>
         <?= $form->field($loan, 'disbursed_date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']])->label("Start Date") ?>
     </div>
     <div class="ui segment">
@@ -108,3 +109,41 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
     <?php ActiveForm::end(); ?>
 </div>
+<?php
+$this->registerJs("
+    function updateInstallment() {
+        var amount = $('#hpnewvehicleloan-loan_amount').val();
+        var interest_percentage = $('#loan-interest').val();
+        var terms = $('#loan-period').val();
+        var interest_terms = 12;//$('#hpnewvehicleloan-loan_amount').val();
+       
+        //var chargePerTerm = Math.floor(100 * charges / terms) /100;
+        var rate = interest_percentage / 100.0 / interest_terms;
+        var part1 = Math.pow((1 + rate), terms);
+        var part2 = amount * rate * part1;
+        var part3 = part1 - 1;
+        payment = Math.round(Math.floor(100 * (part2 / part3))) / 100;
+        $('#loan-installment').val(payment);
+    }
+    
+    $('#hpnewvehicleloan-loan_amount').on('input', function(e) {
+        updateInstallment();
+    });
+    
+    $('#loan-interest').on('input', function(e) {
+        updateInstallment();
+    });
+    
+    $('#loan-period').on('input', function(e) {
+        updateInstallment();
+    });
+    
+    $('#interest_terms').on('input', function(e) {
+        updateInstallment();
+    });
+    
+    $('#loan-collection_method').on('input', function(e) {
+        updateInstallment();
+    });
+");
+?>
