@@ -6,7 +6,6 @@ use app\models\Customer;
 use app\models\CustomerSearchEx;
 use app\utils\NICValidator;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**

@@ -5,31 +5,13 @@ namespace app\controllers;
 use app\models\Account;
 use app\models\BankAccount;
 use app\models\BankTransaction;
-use app\models\Customer;
-use app\models\GeneralAccount;
-use app\models\HpNewVehicleLoan;
-use app\models\Loan;
-use app\models\LoanSchedule;
-use app\models\LoanType;
 use app\models\ManualTransaction;
-use app\models\TellerGeneralExpence;
-use app\models\TellerPayment;
-use app\models\TellerReceipt;
 use app\models\Transaction;
-use app\models\User;
-use app\utils\enums\LoanStatus;
-use app\utils\enums\LoanTypes;
 use app\utils\enums\PaymentType;
 use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
-use app\utils\loan\LoanRecovery;
 use app\utils\TxHandler;
 use Yii;
-use app\models\VehicleType;
-use app\models\VehicleTypeSearch;
-use app\controllers\LmsController;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TellerController
@@ -40,18 +22,18 @@ class TransactionController extends LmsController
     {
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate()) {
-                if (Account::findOne($model->cr_account) == null){
-                    $model->error = "Invalid account id ".$model->cr_account;
+            if ($model->validate()) {
+                if (Account::findOne($model->cr_account) == null) {
+                    $model->error = "Invalid account id " . $model->cr_account;
                 } else if (Account::findOne($model->dr_account) == null) {
-                    $model->error = "Invalid account id ".$model->dr_account;
+                    $model->error = "Invalid account id " . $model->dr_account;
                 } else {
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
                         if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::MANUAL, $model->payment, $model->description)) {
                             $tx->commit();
-                            return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
+                            return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
                         $model->error = $txHnd->error;
                         $tx->rollBack();
@@ -73,7 +55,8 @@ class TransactionController extends LmsController
         ]);
     }
 
-    public function actionView($id) {
+    public function actionView($id)
+    {
         $tx = Transaction::findOne($id);
         return $this->render('view', [
             'model' => $tx,
@@ -84,18 +67,18 @@ class TransactionController extends LmsController
     {
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate()) {
-                if (Account::findOne($model->cr_account) == null){
-                    $model->error = "Invalid account id ".$model->cr_account;
+            if ($model->validate()) {
+                if (Account::findOne($model->cr_account) == null) {
+                    $model->error = "Invalid account id " . $model->cr_account;
                 } else if (Account::findOne($model->dr_account) == null) {
-                    $model->error = "Invalid account id ".$model->dr_account;
+                    $model->error = "Invalid account id " . $model->dr_account;
                 } else {
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
                         if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INVESTMENT, $model->payment, $model->description)) {
                             $tx->commit();
-                            return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
+                            return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
                         $model->error = $txHnd->error;
                         $tx->rollBack();
@@ -124,21 +107,21 @@ class TransactionController extends LmsController
     {
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate()) {
+            if ($model->validate()) {
                 $crAcc = Account::findOne($model->cr_account);
-                if ($crAcc == null){
-                    $model->error = "Invalid account id ".$model->cr_account;
+                if ($crAcc == null) {
+                    $model->error = "Invalid account id " . $model->cr_account;
                 } else if ($crAcc->type != Account::TYPE_TELLER) {
-                    $model->error = $model->cr_account." is not a teller account";
+                    $model->error = $model->cr_account . " is not a teller account";
                 } else if (Account::findOne($model->dr_account) == null) {
-                    $model->error = "Invalid account id ".$model->dr_account;
+                    $model->error = "Invalid account id " . $model->dr_account;
                 } else {
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
                         if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
                             $tx->commit();
-                            return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
+                            return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
                         $model->error = $txHnd->error;
                         $tx->rollBack();
@@ -166,21 +149,21 @@ class TransactionController extends LmsController
     {
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate()) {
+            if ($model->validate()) {
                 $drAcc = Account::findOne($model->dr_account);
-                if ($drAcc == null){
-                    $model->error = "Invalid account id ".$model->dr_account;
+                if ($drAcc == null) {
+                    $model->error = "Invalid account id " . $model->dr_account;
                 } else if ($drAcc->type != Account::TYPE_TELLER) {
-                    $model->error = $model->dr_account." is not a teller account";
+                    $model->error = $model->dr_account . " is not a teller account";
                 } else if (Account::findOne($model->cr_account) == null) {
-                    $model->error = "Invalid account id ".$model->cr_account;
+                    $model->error = "Invalid account id " . $model->cr_account;
                 } else {
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
                         if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
                             $tx->commit();
-                            return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
+                            return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
                         $model->error = $txHnd->error;
                         $tx->rollBack();
@@ -208,22 +191,22 @@ class TransactionController extends LmsController
     {
         $model = new BankTransaction();
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate()) {
+            if ($model->validate()) {
                 $model->dr_account = BankAccount::findOne($model->bank_account)->account_id;
                 $drAcc = Account::findOne($model->dr_account);
-                if ($drAcc == null){
-                    $model->error = "Invalid account id ".$model->dr_account;
+                if ($drAcc == null) {
+                    $model->error = "Invalid account id " . $model->dr_account;
                 } else if ($drAcc->type != Account::TYPE_BANK) {
-                    $model->error = $model->dr_account." is not a bank account";
+                    $model->error = $model->dr_account . " is not a bank account";
                 } else if (Account::findOne($model->cr_account) == null) {
-                    $model->error = "Invalid account id ".$model->cr_account;
+                    $model->error = "Invalid account id " . $model->cr_account;
                 } else {
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
                         if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::BANK, $model->payment, $model->description)) {
                             $tx->commit();
-                            return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
+                            return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
                         $model->error = $txHnd->error;
                         $tx->rollBack();
@@ -251,22 +234,22 @@ class TransactionController extends LmsController
     {
         $model = new BankTransaction();
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate()) {
+            if ($model->validate()) {
                 $model->cr_account = BankAccount::findOne($model->bank_account)->account_id;
                 $crAcc = Account::findOne($model->cr_account);
-                if ($crAcc == null){
-                    $model->error = "Invalid account id ".$model->cr_account;
+                if ($crAcc == null) {
+                    $model->error = "Invalid account id " . $model->cr_account;
                 } else if ($crAcc->type != Account::TYPE_BANK) {
-                    $model->error = $model->cr_account." is not a bank account";
+                    $model->error = $model->cr_account . " is not a bank account";
                 } else if (Account::findOne($model->dr_account) == null) {
-                    $model->error = "Invalid account id ".$model->dr_account;
+                    $model->error = "Invalid account id " . $model->dr_account;
                 } else {
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
                         if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::BANK, $model->payment, $model->description)) {
                             $tx->commit();
-                            return $this->redirect(['transaction/view', 'id'=>$txHnd->txid]);
+                            return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
                         $model->error = $txHnd->error;
                         $tx->rollBack();

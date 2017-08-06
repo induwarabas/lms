@@ -1,12 +1,8 @@
 <?php
 
-use app\utils\enums\PaymentType;
-use app\utils\widgets\CustomerView;
-use yii\bootstrap\Alert;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 use Zelenin\yii\SemanticUI\Elements;
-use Zelenin\yii\SemanticUI\widgets\ActiveForm;
+use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 
 /* @var $this yii\web\View */

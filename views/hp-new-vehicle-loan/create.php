@@ -12,7 +12,7 @@ use yii\helpers\Html;
 /* @var $guarantor2 app\models\Customer */
 /* @var $guarantor3 app\models\Customer */
 
-$this->title = 'Create '.LoanType::findOne($loan->type)->name;
+$this->title = 'Create ' . LoanType::findOne($loan->type)->name;
 $this->params['breadcrumbs'][] = ['label' => 'Hp New Vehicle Loans', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

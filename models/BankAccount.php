@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "bank_account".
  *
@@ -60,11 +58,12 @@ class BankAccount extends \yii\db\ActiveRecord
         return new BankAccountQuery(get_called_class());
     }
 
-    public static function getBankAccItems() {
+    public static function getBankAccItems()
+    {
         $items = [];
         $accounts = BankAccount::find()->all();
         foreach ($accounts as $account) {
-            $items[$account->id] = Bank::findOne($account->bank)->name." - ".$account->bank_account_id;
+            $items[$account->id] = Bank::findOne($account->bank)->name . " - " . $account->bank_account_id;
             //array_push($items, ]);
         }
         return $items;

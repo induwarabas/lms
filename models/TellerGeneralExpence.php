@@ -1,7 +1,6 @@
 <?php
 
 namespace app\models;
-use app\utils\validators\SavingAccountValidator;
 
 /**
  * This is the model class for table "account".
@@ -17,6 +16,7 @@ class TellerGeneralExpence extends \yii\base\Model
     public $description;
     public $stage;
     public $link;
+
     /**
      * @inheritdoc
      */

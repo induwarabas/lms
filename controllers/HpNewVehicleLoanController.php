@@ -5,12 +5,9 @@ namespace app\controllers;
 use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\HpNewVehicleLoanEx;
-use app\models\HpNewVehicleLoanSearch;
 use app\models\Loan;
-use app\utils\enums\LoanTypes;
 use app\utils\loan\LoanCreator;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**

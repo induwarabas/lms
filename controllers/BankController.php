@@ -2,12 +2,10 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\Bank;
 use app\models\BankSearch;
-use app\controllers\LmsController;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * BankController implements the CRUD actions for Bank model.

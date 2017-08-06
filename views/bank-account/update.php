@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $model app\models\BankAccount */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Bank Account',
-]) . $model->id;
+        'modelClass' => 'Bank Account',
+    ]) . $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Bank Accounts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');

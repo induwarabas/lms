@@ -1,7 +1,7 @@
 <?php
 
 namespace app\models;
-use app\utils\enums\LoanTypes;
+
 use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CanvasserView;
 use app\utils\widgets\CustomerView;
@@ -32,7 +32,8 @@ class Account extends \yii\db\ActiveRecord
     const PROTECTION_PLUS = 'PLUS';
     const PROTECTION_MINUS = 'MINUS';
 
-    public static function getTypeId($type) {
+    public static function getTypeId($type)
+    {
         static $TYPE_IDS = [
             Account::TYPE_SAVING => '1',
             Account::TYPE_LOAN => '2',
@@ -103,7 +104,8 @@ class Account extends \yii\db\ActiveRecord
      * Get the teller account
      * @return \app\models\Account
      */
-    public static function getTellerAccount() {
+    public static function getTellerAccount()
+    {
         $accountID = Account::createAccountId(Account::TYPE_TELLER, \Yii::$app->getUser()->id);
         $account = Account::findOne($accountID);
         if ($account == null) {
@@ -119,54 +121,56 @@ class Account extends \yii\db\ActiveRecord
         return $account;
     }
 
-    public function getAccountName() {
-        if($this->type == Account::TYPE_SAVING) {
+    public function getAccountName()
+    {
+        if ($this->type == Account::TYPE_SAVING) {
             $loan = Loan::findOne(['saving_account' => $this->id]);
             if ($loan != null) {
                 $customer = Customer::findOne($loan->customer_id);
-                return "Saving account of ".LoanType::findOne($loan->type)->name." "
-                    .Html::a("loan #".$loan->id, Url::to(['loan/view', 'id' => $loan->id]))
-                    ." of ".CustomerView::widget(['customer' => $customer]);
+                return "Saving account of " . LoanType::findOne($loan->type)->name . " "
+                    . Html::a("loan #" . $loan->id, Url::to(['loan/view', 'id' => $loan->id]))
+                    . " of " . CustomerView::widget(['customer' => $customer]);
             }
         } else if ($this->type == Account::TYPE_LOAN) {
             $loan = Loan::findOne(['loan_account' => $this->id]);
             if ($loan != null) {
                 $customer = Customer::findOne($loan->customer_id);
-                return "Loan account of ".LoanType::findOne($loan->type)->name." "
-                    .Html::a("loan #".$loan->id, Url::to(['loan/view', 'id' => $loan->id]))
-                    ." of ".CustomerView::widget(['customer' => $customer]);
+                return "Loan account of " . LoanType::findOne($loan->type)->name . " "
+                    . Html::a("loan #" . $loan->id, Url::to(['loan/view', 'id' => $loan->id]))
+                    . " of " . CustomerView::widget(['customer' => $customer]);
             }
-        } else if($this->type == Account::TYPE_SUPPLIER) {
+        } else if ($this->type == Account::TYPE_SUPPLIER) {
             $supplier = Supplier::findOne(['account' => $this->id]);
             if ($supplier != null) {
-                return "Supplier ".SupplierView::widget(['supplier' => $supplier]);
+                return "Supplier " . SupplierView::widget(['supplier' => $supplier]);
             }
-        } else if($this->type == Account::TYPE_CANVASSER) {
+        } else if ($this->type == Account::TYPE_CANVASSER) {
             $canvasser = Canvasser::findOne(['account' => $this->id]);
             if ($canvasser != null) {
-                return "Canvasser ".CanvasserView::widget(['canvasser' => $canvasser]);
+                return "Canvasser " . CanvasserView::widget(['canvasser' => $canvasser]);
             }
-        }else if($this->type == Account::TYPE_TELLER) {
+        } else if ($this->type == Account::TYPE_TELLER) {
             $userid = intval(substr($this->id, 1));
             $user = \webvimark\modules\UserManagement\models\User::findOne($userid);
             if ($user != null) {
-                return "Teller ".$user->username;
+                return "Teller " . $user->username;
             }
-        }else if($this->type == Account::TYPE_BANK) {
+        } else if ($this->type == Account::TYPE_BANK) {
             $bankAcc = BankAccount::findOne(['account_id' => $this->id]);
             if ($bankAcc != null) {
-                return Html::a(Bank::findOne($bankAcc->bank)->name." - ".$bankAcc->bank_account_id, ['bank-account/view', ['id' => $bankAcc->id]]);
+                return Html::a(Bank::findOne($bankAcc->bank)->name . " - " . $bankAcc->bank_account_id, ['bank-account/view', ['id' => $bankAcc->id]]);
             }
-        }else if($this->type == Account::TYPE_GENERAL) {
+        } else if ($this->type == Account::TYPE_GENERAL) {
             $ga = GeneralAccount::findOne(['id' => $this->id]);
             if ($ga != null) {
-                return "General account ".$ga->name. "(".$ga->description.")";
+                return "General account " . $ga->name . "(" . $ga->description . ")";
             }
         }
         return "Invalid account";
     }
 
-    public function getAccountHtml() {
-        return AccountIDView::widget(['accountId' => $this->id])." : ".$this->getAccountName();
+    public function getAccountHtml()
+    {
+        return AccountIDView::widget(['accountId' => $this->id]) . " : " . $this->getAccountName();
     }
 }

@@ -3,10 +3,7 @@
 use app\models\CollectionMethod;
 use yii\bootstrap\Alert;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
-use Zelenin\yii\SemanticUI\Elements;
-use Zelenin\yii\SemanticUI\helpers\Size;
-use Zelenin\yii\SemanticUI\modules\Modal;
+use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Loan */

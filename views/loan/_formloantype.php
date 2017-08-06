@@ -1,12 +1,8 @@
 <?php
 
-use app\models\CollectionMethod;
+use app\models\LoanType;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use \app\models\LoanType;
-use Zelenin\yii\SemanticUI\Elements;
-use Zelenin\yii\SemanticUI\helpers\Size;
-use Zelenin\yii\SemanticUI\modules\Modal;
 use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -23,6 +19,6 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
     <div class="form-group">
         <?= Html::submitButton('Create', ['class' => 'ui button green']) ?>
         <?= Html::a('Cancel', ['index'], ['class' => 'ui button']) ?>
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 
-</div>
+    </div>

@@ -2,12 +2,10 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\VehicleType;
 use app\models\VehicleTypeSearch;
-use app\controllers\LmsController;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * VehicleTypeController implements the CRUD actions for VehicleType model.

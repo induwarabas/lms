@@ -1,21 +1,18 @@
 <?php
 
-use app\models\Canvasser;
 use app\models\CollectionMethod;
-use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
 use app\utils\enums\LoanStatus;
 use app\utils\widgets\CanvasserView;
 use app\utils\widgets\CommissionView;
-use app\utils\widgets\CustomerSelector;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
 use dosamigos\datepicker\DatePicker;
+use kartik\form\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\Elements;
-use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -30,7 +27,7 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 <div class="hp-new-vehicle-loan-form">
 
-    <?php $form = ActiveForm::begin(['id' => 'hp']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'hp', 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
     <?= Html::hiddenInput("action", "submit") ?>
     <?= $form->field($loan, 'type')->hiddenInput()->label(false) ?>
     <?= $form->field($loan, 'id')->hiddenInput()->label(false) ?>
@@ -68,11 +65,15 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
             'model' => $loan,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute' => 'status', 'format' => 'html', 'value' => function($data) {return LoanStatus::label($data->status);}],
+                ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
+                    return LoanStatus::label($data->status);
+                }],
                 'amount',
                 'charges',
                 'interest',
-                ['attribute' => 'penalty', 'format' => 'html','value' => function($data) {return isset($data->penalty)? $data->penalty.' %' : '<span class="not-set">(not set)</span>';}],
+                ['attribute' => 'penalty', 'format' => 'html', 'value' => function ($data) {
+                    return isset($data->penalty) ? $data->penalty . ' %' : '<span class="not-set">(not set)</span>';
+                }],
                 ['attribute' => 'collection_method', 'value' => CollectionMethod::findOne(['id' => $loan->collection_method])->name],
                 'period',
                 'installment',
@@ -90,10 +91,10 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
             'model' => $model,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute'=>'supplier', 'format' => 'html','value'=> SupplierView::widget(['supplier' => $model->supplier])],
-                ['attribute' => 'sales_commision', 'format' => 'html','value' => CommissionView::widget(['model' => $model, 'type' => 'sales', 'owner' => 'supplier'])],
-                ['attribute'=>'canvassed', 'format' => 'html','value'=> CanvasserView::widget(['canvasser' => $model->canvassed])],
-                ['attribute' => 'canvassing_commision', 'format' => 'html','value' => CommissionView::widget(['model' => $model, 'type' => 'canvassing', 'owner' => 'canvassed'])],
+                ['attribute' => 'supplier', 'format' => 'html', 'value' => SupplierView::widget(['supplier' => $model->supplier])],
+                ['attribute' => 'sales_commision', 'format' => 'html', 'value' => CommissionView::widget(['model' => $model, 'type' => 'sales', 'owner' => 'supplier'])],
+                ['attribute' => 'canvassed', 'format' => 'html', 'value' => CanvasserView::widget(['canvasser' => $model->canvassed])],
+                ['attribute' => 'canvassing_commision', 'format' => 'html', 'value' => CommissionView::widget(['model' => $model, 'type' => 'canvassing', 'owner' => 'canvassed'])],
             ],
         ]) ?>
     </div>

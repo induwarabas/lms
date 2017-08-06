@@ -21,7 +21,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
     <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'area')->dropDownList(ArrayHelper::map(Area::find()->all(), 'id', 'name'))  ?>
+    <?= $form->field($model, 'area')->dropDownList(ArrayHelper::map(Area::find()->all(), 'id', 'name')) ?>
 
     <?= $form->field($model, 'residential_address')->textarea(['rows' => 6]) ?>
 
@@ -48,10 +48,10 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
         <?php
-        if ($spouse != null){
-            echo Html::a('Cancel' , Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $spouse->id]), ['class' => 'ui button']);
+        if ($spouse != null) {
+            echo Html::a('Cancel', Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $spouse->id]), ['class' => 'ui button']);
         } else if (!$model->isNewRecord) {
-            echo Html::a('Cancel' , Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $model->id]), ['class' => 'ui button']);
+            echo Html::a('Cancel', Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $model->id]), ['class' => 'ui button']);
         }
         ?>
     </div>

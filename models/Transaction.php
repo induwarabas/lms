@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "transaction".
  *
@@ -38,10 +36,10 @@ class Transaction extends \yii\db\ActiveRecord
     {
         return [
             [['timestamp'], 'safe'],
-            [['cr_account', 'dr_account', 'cr_balance', 'dr_balance', 'amount', 'type', 'txlink', 'description','payment','user'], 'required'],
+            [['cr_account', 'dr_account', 'cr_balance', 'dr_balance', 'amount', 'type', 'txlink', 'description', 'payment', 'user'], 'required'],
             [['cr_balance', 'dr_balance', 'amount'], 'number'],
             [['cr_account', 'dr_account'], 'string', 'max' => 12],
-            [['type','payment'], 'string', 'max' => 10],
+            [['type', 'payment'], 'string', 'max' => 10],
             [['cheque', 'user'], 'string', 'max' => 32],
             [['txlink'], 'string', 'max' => 20],
             [['description'], 'string', 'max' => 128],

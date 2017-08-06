@@ -7,14 +7,12 @@ use app\models\BankAccount;
 use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\Loan;
-use app\models\LoanSchedule;
 use app\models\LoanType;
 use app\models\Supplier;
 use app\models\TellerGeneralExpence;
 use app\models\TellerPayment;
 use app\models\TellerReceipt;
 use app\models\Transaction;
-use app\models\User;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\PaymentType;
@@ -25,11 +23,6 @@ use app\utils\TxHandler;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
 use Yii;
-use app\models\VehicleType;
-use app\models\VehicleTypeSearch;
-use app\controllers\LmsController;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TellerController
@@ -167,9 +160,9 @@ class TellerController extends LmsController
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
-                } else if($model->payment == 'CHEQUE' && $model->cheque == '') {
+                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
                     $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
-                } else if($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
                     $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
                 } else {
                     if (Transaction::findOne(['txlink' => $model->link]) != null) {
@@ -209,7 +202,7 @@ class TellerController extends LmsController
             $savingAccount = Account::findOne($loan->saving_account);
             $balance = $savingAccount->balance - $due;
             $model->drAccount = GeneralAccounts::PAYABLE;
-            $chequeWriteTo = "Cheques should be written directly to the customer ".CustomerView::widget(['customer' => $customer]);
+            $chequeWriteTo = "Cheques should be written directly to the customer " . CustomerView::widget(['customer' => $customer]);
             if (LoanTypes::isVehicleLoan($loan->type)) {
                 $loanex = HpNewVehicleLoan::findOne($loan->id);
                 if ($loanex->vehicle_no != null && $loanex->vehicle_no != '') {
@@ -222,11 +215,11 @@ class TellerController extends LmsController
                         $details .= " / " . $loanex->chasis_no;
                     }
                 }
-                if ($loanex->supplier != null&& $loanex->supplier != 0) {
+                if ($loanex->supplier != null && $loanex->supplier != 0) {
                     $supplier = Supplier::findOne($loanex->supplier);
                     $model->drAccount = $supplier->account;
                     $model->amount = $loan->amount + $loanex->getSalesCommission();
-                    $chequeWriteTo = "Cheques should be written to the supplier ".SupplierView::widget(['supplier' => $supplier]);
+                    $chequeWriteTo = "Cheques should be written to the supplier " . SupplierView::widget(['supplier' => $supplier]);
                 }
             }
 
@@ -267,7 +260,7 @@ class TellerController extends LmsController
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
-                        if ($txHnd->createTransaction(GeneralAccounts::EXPENSES,  $teller->id,$model->amount, TxType::EXPENSE, PaymentType::CASH, $model->description, $model->link)) {
+                        if ($txHnd->createTransaction(GeneralAccounts::EXPENSES, $teller->id, $model->amount, TxType::EXPENSE, PaymentType::CASH, $model->description, $model->link)) {
                             $tx->commit();
                             $model->stage = 1;
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
@@ -315,7 +308,7 @@ class TellerController extends LmsController
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
-                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::EXPENSES,$model->amount, TxType::EXPENSE, PaymentType::CASH, $model->description, $model->link)) {
+                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::EXPENSES, $model->amount, TxType::EXPENSE, PaymentType::CASH, $model->description, $model->link)) {
                             $tx->commit();
                             $model->stage = 1;
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);

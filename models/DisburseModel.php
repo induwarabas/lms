@@ -1,7 +1,6 @@
 <?php
 
 namespace app\models;
-use app\utils\validators\SavingAccountValidator;
 
 /**
  * This is the model class for table "account".

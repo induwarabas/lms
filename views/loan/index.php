@@ -23,19 +23,25 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Loan', ['createx'], ['class' => 'btn btn-success']) ?>
     </p>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
+    <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'rowOptions' =>function ($model, $key, $index, $grid) {
-                return ['id' => $model['id'], 'onclick' => 'window.location = "'.Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $model['id']]).'";'];
-            },
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            return ['id' => $model['id'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $model['id']]) . '";'];
+        },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
             'id',
-            ['attribute' => 'type', 'content' => function($data){return LoanType::findOne(['id' => $data->type])->name;}, 'filter'=>array_merge(['0'=>'All'], ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name')),],
-            ['attribute' => 'customer_id', 'content' => function($data){return Customer::findOne(['id' => $data->customer_id])->name;}],
+            ['attribute' => 'type', 'content' => function ($data) {
+                return LoanType::findOne(['id' => $data->type])->name;
+            }, 'filter' => array_merge(['0' => 'All'], ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name')),],
+            ['attribute' => 'customer_id', 'content' => function ($data) {
+                return Customer::findOne(['id' => $data->customer_id])->name;
+            }],
             'amount',
-            ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return LoanStatus::label($data->status);}]
+            ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
+                return LoanStatus::label($data->status);
+            }]
             // 'collection_method',
             // 'period',
             // 'status',
@@ -43,4 +49,4 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'closed_date',
         ],
     ]); ?>
-<?php Pjax::end(); ?></div>
+    <?php Pjax::end(); ?></div>

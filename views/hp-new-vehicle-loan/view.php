@@ -1,10 +1,8 @@
 <?php
 
-use app\models\Canvasser;
 use app\models\CollectionMethod;
 use app\models\DisburseModel;
 use app\models\LoanType;
-use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
 use app\utils\enums\LoanStatus;
@@ -14,15 +12,14 @@ use app\utils\widgets\CommissionView;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
 use dosamigos\datepicker\DatePicker;
+use kartik\form\ActiveForm;
 use webvimark\modules\UserManagement\models\User;
 use yii\bootstrap\Alert;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\DetailView;
 use Zelenin\yii\SemanticUI\Elements;
 use Zelenin\yii\SemanticUI\helpers\Size;
-use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\HpNewVehicleLoan */
@@ -48,18 +45,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'options' => [
                 'class' => 'alert-danger',
             ],
-            'body' => '<b>Error:</b> '.$error,
+            'body' => '<b>Error:</b> ' . $error,
         ]);
     } ?>
 
-    <?php if ($loan->status == 'PENDING' && User::hasPermission('loandisburse')) {?>
+    <?php if ($loan->status == 'PENDING' && User::hasPermission('loandisburse')) { ?>
         <?php $dsb = new DisburseModel(['date' => ($loan->disbursed_date != null && $loan->disbursed_date != '') ? $loan->disbursed_date : date('Y-m-d'), 'loan' => $model->id]); ?>
-        <?php $frm = ActiveForm::begin(['action' => ['loan/disburse']]); ?>
+        <?php $frm = ActiveForm::begin(['action' => ['loan/disburse'], 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
         <?php $modal = Modal::begin([
             'size' => Size::TINY,
             'header' => '<h2>Disburse loan</h2>',
             'toggleButton' => ['label' => 'Disburse this loan', 'class' => 'ui button red'],
-            'footer' => Html::submitButton(Elements::icon('checkmark')."Disburse", ['class' => 'ui button red'])
+            'footer' => Html::submitButton(Elements::icon('checkmark') . "Disburse", ['class' => 'ui button red'])
                 . Elements::button('Nope', ['class' => 'ui button default', 'data-dismiss' => 'modal'])
 
         ]); ?>
@@ -72,7 +69,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php $modal::end(); ?>
 
         <?php $frm::end() ?>
-    <?php } ?><hr/>
+    <?php } ?>
+    <hr/>
 
     <?php
     if (User::hasPermission('editafterdisburse')) {
@@ -110,13 +108,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $loan,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute' => 'type', 'value' => function($data) {return LoanType::findOne($data->type)->name;}],
-                ['attribute' => 'status', 'format' => 'html', 'value' => function($data) {return LoanStatus::label($data->status);}],
+                ['attribute' => 'type', 'value' => function ($data) {
+                    return LoanType::findOne($data->type)->name;
+                }],
+                ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
+                    return LoanStatus::label($data->status);
+                }],
                 ['attribute' => 'amount', 'value' => number_format($loan->amount, 2)],
                 ['attribute' => 'charges', 'value' => number_format($loan->charges, 2)],
-                ['attribute' => 'amount', 'label' => 'Loan Amount', 'format' => 'html', 'value' => function($data) {return number_format($data->amount + $data->charges, 2);}],
-                ['attribute' => 'interest', 'value' => function($data) {return $data->interest.' %';}],
-                ['attribute' => 'penalty', 'value' => function($data) {return $data->penalty.' %';}],
+                ['attribute' => 'amount', 'label' => 'Loan Amount', 'format' => 'html', 'value' => function ($data) {
+                    return number_format($data->amount + $data->charges, 2);
+                }],
+                ['attribute' => 'interest', 'value' => function ($data) {
+                    return $data->interest . ' %';
+                }],
+                ['attribute' => 'penalty', 'value' => function ($data) {
+                    return $data->penalty . ' %';
+                }],
                 ['attribute' => 'collection_method', 'value' => CollectionMethod::findOne(['id' => $loan->collection_method])->name],
                 'period',
                 'installment',
@@ -155,10 +163,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute'=>'supplier', 'format' => 'html','value'=> SupplierView::widget(['supplier' => $model->supplier])],
-                ['attribute' => 'sales_commision', 'format' => 'html','value' => CommissionView::widget(['model' => $model, 'type' => 'sales', 'owner' => 'supplier'])],
-                ['attribute'=>'canvassed', 'format' => 'html','value'=> CanvasserView::widget(['canvasser' => $model->canvassed])],
-                ['attribute' => 'canvassing_commision', 'format' => 'html','value' => CommissionView::widget(['model' => $model, 'type' => 'canvassing', 'owner' => 'canvassed'])],
+                ['attribute' => 'supplier', 'format' => 'html', 'value' => SupplierView::widget(['supplier' => $model->supplier])],
+                ['attribute' => 'sales_commision', 'format' => 'html', 'value' => CommissionView::widget(['model' => $model, 'type' => 'sales', 'owner' => 'supplier'])],
+                ['attribute' => 'canvassed', 'format' => 'html', 'value' => CanvasserView::widget(['canvasser' => $model->canvassed])],
+                ['attribute' => 'canvassing_commision', 'format' => 'html', 'value' => CommissionView::widget(['model' => $model, 'type' => 'canvassing', 'owner' => 'canvassed'])],
             ],
         ]) ?>
     </div>
@@ -171,11 +179,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
                 'rmv_sent_date',
-                ['attribute' => 'rmv_sent_agent', 'format' => 'html','value' => function($data) {return isset($data->rmv_sent_agent) && $data->rmv_sent_agent != '' ? $data->rmv_sent_agent: '<span class="not-set">(not set)</span>';}],
-                ['attribute' => 'rmv_sent_by', 'format' => 'html','value' => function($data) {return isset($data->rmv_sent_by) && $data->rmv_sent_by != '' ? $data->rmv_sent_by: '<span class="not-set">(not set)</span>';}],
+                ['attribute' => 'rmv_sent_agent', 'format' => 'html', 'value' => function ($data) {
+                    return isset($data->rmv_sent_agent) && $data->rmv_sent_agent != '' ? $data->rmv_sent_agent : '<span class="not-set">(not set)</span>';
+                }],
+                ['attribute' => 'rmv_sent_by', 'format' => 'html', 'value' => function ($data) {
+                    return isset($data->rmv_sent_by) && $data->rmv_sent_by != '' ? $data->rmv_sent_by : '<span class="not-set">(not set)</span>';
+                }],
                 'rmv_recv_date',
-                ['attribute' => 'rmv_recv_agent', 'format' => 'html','value' => function($data) {return isset($data->rmv_recv_agent) && $data->rmv_recv_agent != '' ? $data->rmv_recv_agent: '<span class="not-set">(not set)</span>';}],
-                ['attribute' => 'rmv_recv_by', 'format' => 'html','value' => function($data) {return isset($data->rmv_recv_by) && $data->rmv_recv_by != '' ? $data->rmv_recv_by: '<span class="not-set">(not set)</span>';}],
+                ['attribute' => 'rmv_recv_agent', 'format' => 'html', 'value' => function ($data) {
+                    return isset($data->rmv_recv_agent) && $data->rmv_recv_agent != '' ? $data->rmv_recv_agent : '<span class="not-set">(not set)</span>';
+                }],
+                ['attribute' => 'rmv_recv_by', 'format' => 'html', 'value' => function ($data) {
+                    return isset($data->rmv_recv_by) && $data->rmv_recv_by != '' ? $data->rmv_recv_by : '<span class="not-set">(not set)</span>';
+                }],
             ],
         ]) ?>
     </div>

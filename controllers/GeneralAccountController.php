@@ -2,12 +2,10 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\GeneralAccount;
 use app\models\GeneralAccountSearch;
-use app\controllers\LmsController;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * GeneralAccountController implements the CRUD actions for GeneralAccount model.

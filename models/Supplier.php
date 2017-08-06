@@ -3,7 +3,6 @@
 namespace app\models;
 
 use app\utils\PhoneNoValidator;
-use Yii;
 use yii\validators\EmailValidator;
 
 /**
@@ -40,7 +39,7 @@ class Supplier extends \yii\db\ActiveRecord
             [['name', 'status', 'address', 'phone'], 'required'],
             [['status', 'address'], 'string'],
             [['bank'], 'integer'],
-            [['name', 'contact','bank_account_name'], 'string', 'max' => 128],
+            [['name', 'contact', 'bank_account_name'], 'string', 'max' => 128],
             [['account'], 'string', 'max' => 12],
             [['phone', 'mobile'], 'string', 'max' => 16],
             [['email'], 'string', 'max' => 64],

@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Canvasser', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
+    <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             return ['id' => $model['id'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['canvasser/view', 'id' => $model['id']]) . '";'];
@@ -35,7 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
                 return CanvasserStatus::label($data->status);
             }],
-            ['attribute'=>'phone', 'content'=> function($data) {return PhoneNoFormatter::formatAll($data->phone, $data->mobile, '');}],
+            ['attribute' => 'phone', 'content' => function ($data) {
+                return PhoneNoFormatter::formatAll($data->phone, $data->mobile, '');
+            }],
         ],
     ]); ?>
-<?php Pjax::end(); ?></div>
+    <?php Pjax::end(); ?></div>

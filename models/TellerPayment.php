@@ -1,7 +1,6 @@
 <?php
 
 namespace app\models;
-use app\utils\validators\SavingAccountValidator;
 
 /**
  * This is the model class for table "account".
@@ -33,6 +32,7 @@ class TellerPayment extends \yii\base\Model
     public $stage;
     public $link;
     public $user;
+
     /**
      * @inheritdoc
      */
@@ -40,8 +40,8 @@ class TellerPayment extends \yii\base\Model
     {
         return [
             [['loanId', 'amount', 'description', 'stage', 'link', 'drAccount'], 'required'],
-            [['loanId', 'description', 'link', 'payment','drAccount', 'crAccount'], 'string'],
-            [['amount', 'stage','txid','bankAccount'], 'number', 'min' => 0],
+            [['loanId', 'description', 'link', 'payment', 'drAccount', 'crAccount'], 'string'],
+            [['amount', 'stage', 'txid', 'bankAccount'], 'number', 'min' => 0],
             [['loanId'], 'string', 'max' => 10],
             [['cheque'], 'string', 'max' => 32],
         ];

@@ -1,12 +1,8 @@
 <?php
 
-use app\utils\enums\PaymentType;
-use app\utils\widgets\CustomerView;
+use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
-use Zelenin\yii\SemanticUI\Elements;
-use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 
 /* @var $this yii\web\View */
@@ -53,14 +49,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->stage != 1) { ?>
         <div class="supplier-form">
 
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
             <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
 
             <div class="form-group">
-                <?= Html::submitButton('Pay', ['class' => 'btn btn-success']) ?>
+                <div class="col-md-offset-2 col-md-10">
+                    <?= Html::submitButton('Pay', ['class' => 'btn btn-success']) ?>
+                </div>
             </div>
 
             <?php ActiveForm::end(); ?>

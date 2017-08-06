@@ -3,14 +3,11 @@
 namespace app\controllers;
 
 use app\models\Account;
-use app\utils\enums\CanvasserStatus;
-use app\utils\enums\SupplierStatus;
-use Yii;
 use app\models\Canvasser;
 use app\models\CanvasserSearch;
-use app\controllers\LmsController;
+use app\utils\enums\CanvasserStatus;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * CanvasserController implements the CRUD actions for Canvasser model.

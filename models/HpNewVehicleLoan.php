@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "hp_new_vehicle_loan".
  *
@@ -49,7 +47,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
         return [
             [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
             [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
-            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance','charges'], 'number'],
+            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges'], 'number'],
             [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
             [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
             [['rmv_sent_agent', 'rmv_sent_by', 'rmv_recv_agent', 'rmv_recv_by'], 'string', 'max' => 64],
@@ -101,7 +99,8 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
      * Gets the sales commission
      * @return number the active query used by this AR class.
      */
-    public function getSalesCommission() {
+    public function getSalesCommission()
+    {
         if (isset($this->supplier) && $this->supplier != 0 && isset($this->sales_commision) && $this->sales_commision > 0.0) {
             if ($this->sales_commision_type == 'Percentage') {
                 return round($this->loan_amount * $this->sales_commision / 100, 2);
@@ -115,7 +114,8 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
      * Gets the canvassing commission
      * @return number the active query used by this AR class.
      */
-    public function getCanvassingCommission() {
+    public function getCanvassingCommission()
+    {
         if (isset($this->canvassed) && $this->canvassed != 0 && isset($this->canvassing_commision) && $this->canvassing_commision > 0.0) {
             if ($this->canvassing_commision_type == 'Percentage') {
                 return round($this->loan_amount * $this->canvassing_commision / 100, 2);

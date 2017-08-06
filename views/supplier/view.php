@@ -29,13 +29,22 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             ['attribute' => 'account', 'format' => 'html', 'value' => AccountIDView::widget(['accountId' => $model->account])],
-            ['attribute' =>'status', 'format' => 'html', 'value' => function($data){ return LoanStatus::label($data->status);}],
+            ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
+                return LoanStatus::label($data->status);
+            }],
             'contact',
             'address:ntext',
-            ['attribute'=>'phone', 'value'=> function($data) {return PhoneNoFormatter::format($data->phone);}],
-            ['attribute'=>'mobile', 'value'=> function($data) {return PhoneNoFormatter::format($data->mobile);}],
+            ['attribute' => 'phone', 'value' => function ($data) {
+                return PhoneNoFormatter::format($data->phone);
+            }],
+            ['attribute' => 'mobile', 'value' => function ($data) {
+                return PhoneNoFormatter::format($data->mobile);
+            }],
             'email:email',
-            ['attribute'=>'bank', 'value'=> function($data) {$bank = Bank::findOne($data->bank); return $bank != null ? $bank->name: '';}],
+            ['attribute' => 'bank', 'value' => function ($data) {
+                $bank = Bank::findOne($data->bank);
+                return $bank != null ? $bank->name : '';
+            }],
             'bank_account_name',
             'bank_account',
         ],

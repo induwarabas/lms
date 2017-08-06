@@ -12,7 +12,7 @@ $this->title = 'Create Customer';
 $spouseData = "";
 if ($spouse !== null) {
     $this->title = 'Create Spouse';
-    $spouseData = " ". $spouse->name." (".$spouse->nic.")";
+    $spouseData = " " . $spouse->name . " (" . $spouse->nic . ")";
 }
 
 $this->params['breadcrumbs'][] = ['label' => 'Customers', 'url' => ['index']];
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="customer-create">
 
-    <h1><?= Html::encode($this->title).$spouseData ?></h1>
+    <h1><?= Html::encode($this->title) . $spouseData ?></h1>
 
     <?= $this->render('_nicform', [
         'model' => $model,

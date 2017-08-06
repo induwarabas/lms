@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\GeneralAccount */
@@ -21,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= DetailView::widget([
         'model' => $model,
+        'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
         'attributes' => [
             'id',
             'name',

@@ -4,7 +4,6 @@ namespace app\models;
 
 use app\utils\NICValidator;
 use app\utils\PhoneNoValidator;
-use Yii;
 use yii\validators\EmailValidator;
 
 /**
@@ -51,7 +50,7 @@ class Customer extends \yii\db\ActiveRecord
             [['nic'], NICValidator::class],
             [['residential_address', 'billing_address', 'work_address'], 'string'],
             [['fixed_salary', 'other_incomes'], 'number'],
-            [['spouse_id','area'], 'integer'],
+            [['spouse_id', 'area'], 'integer'],
             [['nic', 'phone', 'mobile', 'work_phone'], 'string', 'max' => 12],
             [['phone', 'mobile', 'work_phone'], PhoneNoValidator::class],
             [['full_name'], 'string', 'max' => 256],

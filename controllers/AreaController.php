@@ -2,12 +2,10 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\Area;
 use app\models\AreaSearch;
-use app\controllers\LmsController;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * AreaController implements the CRUD actions for Area model.

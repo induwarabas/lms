@@ -3,10 +3,8 @@
 namespace app\models;
 
 use app\utils\NICValidator;
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Customer;
 
 /**
  * CustomerSearch represents the model behind the search form about `app\models\Customer`.
@@ -86,7 +84,7 @@ class CustomerSearchEx extends Customer
                     $phone = substr($phone, 1);
                 }
             }
-            $query->andWhere("phone like '%".$phone."%' or work_phone like '%".$phone."%' or mobile like '%".$phone."%'");
+            $query->andWhere("phone like '%" . $phone . "%' or work_phone like '%" . $phone . "%' or mobile like '%" . $phone . "%'");
         }
 
         $query->andFilterWhere(['like', 'full_name', $this->name])

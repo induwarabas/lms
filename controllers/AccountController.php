@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Account;
+use app\models\AccountSearch;
 use app\models\Customer;
 use app\models\GeneralAccount;
 use app\models\Loan;
@@ -9,12 +11,8 @@ use app\models\Transaction;
 use app\utils\AccountDetails;
 use app\utils\GeneralAccounts;
 use Yii;
-use app\models\Account;
-use app\models\AccountSearch;
-use app\controllers\LmsController;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * AccountController implements the CRUD actions for Account model.
@@ -71,7 +69,8 @@ class AccountController extends LmsController
      * @param string $id
      * @return \app\utils\AccountDetails
      */
-    private function getAccountDetails($id) {
+    private function getAccountDetails($id)
+    {
         $account = Account::findOne($id);
 
         $details = new AccountDetails();
@@ -87,7 +86,7 @@ class AccountController extends LmsController
             $details->name = $customer->name;
             $details->nameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
             $details->descriptionTitle = "Loan";
-            $details->description = "#".$loan->id;
+            $details->description = "#" . $loan->id;
             $details->descriptionUrl = Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id]);
         } else if ($account->type == Account::TYPE_GENERAL) {
             $details->name = GeneralAccounts::names[$id];
@@ -104,10 +103,10 @@ class AccountController extends LmsController
      */
     public function actionLedger($id)
     {
-        $query = Transaction::find()->where("cr_account = :acc or dr_account = :acc", [":acc" => $id])->orderBy(['txid'=>SORT_DESC])->limit(10);
+        $query = Transaction::find()->where("cr_account = :acc or dr_account = :acc", [":acc" => $id])->orderBy(['txid' => SORT_DESC])->limit(10);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' =>false,
+            'sort' => false,
             'pagination' => false,
         ]);
 

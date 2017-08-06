@@ -3,12 +3,10 @@
 namespace app\controllers;
 
 use app\models\Account;
-use Yii;
 use app\models\BankAccount;
 use app\models\BankAccountSearch;
-use app\controllers\LmsController;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * BankAccountController implements the CRUD actions for BankAccount model.
@@ -53,7 +51,7 @@ class BankAccountController extends LmsController
 
         if ($model->load(Yii::$app->request->post())) {
             $tx = Yii::$app->getDb()->beginTransaction();
-            if($model->save()) {
+            if ($model->save()) {
                 $acc = new Account();
                 $acc->id = Account::createAccountId(Account::TYPE_BANK, $model->primaryKey);
                 $acc->type = Account::TYPE_BANK;

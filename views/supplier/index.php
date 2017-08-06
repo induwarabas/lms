@@ -35,7 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
                 return SupplierStatus::label($data->status);
             }],
-            ['attribute'=>'phone', 'content'=> function($data) {return PhoneNoFormatter::formatAll($data->phone, $data->mobile, '');}],
+            ['attribute' => 'phone', 'content' => function ($data) {
+                return PhoneNoFormatter::formatAll($data->phone, $data->mobile, '');
+            }],
         ],
     ]); ?>
     <?php Pjax::end(); ?></div>

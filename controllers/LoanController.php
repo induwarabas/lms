@@ -12,9 +12,7 @@ use app\utils\loan\LoanDisbursement;
 use app\utils\loan\LoanRecovery;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\data\SqlDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\db\Query;
 
 /**
  * LoanController implements the CRUD actions for Loan model.
@@ -254,23 +252,23 @@ class LoanController extends LmsController
             } else {
                 $tx->rollBack();
             }
-            $this->redirect(['view', 'id' => $model->loan, 'error'=>$disbursement->error]);
-        }else {
-            $this->redirect(['view', 'id' => $model->loan, 'error'=>'Invalid request']);
+            $this->redirect(['view', 'id' => $model->loan, 'error' => $disbursement->error]);
+        } else {
+            $this->redirect(['view', 'id' => $model->loan, 'error' => 'Invalid request']);
         }
 
     }
 
     public function actionRecover($id)
     {
-        $date = Yii::$app->request->getQueryParam('date',null);
+        $date = Yii::$app->request->getQueryParam('date', null);
         if ($date == null) {
             $date = date('Y-m-d');
         }
         $disbursement = new LoanRecovery();
         if ($disbursement->recover($id, $date)) {
             return $this->redirect(["view", 'id' => $id]);
-        }else{
+        } else {
             echo $disbursement->error;
         }
     }

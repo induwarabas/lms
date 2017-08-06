@@ -2,15 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\LoginForm;
 use app\utils\enums\PaymentType;
 use app\utils\TxHandler;
 use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends LmsController
 {
@@ -106,7 +102,7 @@ class SiteController extends LmsController
     public function actionContact()
     {
         $tx = new TxHandler();
-        if ($tx->createTransaction("9000000001", "9000000002", 1000, "CAPITAL", PaymentType::INTERNAL,"Initial transfer")) {
+        if ($tx->createTransaction("9000000001", "9000000002", 1000, "CAPITAL", PaymentType::INTERNAL, "Initial transfer")) {
             echo $tx->getTransactionID();
         } else {
             echo $tx->getError();

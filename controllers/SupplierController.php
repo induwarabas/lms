@@ -6,7 +6,6 @@ use app\models\Account;
 use app\models\Supplier;
 use app\models\SupplierSarch;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
 /**

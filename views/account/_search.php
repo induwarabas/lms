@@ -26,7 +26,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
             </td>
             <td>
                 <div class="field field-from">
-                    <?= DatePicker::widget(['name' => 'from', 'value' => $history['from'],'clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
+                    <?= DatePicker::widget(['name' => 'from', 'value' => $history['from'], 'clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
                 </div>
             </td>
             <td style="padding-right: 10px;padding-left: 40px;width: 1%;white-space:nowrap;">
@@ -36,7 +36,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
             </td>
             <td>
                 <div class="field field-from">
-                    <?= DatePicker::widget(['name' => 'to', 'value' => $history['to'],'clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
+                    <?= DatePicker::widget(['name' => 'to', 'value' => $history['to'], 'clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
                 </div>
             </td>
             <td>
@@ -46,9 +46,6 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
             </td>
         </tr>
     </table>
-
-
-
 
 
     <?php ActiveForm::end(); ?>

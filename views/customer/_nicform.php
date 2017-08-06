@@ -1,9 +1,7 @@
 <?php
 
-use dosamigos\datepicker\DatePicker;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use Zelenin\yii\SemanticUI\Elements;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Customer */
@@ -14,17 +12,19 @@ use Zelenin\yii\SemanticUI\Elements;
 
 <div class="customer-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
     <?= $form->field($model, 'nic')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Create', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
-        <?php
-        if ($spouse != null){
-            echo Html::a('Cancel' , Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $spouse->id]), ['class' => 'ui button']);
-        }
-        ?>
+        <div class="col-md-offset-2 col-md-10">
+            <?= Html::submitButton('Create', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
+            <?php
+            if ($spouse != null) {
+                echo Html::a('Cancel', Yii::$app->getUrlManager()->createUrl(["customer/view", "id" => $spouse->id]), ['class' => 'ui button']);
+            }
+            ?>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>
