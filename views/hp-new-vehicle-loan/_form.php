@@ -8,10 +8,10 @@ use app\models\VehicleType;
 use app\utils\widgets\CommissionSelector;
 use app\utils\widgets\CustomerSelector;
 use dosamigos\datepicker\DatePicker;
+use kartik\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\Elements;
-use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\HpNewVehicleLoan */
@@ -25,7 +25,8 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 <div class="hp-new-vehicle-loan-form">
 
-    <?php $form = ActiveForm::begin(['id' => 'hp']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'hp','type' => ActiveForm::TYPE_HORIZONTAL,
+    'formConfig' => ['labelSpan' => 3, 'deviceSize' => ActiveForm::SIZE_SMALL],]); ?>
     <?= Html::hiddenInput("action", "submit") ?>
     <?= $form->field($loan, 'type')->hiddenInput()->label(false) ?>
     <?= $form->field($loan, 'id')->hiddenInput()->label(false) ?>
@@ -57,21 +58,38 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         <?= $form->field($model, 'engine_no')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'chasis_no')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'vehicle_no')->textInput(['maxlength' => true]) ?>
-
+        <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'insurance')->textInput(['maxlength' => true]) ?>
     </div>
 
     <div class="ui segment">
         <?= Elements::header(Elements::icon('money') . '<div class="content">Loan Details<div class="sub header">Manage loan details.</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>
-        <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($model, 'insurance')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($model, 'loan_amount')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($loan, 'interest')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($loan, 'penalty')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'loan_amount')->textInput(['maxlength' => true,'type' => 'number', 'step' => '0.01']) ?>
+        <?= $form->field($loan, 'interest')->textInput(['maxlength' => true,'type' => 'number', 'step' => '0.01']) ?>
+        <?= $form->field($loan, 'penalty')->textInput(['maxlength' => true,'type' => 'number', 'step' => '0.01']) ?>
         <?= $form->field($loan, 'collection_method')->dropDownList(ArrayHelper::map(CollectionMethod::find()->all(), 'id', 'name')) ?>
         <?= $form->field($loan, 'period')->textInput(['type' => 'number', 'step' => '1']) ?>
-        <?= $form->field($loan, 'installment')->textInput(['type' => 'number', 'step' => '1', "readonly" => true]) ?>
         <?= $form->field($loan, 'disbursed_date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']])->label("Start Date") ?>
+        <?= $form->field($model, 'charges')->textInput(['maxlength' => true,'type' => 'number', 'step' => '0.01']) ?>
+        <?= Elements::divider() ?>
+        <div class="form-group field-loan-installment">
+            <label class="control-label col-sm-3" for="loan-installment">Installment</label>
+            <div class='col-sm-9'> <div id="instal" style="margin-top: 6px;margin-left: 10px"></div></div>
+        </div>
+        <div class="form-group field-loan-installment">
+            <label class="control-label col-sm-3" for="total-commision">Commission</label>
+            <div class='col-sm-9'> <div id="total-commision" style="margin-top: 6px;margin-left: 10px"></div></div>
+        </div>
+        <div class="form-group field-loan-installment">
+            <label class="control-label col-sm-3" for="total-charges">Charges</label>
+            <div class='col-sm-9'> <div id="total-charges" style="margin-top: 6px;margin-left: 10px"></div></div>
+        </div>
+        <div class="form-group field-loan-installment">
+            <label class="control-label col-sm-3" for="total-installment" style="font-size: x-large">Total Installment</label>
+            <div class='col-sm-9'> <div id="total-installment" style="margin-top: 6px;margin-left: 10px;font-size: x-large"></div></div>
+        </div>
+
     </div>
     <div class="ui segment">
         <?= Elements::header(Elements::icon('briefcase') . '<div class="content">Charges<div class="sub header">Manage charges details.</div></div>', ['tag' => 'h2']) ?>
@@ -81,12 +99,21 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
         $supps["0"] = '-- No supplier --';
         echo $form->field($model, 'supplier')->dropDownList($supps); ?>
         <?= $form->field($model, 'sales_commision')->widget(CommissionSelector::class, ['type_attr' => 'sales_commision_type']) ?>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="sales-commision-amount">Sales Commission Amount</label>
+            <div class='col-sm-9'> <div id="sales-commision-amount" style="margin-top: 6px;margin-left: 10px"></div></div>
+        </div>
+        <?= Elements::divider() ?>
         <?php
         $cnvs = ArrayHelper::map(Canvasser::find()->all(), 'id', 'name');
         $cnvs["0"] = '-- No canvasser --';
         echo $form->field($model, 'canvassed')->dropDownList($cnvs);
         ?>
         <?= $form->field($model, 'canvassing_commision')->widget(CommissionSelector::class, ['type_attr' => 'canvassing_commision_type']) ?>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="canvessing-commision-amount">Canvessing Commission Amount</label>
+            <div class='col-sm-9'> <div id="canvessing-commision-amount" style="margin-top: 6px;margin-left: 10px"></div></div>
+        </div>
 
     </div>
     <div class="ui segment">
@@ -110,8 +137,8 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 </div>
 <?php
-$this->registerJs("
-    function updateInstallment() {
+$this->registerJs("  
+    function updateContents() {
         var amount = $('#hpnewvehicleloan-loan_amount').val();
         var interest_percentage = $('#loan-interest').val();
         var terms = $('#loan-period').val();
@@ -123,27 +150,97 @@ $this->registerJs("
         var part2 = amount * rate * part1;
         var part3 = part1 - 1;
         payment = Math.round(Math.floor(100 * (part2 / part3))) / 100;
-        $('#loan-installment').val(payment);
+        $('#instal').text(payment);
+        
+        var totalCommision = 0;
+    
+        if ($('#".Html::getInputId($model, 'sales_commision_type')."').val() == 'Percentage') {
+            var amount = $('#hpnewvehicleloan-loan_amount').val();
+            if (amount == '') {
+                amount = 0;
+            }
+            var percentage = $('#".Html::getInputId($model, 'sales_commision')."').val();
+            var commision = (amount * percentage / 100);
+            $('#sales-commision-amount').text(amount + ' x ' + percentage + '% = ' + commision.toFixed(2));
+            totalCommision += commision;
+        } else {
+            var commision = $('#".Html::getInputId($model, 'sales_commision')."').val();
+            if (commision == '') {
+                commision = 0;
+            }
+            $('#sales-commision-amount').text(commision);
+            totalCommision += parseFloat(commision);
+        }
+        
+        if ($('#".Html::getInputId($model, 'canvassing_commision_type')."').val() == 'Percentage') {
+            var amount = $('#hpnewvehicleloan-loan_amount').val();
+            if (amount == '') {
+                amount = 0;
+            }
+            var percentage = $('#".Html::getInputId($model, 'canvassing_commision')."').val();
+            var commision = (amount * percentage / 100);
+            $('#canvessing-commision-amount').text(amount + ' x ' + percentage + '% = ' + commision.toFixed(2));
+            totalCommision += commision;
+        } else {
+            var commision  = $('#".Html::getInputId($model, 'canvassing_commision')."').val();
+            if (commision == '') {
+                commision = 0;
+            }
+            $('#canvessing-commision-amount').text(commision);
+            totalCommision += parseFloat(commision);
+        }
+        var commisionPerTerm = (totalCommision/terms);
+         $('#total-commision').text(totalCommision + ' / ' + terms + ' = ' + (commisionPerTerm).toFixed(2));
+         
+         var charges = $('#hpnewvehicleloan-charges').val();
+         if (charges == '') {
+            charges = 0;
+        }
+         var chargesPerTerm = (charges/terms);
+         $('#total-charges').text(charges + ' / ' + terms + ' = ' + (chargesPerTerm).toFixed(2));
+         
+         
+         $('#total-installment').text(payment.toFixed(2) + ' + ' + commisionPerTerm.toFixed(2) + ' + ' + chargesPerTerm.toFixed(2) + ' = ' + (payment + commisionPerTerm + chargesPerTerm).toFixed(2));
     }
     
     $('#hpnewvehicleloan-loan_amount').on('input', function(e) {
-        updateInstallment();
+        updateContents();
+    });
+    
+    $('#hpnewvehicleloan-charges').on('input', function(e) {
+        updateContents();
     });
     
     $('#loan-interest').on('input', function(e) {
-        updateInstallment();
+        updateContents();
     });
     
     $('#loan-period').on('input', function(e) {
-        updateInstallment();
+        updateContents();
     });
     
     $('#interest_terms').on('input', function(e) {
-        updateInstallment();
+        updateContents();
     });
     
     $('#loan-collection_method').on('input', function(e) {
-        updateInstallment();
+        updateContents();
+    });
+    
+    $('#".Html::getInputId($model, 'sales_commision_type')."').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#".Html::getInputId($model, 'sales_commision')."').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#".Html::getInputId($model, 'canvassing_commision_type')."').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#".Html::getInputId($model, 'canvassing_commision')."').on('input', function(e) {
+        updateContents();
     });
 ");
 ?>

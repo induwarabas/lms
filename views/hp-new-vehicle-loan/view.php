@@ -112,8 +112,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                 ['attribute' => 'type', 'value' => function($data) {return LoanType::findOne($data->type)->name;}],
                 ['attribute' => 'status', 'format' => 'html', 'value' => function($data) {return LoanStatus::label($data->status);}],
-                'amount',
-                'charges',
+                ['attribute' => 'amount', 'value' => number_format($loan->amount, 2)],
+                ['attribute' => 'charges', 'value' => number_format($loan->charges, 2)],
+                ['attribute' => 'amount', 'label' => 'Loan Amount', 'format' => 'html', 'value' => function($data) {return number_format($data->amount + $data->charges, 2);}],
                 ['attribute' => 'interest', 'value' => function($data) {return $data->interest.' %';}],
                 ['attribute' => 'penalty', 'value' => function($data) {return $data->penalty.' %';}],
                 ['attribute' => 'collection_method', 'value' => CollectionMethod::findOne(['id' => $loan->collection_method])->name],
@@ -140,9 +141,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model',
                 'engine_no',
                 'chasis_no',
-                'price',
-                'loan_amount',
-                'insurance',
+                ['attribute' => 'price', 'value' => number_format($model->price, 2)],
+                ['attribute' => 'loan_amount', 'value' => number_format($model->loan_amount, 2)],
+                ['attribute' => 'insurance', 'value' => number_format($model->insurance, 2)],
             ],
         ]) ?>
     </div>

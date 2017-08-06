@@ -7,6 +7,8 @@ use app\utils\validators\SavingAccountValidator;
  * This is the model class for table "account".
  *
  * @property integer $txid
+ * @property integer $drAccount
+ * @property integer $crAccount
  * @property string $loanId
  * @property double $amount
  * @property string $payment
@@ -20,6 +22,8 @@ use app\utils\validators\SavingAccountValidator;
 class TellerPayment extends \yii\base\Model
 {
     public $txid;
+    public $drAccount;
+    public $crAccount;
     public $loanId;
     public $amount;
     public $payment;
@@ -35,8 +39,8 @@ class TellerPayment extends \yii\base\Model
     public function rules()
     {
         return [
-            [['loanId', 'amount', 'description', 'stage', 'link'], 'required'],
-            [['loanId', 'description', 'link', 'payment'], 'string'],
+            [['loanId', 'amount', 'description', 'stage', 'link', 'drAccount'], 'required'],
+            [['loanId', 'description', 'link', 'payment','drAccount', 'crAccount'], 'string'],
             [['amount', 'stage','txid','bankAccount'], 'number', 'min' => 0],
             [['loanId'], 'string', 'max' => 10],
             [['cheque'], 'string', 'max' => 32],
@@ -51,6 +55,7 @@ class TellerPayment extends \yii\base\Model
         return [
             'txid' => 'Transaction ID',
             'loanId' => 'Loan ID',
+            'drAccount' => 'Debit Account',
             'amount' => 'Amount',
             'payment' => 'Payment',
             'bankAccount' => 'Bank Account',

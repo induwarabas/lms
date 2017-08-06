@@ -226,7 +226,7 @@ class LoanController extends LmsController
         $loan = Loan::findOne($id);
 
         $result = Yii::$app->db->createCommand("SELECT SUM(penalty) as penalty, SUM(paid) as paid, SUM(due) as due FROM loan_schedule where loan_id = :loanId", [':loanId' => $id])->queryOne();
-        $result2 = Yii::$app->db->createCommand("SELECT SUM(principal) as principal, SUM(interest) as interest, SUM(penalty) as penalty FROM loan_schedule where loan_id = :loanId and status = 'PAYED'", [':loanId' => $id])->queryOne();
+        $result2 = Yii::$app->db->createCommand("SELECT SUM(principal) as principal, SUM(charges) as charges, SUM(interest) as interest, SUM(penalty) as penalty FROM loan_schedule where loan_id = :loanId and status = 'PAYED'", [':loanId' => $id])->queryOne();
 
         return $this->render('schedule', [
             'dataProvider' => $dataProvider,

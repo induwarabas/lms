@@ -107,10 +107,7 @@ class LoanDisbursement
 
         if (LoanTypes::isVehicleLoan($loan->type)) {
             $loanex = HpNewVehicleLoan::findOne($loan->id);
-
-
-
-            $total = 0.0;
+            $total = $loanex->charges;
             if (isset($loanex->supplier) && $loanex->supplier != 0){
                 $supplier = Supplier::findOne($loanex->supplier);
                 if (!$txHnd->createTransaction(GeneralAccounts::PARK,

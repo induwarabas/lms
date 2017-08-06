@@ -3,10 +3,10 @@
 use app\models\Customer;
 use app\models\LoanType;
 use app\utils\enums\LoanStatus;
+use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use Zelenin\yii\SemanticUI\widgets\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\LoanSearch */

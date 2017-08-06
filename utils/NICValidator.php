@@ -45,7 +45,7 @@ class NICValidator extends Validator
         for ($i = 0; $i < 13; ++$i) {
             if ($days <= $daysForMonths[$i]) {
                 $month = $i + 1;
-                $day = $days;
+                $day = number_format($days, 0);
                 break;
             } else {
                 $days = $days - $daysForMonths[$i];

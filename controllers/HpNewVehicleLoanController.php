@@ -78,7 +78,7 @@ class HpNewVehicleLoanController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post())) {
             $loan->amount = $model->loan_amount;
-            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission();
+            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
             if ($model->validate() && $loan->validate()) {
                 $tx = Yii::$app->getDb()->beginTransaction();
                 $loanCreator = new LoanCreator();
@@ -161,7 +161,7 @@ class HpNewVehicleLoanController extends LmsController
         }
 
         $loan->amount = $model->loan_amount;
-        $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission();
+        $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
         $loan->penalty = 0.0;
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post()) && $model->validate() && $loan->validate()) {

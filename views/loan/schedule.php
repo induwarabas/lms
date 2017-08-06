@@ -21,19 +21,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <table class="ui table table-striped table-hover table-bordered">
+    <table class="ui table table-bordered">
         <tr>
-            <td>
-                <span style="font-weight: bold;">Loan Amount</span><br/>
-                <span style="font-size: x-large;"><?= number_format($loan->amount, 2) ?></span><br/>
-                <?= number_format($payed['principal'], 2).Elements::icon('add square', ['class' => 'green']) ?><br/>
-                <?= number_format($loan->amount - $payed['principal'], 2).Elements::icon('minus square', ['class' => 'red']) ?>
-            </td>
             <td>
                 <span style="font-weight: bold;">Total Payment</span><br/>
                 <span style="font-size: x-large;"><?= number_format($loan->total_payment, 2) ?></span><br/>
                 <?= number_format($total['paid'], 2).Elements::icon('add square', ['class' => 'green']) ?><br/>
                 <?= number_format($loan->total_payment - $total['paid'], 2).Elements::icon('minus square', ['class' => 'red']) ?>
+            </td>
+            <td>
+                <span style="font-weight: bold;">Loan Amount</span><br/>
+                <span style="font-size: x-large;"><?= number_format($loan->amount + $loan->charges, 2) ?></span><br/>
+                <?= number_format($payed['principal'] + $payed['charges'], 2).Elements::icon('add square', ['class' => 'green']) ?><br/>
+                <?= number_format($loan->amount + $loan->charges - $payed['principal']  - $payed['charges'], 2).Elements::icon('minus square', ['class' => 'red']) ?>
             </td>
             <td>
                 <span style="font-weight: bold;">Total Interest</span><br/>
@@ -68,7 +68,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => "principal", 'value' => 'principal', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "interest", 'value' => 'interest', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "charges", 'value' => 'charges', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
-            ['attribute' => "balance", 'value' => 'balance', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             'arrears',
             ['attribute' => "penalty", 'value' => 'penalty', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "paid", 'value' => 'paid', 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],

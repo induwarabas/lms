@@ -2,6 +2,12 @@
 
 namespace app\models;
 use app\utils\enums\LoanTypes;
+use app\utils\widgets\AccountIDView;
+use app\utils\widgets\CanvasserView;
+use app\utils\widgets\CustomerView;
+use app\utils\widgets\SupplierView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "account".
@@ -118,23 +124,27 @@ class Account extends \yii\db\ActiveRecord
             $loan = Loan::findOne(['saving_account' => $this->id]);
             if ($loan != null) {
                 $customer = Customer::findOne($loan->customer_id);
-                return "Saving account of ".LoanType::findOne($loan->type)->name. " loan #".$loan->id." of ".$customer->name." (".$customer->nic.")";
+                return "Saving account of ".LoanType::findOne($loan->type)->name." "
+                    .Html::a("loan #".$loan->id, Url::to(['loan/view', 'id' => $loan->id]))
+                    ." of ".CustomerView::widget(['customer' => $customer]);
             }
         } else if ($this->type == Account::TYPE_LOAN) {
             $loan = Loan::findOne(['loan_account' => $this->id]);
             if ($loan != null) {
                 $customer = Customer::findOne($loan->customer_id);
-                return "Loan account of ".LoanType::findOne($loan->type)->name. " loan #".$loan->id." of ".$customer->name." (".$customer->nic.")";
+                return "Loan account of ".LoanType::findOne($loan->type)->name." "
+                    .Html::a("loan #".$loan->id, Url::to(['loan/view', 'id' => $loan->id]))
+                    ." of ".CustomerView::widget(['customer' => $customer]);
             }
         } else if($this->type == Account::TYPE_SUPPLIER) {
             $supplier = Supplier::findOne(['account' => $this->id]);
             if ($supplier != null) {
-                return "Supplier ".$supplier->name;
+                return "Supplier ".SupplierView::widget(['supplier' => $supplier]);
             }
         } else if($this->type == Account::TYPE_CANVASSER) {
             $canvasser = Canvasser::findOne(['account' => $this->id]);
             if ($canvasser != null) {
-                return "Canvasser ".$canvasser->name;
+                return "Canvasser ".CanvasserView::widget(['canvasser' => $canvasser]);
             }
         }else if($this->type == Account::TYPE_TELLER) {
             $userid = intval(substr($this->id, 1));
@@ -145,7 +155,7 @@ class Account extends \yii\db\ActiveRecord
         }else if($this->type == Account::TYPE_BANK) {
             $bankAcc = BankAccount::findOne(['account_id' => $this->id]);
             if ($bankAcc != null) {
-                return Bank::findOne($bankAcc->bank)->name." ".$bankAcc->bank_account_id;
+                return Html::a(Bank::findOne($bankAcc->bank)->name." - ".$bankAcc->bank_account_id, ['bank-account/view', ['id' => $bankAcc->id]]);
             }
         }else if($this->type == Account::TYPE_GENERAL) {
             $ga = GeneralAccount::findOne(['id' => $this->id]);
@@ -154,5 +164,9 @@ class Account extends \yii\db\ActiveRecord
             }
         }
         return "Invalid account";
+    }
+
+    public function getAccountHtml() {
+        return AccountIDView::widget(['accountId' => $this->id])." : ".$this->getAccountName();
     }
 }

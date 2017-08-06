@@ -12,6 +12,7 @@ namespace app\utils;
 use app\models\Account;
 use app\models\Transaction;
 use app\utils\enums\PaymentType;
+use app\utils\widgets\AccountIDView;
 use Yii;
 
 class TxHandler
@@ -50,7 +51,7 @@ class TxHandler
         }
 
         if ($drAccount->protection == 'PLUS' && $drAccount->balance - $amount < 0.0) {
-            $this->error = $dr . " has no funds to do the transaction";
+            $this->error = $drAccount->getAccountHtml() . " has no funds to do the transaction";
             return false;
         }
 
@@ -62,7 +63,7 @@ class TxHandler
         }
 
         if ($crAccount->protection == 'MINUS' && $crAccount->balance + $amount > 0.0) {
-            $this->error = $cr . " has no funds to do the transaction";
+            $this->error = $crAccount->getAccountHtml() . " has no funds to do the transaction";
             return false;
         }
 
