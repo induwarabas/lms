@@ -6,6 +6,7 @@ use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\HpNewVehicleLoanEx;
 use app\models\Loan;
+use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanCreator;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -37,6 +38,20 @@ class HpNewVehicleLoanController extends LmsController
         $guarantor1 = Customer::findOne(['id' => $loan->guarantor_1]);
         $guarantor2 = Customer::findOne(['id' => $loan->guarantor_2]);
         $guarantor3 = Customer::findOne(['id' => $loan->guarantor_3]);
+
+        $interestTerms = 12;
+        if ($loan->collection_method === 2) //Weekly
+        {
+            $interestTerms = 52;
+        } else if ($loan->collection_method == 3) //Daily
+        {
+            $interestTerms = 365;
+        }
+
+        $amort = new AmortizationCalculator();
+        $installment = $amort->calculateInstallment($model->loan_amount, $loan->interest, $loan->period, $interestTerms);
+        $loan->installment = $installment;
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'loan' => $loan,
@@ -75,6 +90,9 @@ class HpNewVehicleLoanController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post())) {
             $loan->amount = $model->loan_amount;
+            if ($model->charges == null) {
+                $model->charges = 0;
+            }
             $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
             if ($model->validate() && $loan->validate()) {
                 $tx = Yii::$app->getDb()->beginTransaction();
@@ -158,10 +176,11 @@ class HpNewVehicleLoanController extends LmsController
         }
 
         $loan->amount = $model->loan_amount;
-        $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
         $loan->penalty = 0.0;
+        $loan->charges = 0.0;
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post()) && $model->validate() && $loan->validate()) {
+            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
             $tx = Yii::$app->getDb()->beginTransaction();
             $loan->save();
             $model->id = $loan->primaryKey;

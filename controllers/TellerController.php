@@ -218,7 +218,7 @@ class TellerController extends LmsController
                 if ($loanex->supplier != null && $loanex->supplier != 0) {
                     $supplier = Supplier::findOne($loanex->supplier);
                     $model->drAccount = $supplier->account;
-                    $model->amount = $loan->amount + $loanex->getSalesCommission();
+                    $model->amount = $loan->amount;
                     $chequeWriteTo = "Cheques should be written to the supplier " . SupplierView::widget(['supplier' => $supplier]);
                 }
             }

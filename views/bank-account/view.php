@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             ['attribute' => 'bank', 'value' => Bank::findOne($model->bank)->name],
             'bank_account_id',
-            'account_id',
+            ['attribute' => 'account_id', 'format' => 'html', 'value' => \app\utils\widgets\AccountIDView::widget(['accountId' => $model->account_id])],
             'description:ntext',
         ],
     ]) ?>

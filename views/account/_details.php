@@ -16,13 +16,7 @@ use Zelenin\yii\SemanticUI\Elements;
     </tr>
     <tr>
         <th style="width: 1%;white-space:nowrap;">Account Name</th>
-        <td><?php
-            if ($details->nameUrl == null) {
-                echo $details->name;
-            } else {
-                echo Html::a($details->name, $details->nameUrl);
-            }
-            ?>
+        <td><?php echo $details->account->getAccountName(); ?>
         </td>
         <th rowspan="3" style="width: 1%;white-space:nowrap;padding-top: 15px;">
             <h2>Balance</h2>

@@ -58,7 +58,7 @@ class CustomerSelector extends InputWidget
 
         $customerUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $this->customer->id]);
         $out = '<div style="display: block"><a href="'.$customerUrl.'" style="color: #1e70bf; margin-right: 20px;"><b>'.$name . " (" . $this->customer->nic . ")".'</b></a>' . Html::activeHiddenInput($this->model, $this->attribute, ['value' => $this->customer->id])
-            . Html::a("Change", $this->url, ['class' => 'ui button blue', 'id' => 'csbtn_' . $this->attribute]);
+            . Html::a("Change", '#', ['class' => 'ui button blue', 'id' => 'csbtn_' . $this->attribute]);
         if ($this->remove_url != null) {
             $this->getView()->registerJs('
                 $( "#csrbtn_' . $this->attribute . '" ).click(function() {
@@ -68,8 +68,9 @@ class CustomerSelector extends InputWidget
                     });
                 });
             ');
-            $out .= Html::a("Remove", '#', ['class' => 'ui button red', 'id' => 'csrbtn_' . $this->attribute]).'</div>';
+            $out .= Html::a("Remove", '#', ['class' => 'ui button red', 'id' => 'csrbtn_' . $this->attribute]);
         }
+        $out .= '</div>';
         return $out;
     }
 

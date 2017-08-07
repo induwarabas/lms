@@ -11,14 +11,18 @@ namespace app\utils\loan;
 
 class AmortizationCalculator
 {
-    public function calculate($amount, $interest_percentage, $terms, $interest_terms, $charges)
-    {
-        $chargePerTerm = floor(100 * $charges / $terms) / 100;
+    public function calculateInstallment($amount, $interest_percentage, $terms, $interest_terms) {
         $rate = $interest_percentage / 100.0 / $interest_terms;
         $part1 = pow((1 + $rate), $terms);
         $part2 = $amount * $rate * $part1;
         $part3 = $part1 - 1;
-        $payment = round(floor(100 * ($part2 / $part3)) / 100, 2, PHP_ROUND_HALF_UP);
+        return round(floor(100 * ($part2 / $part3)) / 100, 2, PHP_ROUND_HALF_UP);
+    }
+    public function calculate($amount, $interest_percentage, $terms, $interest_terms, $charges)
+    {
+        $rate = $interest_percentage / 100.0 / $interest_terms;
+        $chargePerTerm = floor(100 * $charges / $terms) / 100;
+        $payment = $this->calculateInstallment($amount, $interest_percentage, $terms, $interest_terms);
 
         $schedule = new AmortizationSchedule();
         $schedule->payment = $payment + $chargePerTerm;

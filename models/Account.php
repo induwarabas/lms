@@ -158,7 +158,7 @@ class Account extends \yii\db\ActiveRecord
         } else if ($this->type == Account::TYPE_BANK) {
             $bankAcc = BankAccount::findOne(['account_id' => $this->id]);
             if ($bankAcc != null) {
-                return Html::a(Bank::findOne($bankAcc->bank)->name . " - " . $bankAcc->bank_account_id, ['bank-account/view', ['id' => $bankAcc->id]]);
+                return Html::a(Bank::findOne($bankAcc->bank)->name . " - " . $bankAcc->bank_account_id, ['bank-account/view', 'id' => $bankAcc->id]);
             }
         } else if ($this->type == Account::TYPE_GENERAL) {
             $ga = GeneralAccount::findOne(['id' => $this->id]);

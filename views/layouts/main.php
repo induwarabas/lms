@@ -60,7 +60,7 @@ AppAsset::register($this);
                 'label' => 'Loans',
                 'items' => [
                     ['label' => 'Create', 'url' => ['/loan/create']],
-                    ['label' => 'View', 'url' => ['/loan/index']],
+                    ['label' => 'View', 'url' => ['/loan/index', 'sort' => '-id']],
                 ]
             ],
             [
@@ -86,7 +86,7 @@ AppAsset::register($this);
                 ]
             ],
             [
-                'label' => 'Backend routes',
+                'label' => 'User',
                 'items' => [
                     ['label' => 'Users', 'url' => ['/user-management/user/index']],
                     ['label' => 'Roles', 'url' => ['/user-management/role/index']],
@@ -95,17 +95,17 @@ AppAsset::register($this);
                     ['label' => 'Visit log', 'url' => ['/user-management/user-visit-log/index']],
                 ]
             ],
-            [
-                'label' => 'Frontend routes',
-                'items' => [
-                    ['label' => 'Login', 'url' => ['/user-management/auth/login']],
-                    ['label' => 'Logout', 'url' => ['/user-management/auth/logout']],
-                    ['label' => 'Registration', 'url' => ['/user-management/auth/registration']],
-                    ['label' => 'Change own password', 'url' => ['/user-management/auth/change-own-password']],
-                    ['label' => 'Password recovery', 'url' => ['/user-management/auth/password-recovery']],
-                    ['label' => 'E-mail confirmation', 'url' => ['/user-management/auth/confirm-email']],
-                ],
-            ],
+//            [
+//                'label' => 'Frontend routes',
+//                'items' => [
+//                    ['label' => 'Login', 'url' => ['/user-management/auth/login']],
+//                    ['label' => 'Logout', 'url' => ['/user-management/auth/logout']],
+//                    ['label' => 'Registration', 'url' => ['/user-management/auth/registration']],
+//                    ['label' => 'Change own password', 'url' => ['/user-management/auth/change-own-password']],
+//                    ['label' => 'Password recovery', 'url' => ['/user-management/auth/password-recovery']],
+//                    ['label' => 'E-mail confirmation', 'url' => ['/user-management/auth/confirm-email']],
+//                ],
+//            ],
             Yii::$app->user->isGuest ? (
             ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

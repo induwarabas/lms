@@ -3,6 +3,7 @@
 use app\models\Customer;
 use app\models\LoanType;
 use app\utils\enums\LoanStatus;
+use app\utils\widgets\CustomerView;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -31,17 +32,19 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
-            'id',
+            ['attribute' => 'id', 'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
             ['attribute' => 'type', 'content' => function ($data) {
                 return LoanType::findOne(['id' => $data->type])->name;
-            }, 'filter' => array_merge(['0' => 'All'], ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name')),],
+            }, 'filter' => ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name'),
+                'contentOptions' => ['style' => 'max-width: 140px;'], 'headerOptions' => ['style' => 'max-width: 140px;'], 'filterOptions' => ['style' => 'max-width: 140px;']],
             ['attribute' => 'customer_id', 'content' => function ($data) {
-                return Customer::findOne(['id' => $data->customer_id])->name;
+                return CustomerView::widget(['customer' => Customer::findOne(['id' => $data->customer_id])]);
             }],
             'amount',
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
                 return LoanStatus::label($data->status);
-            }]
+            }, 'filter'=>['PENDING' => 'PENDING', 'ACTIVE' => 'ACTIVE','COMPLETED' => 'COMPLETED', 'CLOSED' => 'CLOSED'],
+                'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']]
             // 'collection_method',
             // 'period',
             // 'status',

@@ -2,23 +2,33 @@
 
 namespace app\models;
 
+use app\utils\NICValidator;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
  * LoanSearch represents the model behind the search form about `app\models\Loan`.
+ *
+ * @property integer $id
+ * @property string $customer_id
+ * @property integer $type
+ * @property string $status
  */
-class LoanSearch extends Loan
+class LoanSearch extends Model
 {
+    public $id;
+    public $customer_id;
+    public $type;
+    public $status;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'customer_id', 'period', 'type'], 'integer'],
-            [['saving_account', 'loan_account', 'collection_method', 'status', 'disbursed_date', 'closed_date'], 'safe'],
-            [['amount'], 'number'],
+            [['id', 'type'], 'integer'],
+            [['customer_id', 'status'], 'string'],
         ];
     }
 
@@ -42,13 +52,19 @@ class LoanSearch extends Loan
     {
         $query = Loan::find();
 
-        // add conditions that should always apply here
+        $this->load($params);
+        $custid = null;
+        if (isset($this->customer_id) && $this->customer_id != '') {
+            $cust = Customer::find()->where("full_name like :fullname or (nic = :nic or nic = :oldnic)",
+                [':fullname' => '%'.$this->customer_id.'%', ':nic' => NICValidator::getNewNic($this->customer_id), ':oldnic' => NICValidator::getOldNic($this->customer_id)])->one();
+            $custid = ($cust != null) ? $cust->id : 0;
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        $this->load($params);
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -56,25 +72,18 @@ class LoanSearch extends Loan
             return $dataProvider;
         }
 
-        if ($this->type == 0) {
-            unset($this->type);
-        }
-
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'customer_id' => $this->customer_id,
-            'amount' => $this->amount,
-            'period' => $this->period,
-            'disbursed_date' => $this->disbursed_date,
-            'closed_date' => $this->closed_date,
+            'customer_id' => $custid,
             'type' => $this->type,
+            'status' => $this->status
         ]);
 
-        $query->andFilterWhere(['like', 'saving_account', $this->saving_account])
-            ->andFilterWhere(['like', 'loan_account', $this->loan_account])
-            ->andFilterWhere(['like', 'collection_method', $this->collection_method])
-            ->andFilterWhere(['like', 'status', $this->status]);
+//        $query->andFilterWhere(['like', 'saving_account', $this->saving_account])
+//            ->andFilterWhere(['like', 'loan_account', $this->loan_account])
+//            ->andFilterWhere(['like', 'collection_method', $this->collection_method])
+//            ->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;
     }

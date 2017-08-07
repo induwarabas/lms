@@ -50,9 +50,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <tr>
             <td>Amount</td>
             <td><?php
-                if (\app\utils\Doubles::compare($model->amount, $loan->amount) != 0) {
-                    echo number_format($loan->amount, 2) . " + " . number_format($model->amount - $loan->amount, 2) . " = ";
-                }
+//                if (\app\utils\Doubles::compare($model->amount, $loan->amount) != 0) {
+//                    echo number_format($loan->amount, 2) . " + " . number_format($model->amount - $loan->amount, 2) . " = ";
+//                }
                 echo number_format($model->amount, 2);
                 ?>
             </td>
@@ -108,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->stage == 2) { ?>
         <div class="supplier-form">
 
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
             <?= $form->field($model, 'drAccount')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>

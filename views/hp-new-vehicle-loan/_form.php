@@ -25,8 +25,7 @@ use Zelenin\yii\SemanticUI\Elements;
 
     <div class="hp-new-vehicle-loan-form">
 
-        <?php $form = ActiveForm::begin(['id' => 'hp', 'type' => ActiveForm::TYPE_HORIZONTAL,
-            'formConfig' => ['labelSpan' => 3, 'deviceSize' => ActiveForm::SIZE_SMALL],]); ?>
+        <?php $form = ActiveForm::begin(['id' => 'hp', 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
         <?= Html::hiddenInput("action", "submit") ?>
         <?= $form->field($loan, 'type')->hiddenInput()->label(false) ?>
         <?= $form->field($loan, 'id')->hiddenInput()->label(false) ?>
@@ -52,8 +51,8 @@ use Zelenin\yii\SemanticUI\Elements;
         <div class="ui segment">
             <?= Elements::header(Elements::icon('car') . '<div class="content">Vehicle Details<div class="sub header">Manage vehicle details.</div></div>', ['tag' => 'h2']) ?>
             <?= Elements::divider() ?>
-            <?= $form->field($model, 'vehicle_type')->dropDownList(ArrayHelper::map(VehicleType::find()->all(), 'id', 'name')) ?>
-            <?= $form->field($model, 'make')->dropDownList(ArrayHelper::map(VehicleBrand::find()->all(), 'id', 'name')) ?>
+            <?= $form->field($model, 'vehicle_type')->dropDownList(ArrayHelper::map(VehicleType::find()->all(), 'id', 'name'), ['prompt' => '-- Select Vehicle Type --']) ?>
+            <?= $form->field($model, 'make')->dropDownList(ArrayHelper::map(VehicleBrand::find()->all(), 'id', 'name'), ['prompt' => '-- Select Vehicle Brand --']) ?>
             <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'engine_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'chasis_no')->textInput(['maxlength' => true]) ?>
@@ -74,27 +73,26 @@ use Zelenin\yii\SemanticUI\Elements;
             <?= $form->field($model, 'charges')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
             <?= Elements::divider() ?>
             <div class="form-group field-loan-installment">
-                <label class="control-label col-sm-3" for="loan-installment">Installment</label>
-                <div class='col-sm-9'>
+                <label class="control-label col-md-2" for="loan-installment">Installment</label>
+                <div class='col-md-10'>
                     <div id="instal" style="margin-top: 6px;margin-left: 10px"></div>
                 </div>
             </div>
             <div class="form-group field-loan-installment">
-                <label class="control-label col-sm-3" for="total-commision">Commission</label>
-                <div class='col-sm-9'>
+                <label class="control-label col-md-2" for="total-commision">Commission</label>
+                <div class='col-md-10'>
                     <div id="total-commision" style="margin-top: 6px;margin-left: 10px"></div>
                 </div>
             </div>
             <div class="form-group field-loan-installment">
-                <label class="control-label col-sm-3" for="total-charges">Charges</label>
-                <div class='col-sm-9'>
+                <label class="control-label col-md-2" for="total-charges">Charges</label>
+                <div class='col-md-10'>
                     <div id="total-charges" style="margin-top: 6px;margin-left: 10px"></div>
                 </div>
             </div>
             <div class="form-group field-loan-installment">
-                <label class="control-label col-sm-3" for="total-installment" style="font-size: x-large">Total
-                    Installment</label>
-                <div class='col-sm-9'>
+                <label class="control-label col-md-2" for="total-installment" style="font-size: x-large">Total</label>
+                <div class='col-md-10'>
                     <div id="total-installment" style="margin-top: 6px;margin-left: 10px;font-size: x-large"></div>
                 </div>
             </div>
@@ -104,27 +102,23 @@ use Zelenin\yii\SemanticUI\Elements;
             <?= Elements::header(Elements::icon('briefcase') . '<div class="content">Charges<div class="sub header">Manage charges details.</div></div>', ['tag' => 'h2']) ?>
             <?= Elements::divider() ?>
             <?php
-            $supps = ArrayHelper::map(Supplier::find()->all(), 'id', 'name');
-            $supps["0"] = '-- No supplier --';
-            echo $form->field($model, 'supplier')->dropDownList($supps); ?>
+            echo $form->field($model, 'supplier')->dropDownList(ArrayHelper::map(Supplier::find()->all(), 'id', 'name'), ['prompt' => '-- No supplier --']); ?>
             <?= $form->field($model, 'sales_commision')->widget(CommissionSelector::class, ['type_attr' => 'sales_commision_type']) ?>
             <div class="form-group">
-                <label class="control-label col-sm-3" for="sales-commision-amount">Sales Commission Amount</label>
-                <div class='col-sm-9'>
+                <label class="control-label col-md-2" for="sales-commision-amount">Sales Commission Amount</label>
+                <div class='col-md-10'>
                     <div id="sales-commision-amount" style="margin-top: 6px;margin-left: 10px"></div>
                 </div>
             </div>
             <?= Elements::divider() ?>
             <?php
-            $cnvs = ArrayHelper::map(Canvasser::find()->all(), 'id', 'name');
-            $cnvs["0"] = '-- No canvasser --';
-            echo $form->field($model, 'canvassed')->dropDownList($cnvs);
+            echo $form->field($model, 'canvassed')->dropDownList(ArrayHelper::map(Canvasser::find()->all(), 'id', 'name'), ['prompt' => '-- No canvasser --']);
             ?>
             <?= $form->field($model, 'canvassing_commision')->widget(CommissionSelector::class, ['type_attr' => 'canvassing_commision_type']) ?>
             <div class="form-group">
-                <label class="control-label col-sm-3" for="canvessing-commision-amount">Canvessing Commission
+                <label class="control-label col-md-2" for="canvessing-commision-amount">Canvassing Commission
                     Amount</label>
-                <div class='col-sm-9'>
+                <div class='col-md-10'>
                     <div id="canvessing-commision-amount" style="margin-top: 6px;margin-left: 10px"></div>
                 </div>
             </div>
@@ -144,8 +138,10 @@ use Zelenin\yii\SemanticUI\Elements;
         </div>
 
         <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
             <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
             <?= Html::a("Cancel", ["loan/cancel"], ['id' => 'cancel', 'class' => 'ui button']) ?>
+            </div>
         </div>
 
         <?php ActiveForm::end(); ?>
@@ -167,41 +163,49 @@ $this->registerJs("
         $('#instal').text(payment);
         
         var totalCommision = 0;
-    
-        if ($('#" . Html::getInputId($model, 'sales_commision_type') . "').val() == 'Percentage') {
-            var amount = $('#hpnewvehicleloan-loan_amount').val();
-            if (amount == '') {
-                amount = 0;
+
+        if ($('#hpnewvehicleloan-supplier').val() != '') {
+             if ($('#" . Html::getInputId($model, 'sales_commision_type') . "').val() == 'Percentage') {
+                var amount = $('#hpnewvehicleloan-loan_amount').val();
+                if (amount == '') {
+                    amount = 0;
+                }
+                var percentage = $('#" . Html::getInputId($model, 'sales_commision') . "').val();
+                var commision = (amount * percentage / 100);
+                $('#sales-commision-amount').text(amount + ' x ' + percentage + '% = ' + commision.toFixed(2));
+                totalCommision += commision;
+            } else {
+                var commision = $('#" . Html::getInputId($model, 'sales_commision') . "').val();
+                if (commision == '') {
+                    commision = 0;
+                }
+                $('#sales-commision-amount').text(commision);
+                totalCommision += parseFloat(commision);
             }
-            var percentage = $('#" . Html::getInputId($model, 'sales_commision') . "').val();
-            var commision = (amount * percentage / 100);
-            $('#sales-commision-amount').text(amount + ' x ' + percentage + '% = ' + commision.toFixed(2));
-            totalCommision += commision;
         } else {
-            var commision = $('#" . Html::getInputId($model, 'sales_commision') . "').val();
-            if (commision == '') {
-                commision = 0;
-            }
-            $('#sales-commision-amount').text(commision);
-            totalCommision += parseFloat(commision);
+            $('#sales-commision-amount').text('No supplier selected');
         }
-        
-        if ($('#" . Html::getInputId($model, 'canvassing_commision_type') . "').val() == 'Percentage') {
-            var amount = $('#hpnewvehicleloan-loan_amount').val();
-            if (amount == '') {
-                amount = 0;
+       
+        if ($('#hpnewvehicleloan-canvassed').val() != '') {
+            if ($('#" . Html::getInputId($model, 'canvassing_commision_type') . "').val() == 'Percentage') {
+                var amount = $('#hpnewvehicleloan-loan_amount').val();
+                if (amount == '') {
+                    amount = 0;
+                }
+                var percentage = $('#" . Html::getInputId($model, 'canvassing_commision') . "').val();
+                var commision = (amount * percentage / 100);
+                $('#canvessing-commision-amount').text(amount + ' x ' + percentage + '% = ' + commision.toFixed(2));
+                totalCommision += commision;
+            } else {
+                var commision  = $('#" . Html::getInputId($model, 'canvassing_commision') . "').val();
+                if (commision == '') {
+                    commision = 0;
+                }
+                $('#canvessing-commision-amount').text(commision);
+                totalCommision += parseFloat(commision);
             }
-            var percentage = $('#" . Html::getInputId($model, 'canvassing_commision') . "').val();
-            var commision = (amount * percentage / 100);
-            $('#canvessing-commision-amount').text(amount + ' x ' + percentage + '% = ' + commision.toFixed(2));
-            totalCommision += commision;
         } else {
-            var commision  = $('#" . Html::getInputId($model, 'canvassing_commision') . "').val();
-            if (commision == '') {
-                commision = 0;
-            }
-            $('#canvessing-commision-amount').text(commision);
-            totalCommision += parseFloat(commision);
+            $('#canvessing-commision-amount').text('No canvasser selected');
         }
         var commisionPerTerm = (totalCommision/terms);
          $('#total-commision').text(totalCommision + ' / ' + terms + ' = ' + (commisionPerTerm).toFixed(2));
@@ -241,6 +245,14 @@ $this->registerJs("
         updateContents();
     });
     
+    $('#hpnewvehicleloan-supplier').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#hpnewvehicleloan-canvasser').on('input', function(e) {
+        updateContents();
+    });
+    
     $('#" . Html::getInputId($model, 'sales_commision_type') . "').on('input', function(e) {
         updateContents();
     });
@@ -256,5 +268,6 @@ $this->registerJs("
     $('#" . Html::getInputId($model, 'canvassing_commision') . "').on('input', function(e) {
         updateContents();
     });
+    updateContents();
 ");
 ?>

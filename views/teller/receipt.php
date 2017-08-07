@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->stage == 2) { ?>
         <div class="supplier-form">
 
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>
 
