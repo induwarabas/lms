@@ -12,8 +12,9 @@ use yii\helpers\Html;
 
     <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
-    <?= $form->field($model, 'id')->textInput(['maxlength' => true]) ?>
-
+    <?php if ($model->isNewRecord) { ?>
+    <?= $form->field($model, 'type')->dropDownList(\app\utils\enums\GeneralAccountTypes::getAll()) ?>
+    <?php } ?>
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>

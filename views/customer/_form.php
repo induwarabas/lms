@@ -1,9 +1,9 @@
 <?php
 
 use app\models\Area;
+use kartik\form\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Customer */
@@ -13,7 +13,7 @@ use Zelenin\yii\SemanticUI\widgets\ActiveForm;
 
 <div class="customer-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
     <?= $form->field($model, 'nic')->textInput(['maxlength' => true, "readonly" => true, "style" => 'text-color: black;']) ?>
     <?= $form->field($model, 'gender')->textInput(['maxlength' => true, "readonly" => true]) ?>

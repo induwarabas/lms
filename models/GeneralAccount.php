@@ -5,8 +5,10 @@ namespace app\models;
 /**
  * This is the model class for table "general_account".
  *
- * @property string $id
+ * @property integer $id
+ * @property string $account_id
  * @property string $name
+ * @property string $type
  * @property string $description
  */
 class GeneralAccount extends \yii\db\ActiveRecord
@@ -25,9 +27,9 @@ class GeneralAccount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'name', 'description'], 'required'],
-            [['id'], 'string', 'max' => 10],
-            [['name'], 'string', 'max' => 32],
+            [['name', 'type', 'description'], 'required'],
+            [['account_id'], 'string', 'max' => 10],
+            [['name', 'type'], 'string', 'max' => 32],
             [['description'], 'string', 'max' => 128],
         ];
     }
@@ -38,8 +40,10 @@ class GeneralAccount extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'Account ID',
+            'id' => 'ID',
+            'account_id' => 'Account ID',
             'name' => 'Name',
+            'type' => 'Type',
             'description' => 'Description',
         ];
     }

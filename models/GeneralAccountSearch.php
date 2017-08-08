@@ -16,7 +16,7 @@ class GeneralAccountSearch extends GeneralAccount
     public function rules()
     {
         return [
-            [['id', 'name', 'description'], 'safe'],
+            [['id', 'account_id','type','name', 'description'], 'safe'],
         ];
     }
 
@@ -54,6 +54,8 @@ class GeneralAccountSearch extends GeneralAccount
             return $dataProvider;
         }
 
+        $query->andFilterWhere(['type' => $this->type])
+            ->andFilterWhere(['account_id' => $this->account_id]);
         // grid filtering conditions
         $query->andFilterWhere(['like', 'id', $this->id])
             ->andFilterWhere(['like', 'name', $this->name])

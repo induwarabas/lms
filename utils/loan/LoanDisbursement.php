@@ -108,18 +108,43 @@ class LoanDisbursement
         if (LoanTypes::isVehicleLoan($loan->type)) {
             $loanex = HpNewVehicleLoan::findOne($loan->id);
             $total = $loanex->charges;
-            if (isset($loanex->supplier) && $loanex->supplier != 0){
-                $supplier = Supplier::findOne($loanex->supplier);
+
+            if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+                GeneralAccounts::PAYABLE,
+                $loan->amount,
+                TxType::DISBURSE,
+                PaymentType::INTERNAL,
+                "Disbursement of the loan #" . $loan->id,
+                $link)) {
+                $this->error = $txHnd->error;
+                return false;
+            }
+
+            if ($loanex->charges != null && $loanex->charges != 0) {
                 if (!$txHnd->createTransaction(GeneralAccounts::PARK,
-                    $supplier->account,
-                    $loan->amount,
+                    GeneralAccounts::CHARGES,
+                    $loanex->charges,
                     TxType::DISBURSE,
                     PaymentType::INTERNAL,
-                    "Disbursement of the loan #" . $loan->id,
+                    "Disbursement other charges of the loan #" . $loan->id,
                     $link)) {
                     $this->error = $txHnd->error;
                     return false;
                 }
+            }
+
+            if (isset($loanex->supplier) && $loanex->supplier != 0){
+                $supplier = Supplier::findOne($loanex->supplier);
+//                if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+//                    $supplier->account,
+//                    $loan->amount,
+//                    TxType::DISBURSE,
+//                    PaymentType::INTERNAL,
+//                    "Disbursement of the loan #" . $loan->id,
+//                    $link)) {
+//                    $this->error = $txHnd->error;
+//                    return false;
+//                }
 
                 $salesCommission = $loanex->getSalesCommission();
 
@@ -135,17 +160,6 @@ class LoanDisbursement
                         $this->error = $txHnd->error;
                         return false;
                     }
-                }
-            } else {
-                if (!$txHnd->createTransaction(GeneralAccounts::PARK,
-                    GeneralAccounts::PAYABLE,
-                    $loan->amount,
-                    TxType::DISBURSE,
-                    PaymentType::INTERNAL,
-                    "Disbursement of the loan #" . $loan->id,
-                    $link)) {
-                    $this->error = $txHnd->error;
-                    return false;
                 }
             }
 
@@ -185,7 +199,7 @@ class LoanDisbursement
             }
 
             if (!$txHnd->createTransaction(GeneralAccounts::PARK,
-                GeneralAccounts::PAYABLE,
+                GeneralAccounts::CHARGES,
                 $loan->charges,
                 TxType::DISBURSE,
                 PaymentType::INTERNAL,

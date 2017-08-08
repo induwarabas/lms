@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\models\Account;
 use app\models\GeneralAccount;
 use app\models\GeneralAccountSearch;
+use app\utils\enums\GeneralAccountTypes;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -48,13 +50,27 @@ class GeneralAccountController extends LmsController
     {
         $model = new GeneralAccount();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $tx = Yii::$app->getDb()->beginTransaction();
+            if($model->save()) {
+                $model->account_id = Account::createAccountId(Account::TYPE_GENERAL, $model->id);
+                $account = new Account();
+                $account->id = $model->account_id;
+                $account->type = Account::TYPE_GENERAL;
+                $account->balance = 0.0;
+                $account->protection = GeneralAccountTypes::getProtection($model->type);
+                if($account->save() && $model->save()) {
+                    $tx->commit();
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            } else {
+                $tx->rollBack();
+            }
+
         }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**

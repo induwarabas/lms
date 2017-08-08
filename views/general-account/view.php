@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Ledger'), ['account/ledger', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Ledger'), ['account/ledger', 'id' => $model->account_id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([
@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
         'attributes' => [
             'id',
+            ['attribute' => 'account_id', 'format' => 'html', 'value' => \app\utils\widgets\AccountIDView::widget(['accountId' => $model->account_id])],
             'name',
             'description',
         ],

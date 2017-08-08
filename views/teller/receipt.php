@@ -1,6 +1,7 @@
 <?php
 
 use app\utils\enums\PaymentType;
+use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CustomerView;
 use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
@@ -56,11 +57,11 @@ $this->params['breadcrumbs'][] = $this->title;
         </tr>
         <tr>
             <td>Saving Account</td>
-            <td><?= Html::a($loan->saving_account, Yii::$app->getUrlManager()->createUrl(['account/ledger', 'id' => $loan->saving_account]), ['target' => '_blank']) ?></td>
+            <td><?= AccountIDView::widget(['accountId' => $loan->saving_account]) ?></td>
         </tr>
         <tr>
             <td>Loan Account</td>
-            <td><?= Html::a($loan->loan_account, Yii::$app->getUrlManager()->createUrl(['account/ledger', 'id' => $loan->loan_account]), ['target' => '_blank']) ?></td>
+            <td><?= AccountIDView::widget(['accountId' => $loan->loan_account]) ?></td>
         </tr>
         <tr>
             <td>Balance</td>

@@ -18,6 +18,8 @@ class GeneralAccounts
     const PARK = '9000000005';
     const EXPENSES = '9000000006';
     const INVESTMENT = '9000000007';
+    const SALARY = '9000000008';
+    const CHARGES = '9000000009';
 
     const names = [
         GeneralAccounts::PAYABLE => 'PAYABLE',
@@ -27,5 +29,7 @@ class GeneralAccounts
         GeneralAccounts::PARK => 'PARK',
         GeneralAccounts::EXPENSES => 'EXPENSES',
         GeneralAccounts::INVESTMENT => 'INVESTMENT',
+        GeneralAccounts::SALARY => 'SALARY',
+        GeneralAccounts::CHARGES => 'CHARGES',
     ];
 }

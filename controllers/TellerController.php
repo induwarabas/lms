@@ -4,10 +4,14 @@ namespace app\controllers;
 
 use app\models\Account;
 use app\models\BankAccount;
+use app\models\Canvasser;
+use app\models\CanvassingCommisionPayment;
 use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\Loan;
 use app\models\LoanType;
+use app\models\OtherChargesPayment;
+use app\models\SalesCommisionPayment;
 use app\models\Supplier;
 use app\models\TellerGeneralExpence;
 use app\models\TellerPayment;
@@ -217,8 +221,8 @@ class TellerController extends LmsController
                 }
                 if ($loanex->supplier != null && $loanex->supplier != 0) {
                     $supplier = Supplier::findOne($loanex->supplier);
-                    $model->drAccount = $supplier->account;
-                    $model->amount = $loan->amount;
+                    //$model->drAccount = $supplier->account;
+                    //$model->amount = $loan->amount;
                     $chequeWriteTo = "Cheques should be written to the supplier " . SupplierView::widget(['supplier' => $supplier]);
                 }
             }
@@ -241,6 +245,201 @@ class TellerController extends LmsController
             ]);
         }
     }
+
+    public function actionScPayment()
+    {
+        $model = new SalesCommisionPayment();
+        $model->payment = 'CHEQUE';
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate(['supplier'])) {
+            $error = null;
+            $supplier = Supplier::findOne($model->supplier);
+            if ($supplier == null) {
+                $model->addError('supplier', "Invalid supplier id.");
+                return $this->render('payment-account', [
+                    'model' => $model,
+                    'error' => null
+                ]);
+            }
+
+            if ($model->description == null || $model->description == '') {
+                $model->description = 'Sales commission payment';
+            }
+
+            if ($model->stage == 2 && $model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
+                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
+                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else {
+                    $model->crAccount = $teller->id;
+                    if ($model->payment == 'CHEQUE') {
+                        $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
+                    }
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 3;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+
+                        if ($txHnd->createTransaction($supplier->account, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                            $tx->commit();
+                            $model->stage = 3;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 2;
+            }
+
+            return $this->render('sc-payment', [
+                'model' => $model,
+                'error' => $error,
+                'supplier' => $supplier
+            ]);
+        } else {
+            $model->stage = 0;
+            $model->link = uniqid();
+            return $this->render('sc-payment-supplier', [
+                'model' => $model,
+                'error' => null
+            ]);
+        }
+    }
+
+    public function actionCcPayment()
+    {
+        $model = new CanvassingCommisionPayment();
+        $model->payment = 'CHEQUE';
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate(['supplier'])) {
+            $error = null;
+            $canvasser = Canvasser::findOne($model->canvasser);
+            if ($canvasser == null) {
+                $model->addError('canvasser', "Invalid canvasser id.");
+                return $this->render('payment-account', [
+                    'model' => $model,
+                    'error' => null
+                ]);
+            }
+
+            if ($model->description == null || $model->description == '') {
+                $model->description = 'Canvassing commission payment';
+            }
+
+            if ($model->stage == 2 && $model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
+                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
+                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else {
+                    $model->crAccount = $teller->id;
+                    if ($model->payment == 'CHEQUE') {
+                        $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
+                    }
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 3;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+
+                        if ($txHnd->createTransaction($canvasser->account, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                            $tx->commit();
+                            $model->stage = 3;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 2;
+            }
+
+            return $this->render('cc-payment', [
+                'model' => $model,
+                'error' => $error,
+                'canvasser' => $canvasser
+            ]);
+        } else {
+            $model->stage = 0;
+            $model->link = uniqid();
+            return $this->render('cc-payment-canvasser', [
+                'model' => $model,
+                'error' => null
+            ]);
+        }
+    }
+
+    public function actionOcPayment()
+    {
+        $model = new OtherChargesPayment();
+        $model->payment = 'CHEQUE';
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $error = null;
+
+            if ($model->stage == 2 && $model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
+                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
+                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else {
+                    $model->crAccount = $teller->id;
+                    if ($model->payment == 'CHEQUE') {
+                        $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
+                    }
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 3;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+
+                        if ($txHnd->createTransaction(GeneralAccounts::CHARGES, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                            $tx->commit();
+                            $model->stage = 3;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 2;
+            }
+
+            return $this->render('oc-payment', [
+                'model' => $model,
+                'error' => $error,
+            ]);
+        } else {
+            $model->stage = 2;
+            $model->link = uniqid();
+            return $this->render('oc-payment', [
+                'model' => $model,
+                'error' => null,
+            ]);
+        }
+    }
+
 
     public function actionExpensePayment()
     {

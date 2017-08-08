@@ -57,8 +57,8 @@ use Zelenin\yii\SemanticUI\Elements;
             <?= $form->field($model, 'engine_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'chasis_no')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'vehicle_no')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'insurance')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'price')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
+            <?= $form->field($model, 'insurance')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
         </div>
 
         <div class="ui segment">

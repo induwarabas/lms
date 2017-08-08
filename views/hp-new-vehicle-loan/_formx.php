@@ -112,8 +112,10 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
     </div>
 
     <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
         <?= Html::a("Cancel", ["loan/cancel"], ['id' => 'cancel', 'class' => 'ui button']) ?>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>

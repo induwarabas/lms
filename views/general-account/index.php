@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php
-        //Html::a(Yii::t('app', 'Create General Account'), ['create'], ['class' => 'btn btn-success']);
+        echo Html::a(Yii::t('app', 'Create General Account'), ['create'], ['class' => 'btn btn-success']);
         ?>
     </p>
     <?php Pjax::begin(); ?>    <?= GridView::widget([
@@ -30,6 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             'id',
+            'account_id',
+            ['attribute' => 'type', 'filter' => \app\utils\enums\GeneralAccountTypes::getAll()],
             'name',
             'description',
         ],

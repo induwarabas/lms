@@ -43,7 +43,6 @@ AppAsset::register($this);
                 'items' =>
                     [
                         ['label' => 'Receipt', 'url' => ['/teller/receipt']],
-                        ['label' => 'Payment', 'url' => ['/teller/payment']],
                         ['label' => 'Expense Payment', 'url' => ['/teller/expense-payment']],
                         ['label' => 'Expense Receipt', 'url' => ['/teller/expense-receipt']]
                     ]
@@ -61,6 +60,10 @@ AppAsset::register($this);
                 'items' => [
                     ['label' => 'Create', 'url' => ['/loan/create']],
                     ['label' => 'View', 'url' => ['/loan/index', 'sort' => '-id']],
+                    ['label' => 'Payment', 'url' => ['/teller/payment']],
+                    ['label' => 'Sales Commission Payment', 'url' => ['/teller/sc-payment']],
+                    ['label' => 'Canvassing Commission Payment', 'url' => ['/teller/cc-payment']],
+                    ['label' => 'Charges Payment', 'url' => ['/teller/oc-payment']],
                 ]
             ],
             [

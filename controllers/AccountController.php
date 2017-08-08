@@ -82,16 +82,17 @@ class AccountController extends LmsController
             else
                 $loan = Loan::find()->where("loan_account = :id", [':id' => $id])->one();
 
-            $customer = Customer::findOne($loan->customer_id);
-            $details->name = $customer->name;
-            $details->nameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
+            //$customer = Customer::findOne($loan->customer_id);
+            //$details->name = $customer->name;
+            //$details->nameUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $customer->id]);
             $details->descriptionTitle = "Loan";
             $details->description = "#" . $loan->id;
             $details->descriptionUrl = Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id]);
         } else if ($account->type == Account::TYPE_GENERAL) {
-            $details->name = GeneralAccounts::names[$id];
+            $ga = GeneralAccount::findOne(['account_id' => $id]);
+            //$details->name = $ga->name;
             $details->descriptionTitle = 'Purpose';
-            $details->description = GeneralAccount::findOne($id)->description;
+            $details->description = $ga->description;
         }
         return $details;
     }
