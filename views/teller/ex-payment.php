@@ -3,21 +3,16 @@
 use app\models\Account;
 use app\models\BankAccount;
 use app\utils\enums\PaymentType;
-use app\utils\widgets\AccountIDView;
-use app\utils\widgets\CustomerView;
-use app\utils\widgets\SupplierView;
 use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
 use yii\helpers\Html;
-use Zelenin\yii\SemanticUI\Elements;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\SalesCommisionPayment */
-/* @var $supplier app\models\Supplier */
+/* @var $model app\models\ExpenditurePayment */
 /* @var $error string */
 
-$this->title = 'Sales Commission Payment';
+$this->title = 'Canvassing Commission Payment';
 $this->params['breadcrumbs'][] = ['label' => 'Teller', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -38,12 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <table class="ui definition table">
         <tbody>
         <tr>
-            <td>Supplier</td>
-            <td><?= SupplierView::widget(['supplier' => $supplier]) ?></td>
-        </tr>
-        <tr>
             <td>Debit Account</td>
-            <td><?= AccountIDView::widget(['accountId' => $supplier->account]) ?></td>
+            <td><?= Account::findOne($model->drAccount)->getAccountHtml() ?></td>
         </tr>
         <?php if ($model->stage == 3) { ?>
             <tr>
@@ -80,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
-            <?= $form->field($model, 'supplier')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'drAccount')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
 
             <?= $form->field($model, 'payment')->dropDownList(PaymentType::getItems()) ?>

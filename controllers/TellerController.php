@@ -7,6 +7,8 @@ use app\models\BankAccount;
 use app\models\Canvasser;
 use app\models\CanvassingCommisionPayment;
 use app\models\Customer;
+use app\models\ExpenditurePayment;
+use app\models\GeneralAccount;
 use app\models\HpNewVehicleLoan;
 use app\models\Loan;
 use app\models\LoanType;
@@ -55,8 +57,8 @@ class TellerController extends LmsController
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
-                } else if ($model->payment == PaymentType::CHEQUE && ($model->cheque == null || $model->cheque == '')) {
-                    $model->addError('cheque', 'Cheque number required for cheque transactions');
+                } else if (PaymentType::needReference($model->payment) && ($model->cheque == null || $model->cheque == '')) {
+                    $model->addError('cheque', 'Reference number required for '.$model->payment.' transactions');
                 } else {
                     $currentTx = Transaction::findOne(['txlink' => $model->link]);
                     if ($currentTx != null) {
@@ -125,7 +127,7 @@ class TellerController extends LmsController
     public function actionPayment()
     {
         $model = new TellerPayment();
-        $model->payment = 'CHEQUE';
+        $model->payment = PaymentType::CHEQUE;
         $teller = Account::getTellerAccount();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate(['loanId'])) {
@@ -164,10 +166,10 @@ class TellerController extends LmsController
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
-                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
-                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
-                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
-                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else if (PaymentType::needReference($model->payment) && $model->cheque == '') {
+                    $model->addError('cheque', 'Reference number cannot be blank for '.$model->payment.' payments');
+                } else if (PaymentType::needReference($model->payment) && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for '.$model->payment.' payments');
                 } else {
                     if (Transaction::findOne(['txlink' => $model->link]) != null) {
                         $error = "Transaction is already done.";
@@ -176,10 +178,10 @@ class TellerController extends LmsController
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
                         $model->crAccount = $teller->id;
-                        if ($model->payment == 'CHEQUE') {
+                        if (PaymentType::needReference($model->payment)) {
                             $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
                         }
-                        if ($txHnd->createTransaction($model->drAccount, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                        if ($txHnd->createTransaction($model->drAccount, $model->crAccount, $model->amount, TxType::PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $loan->paid = $txHnd->txid;
                             if ($loan->save()) {
                                 $tx->commit();
@@ -249,7 +251,7 @@ class TellerController extends LmsController
     public function actionScPayment()
     {
         $model = new SalesCommisionPayment();
-        $model->payment = 'CHEQUE';
+        $model->payment = PaymentType::CHEQUE;
         $teller = Account::getTellerAccount();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate(['supplier'])) {
@@ -257,7 +259,7 @@ class TellerController extends LmsController
             $supplier = Supplier::findOne($model->supplier);
             if ($supplier == null) {
                 $model->addError('supplier', "Invalid supplier id.");
-                return $this->render('payment-account', [
+                return $this->render('sc-payment-supplier', [
                     'model' => $model,
                     'error' => null
                 ]);
@@ -270,13 +272,13 @@ class TellerController extends LmsController
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
-                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
-                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
-                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
-                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else if (PaymentType::needReference($model->payment) && $model->cheque == '') {
+                    $model->addError('cheque', 'Reference number cannot be blank for '.$model->payment.' payments');
+                } else if (PaymentType::needReference($model->payment) && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for '.$model->payment.' payments');
                 } else {
                     $model->crAccount = $teller->id;
-                    if ($model->payment == 'CHEQUE') {
+                    if (PaymentType::needReference($model->payment)) {
                         $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
                     }
                     if (Transaction::findOne(['txlink' => $model->link]) != null) {
@@ -286,7 +288,7 @@ class TellerController extends LmsController
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
 
-                        if ($txHnd->createTransaction($supplier->account, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                        if ($txHnd->createTransaction($supplier->account, $model->crAccount, $model->amount, TxType::PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $tx->commit();
                             $model->stage = 3;
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
@@ -318,7 +320,7 @@ class TellerController extends LmsController
     public function actionCcPayment()
     {
         $model = new CanvassingCommisionPayment();
-        $model->payment = 'CHEQUE';
+        $model->payment = PaymentType::CHEQUE;
         $teller = Account::getTellerAccount();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate(['supplier'])) {
@@ -326,7 +328,7 @@ class TellerController extends LmsController
             $canvasser = Canvasser::findOne($model->canvasser);
             if ($canvasser == null) {
                 $model->addError('canvasser', "Invalid canvasser id.");
-                return $this->render('payment-account', [
+                return $this->render('cc-payment-canvasser', [
                     'model' => $model,
                     'error' => null
                 ]);
@@ -339,13 +341,13 @@ class TellerController extends LmsController
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
-                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
-                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
-                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
-                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else if (PaymentType::needReference($model->payment) && $model->cheque == '') {
+                    $model->addError('cheque', 'Reference number cannot be blank for '.$model->payment.' payments');
+                } else if (PaymentType::needReference($model->payment) && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for '.$model->payment.' payments');
                 } else {
                     $model->crAccount = $teller->id;
-                    if ($model->payment == 'CHEQUE') {
+                    if (PaymentType::needReference($model->payment)) {
                         $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
                     }
                     if (Transaction::findOne(['txlink' => $model->link]) != null) {
@@ -355,7 +357,7 @@ class TellerController extends LmsController
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
 
-                        if ($txHnd->createTransaction($canvasser->account, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                        if ($txHnd->createTransaction($canvasser->account, $model->crAccount, $model->amount, TxType::PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $tx->commit();
                             $model->stage = 3;
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
@@ -387,7 +389,7 @@ class TellerController extends LmsController
     public function actionOcPayment()
     {
         $model = new OtherChargesPayment();
-        $model->payment = 'CHEQUE';
+        $model->payment = PaymentType::CHEQUE;
         $teller = Account::getTellerAccount();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -396,13 +398,13 @@ class TellerController extends LmsController
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
                     $model->addError('amount', 'Amount should be greater than 0');
-                } else if ($model->payment == 'CHEQUE' && $model->cheque == '') {
-                    $model->addError('cheque', 'Cheque number cannot be blank for cheque payments');
-                } else if ($model->payment == 'CHEQUE' && ($model->bankAccount == null || $model->bankAccount == 0)) {
-                    $model->addError('bankAccount', 'Bank Account cannot be blank for cheque payments');
+                } else if (PaymentType::needReference($model->payment) && $model->cheque == '') {
+                    $model->addError('cheque', 'Reference number cannot be blank for '.$model->payment.' payments');
+                } else if (PaymentType::needReference($model->payment) && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for '.$model->payment.' payments');
                 } else {
                     $model->crAccount = $teller->id;
-                    if ($model->payment == 'CHEQUE') {
+                    if (PaymentType::needReference($model->payment)) {
                         $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
                     }
                     if (Transaction::findOne(['txlink' => $model->link]) != null) {
@@ -412,7 +414,7 @@ class TellerController extends LmsController
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
 
-                        if ($txHnd->createTransaction(GeneralAccounts::CHARGES, $model->crAccount, $model->amount, TxType::PAYMENT, PaymentType::CASH, $model->description, $model->link)) {
+                        if ($txHnd->createTransaction(GeneralAccounts::CHARGES, $model->crAccount, $model->amount, TxType::PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $tx->commit();
                             $model->stage = 3;
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
@@ -440,6 +442,69 @@ class TellerController extends LmsController
         }
     }
 
+    public function actionExpenditurePayment()
+    {
+        $model = new ExpenditurePayment();
+        $model->payment = PaymentType::CHEQUE;
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate(['drAccount'])) {
+            $error = null;
+            $generalAccount = GeneralAccount::findOne(['account_id' => $model->drAccount]);
+            if ($generalAccount == null) {
+                $model->addError('drAccount', "Invalid account id.");
+                return $this->render('ex-payment-account', [
+                    'model' => $model,
+                    'error' => null
+                ]);
+            }
+
+            if ($model->stage == 2 && $model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else if (PaymentType::needReference($model->payment) && $model->cheque == '') {
+                    $model->addError('cheque', 'Reference number cannot be blank for '.$model->payment.' payments');
+                } else if (PaymentType::needReference($model->payment) && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for '.$model->payment.' payments');
+                } else {
+                    $model->crAccount = $teller->id;
+                    if (PaymentType::needReference($model->payment)) {
+                        $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
+                    }
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 3;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+
+                        if ($txHnd->createTransaction($model->drAccount, $model->crAccount, $model->amount, TxType::EXPENSE, $model->payment, $model->description, $model->link, $model->cheque)) {
+                            $tx->commit();
+                            $model->stage = 3;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 2;
+            }
+
+            return $this->render('ex-payment', [
+                'model' => $model,
+                'error' => $error,
+            ]);
+        } else {
+            $model->stage = 0;
+            $model->link = uniqid();
+            return $this->render('ex-payment-account', [
+                'model' => $model,
+                'error' => null
+            ]);
+        }
+    }
 
     public function actionExpensePayment()
     {

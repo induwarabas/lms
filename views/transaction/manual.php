@@ -1,5 +1,6 @@
 <?php
 
+use app\utils\enums\PaymentType;
 use app\utils\widgets\AccountIDView;
 use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
@@ -72,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'dr_account')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'cr_account')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'payment')->dropDownList(['CASH' => 'CASH', 'CHEQUE' => 'CHEQUE']) ?>
+            <?= $form->field($model, 'payment')->dropDownList(PaymentType::getItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
 

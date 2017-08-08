@@ -2,6 +2,7 @@
 
 use app\models\Account;
 use app\models\BankAccount;
+use app\utils\enums\PaymentType;
 use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CustomerView;
 use kartik\form\ActiveForm;
@@ -91,8 +92,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php if ($model->stage == 3) { ?>
             <tr>
                 <td>Payment type</td>
-                <td>CASH</td>
+                <td><?= $model->payment ?></td>
             </tr>
+            <?php if (PaymentType::needReference($model->payment)) { ?>
+                <tr>
+                    <td>Reference Number</td>
+                    <td><?= $model->cheque ?></td>
+                </tr>
+            <?php } ?>
             <tr>
                 <td>Amount Payed</td>
                 <td><?= number_format($model->amount, 2) ?></td>
@@ -115,7 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01', 'readonly' => true]) ?>
 
-            <?= $form->field($model, 'payment')->dropDownList(['CASH' => 'CASH', 'CHEQUE' => 'CHEQUE']) ?>
+            <?= $form->field($model, 'payment')->dropDownList(PaymentType::getItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'bankAccount')->dropDownList(BankAccount::getBankAccItems()) ?>
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>

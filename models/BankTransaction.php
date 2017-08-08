@@ -68,7 +68,7 @@ class BankTransaction extends Model
             'bank_account' => 'Bank Account',
             'amount' => 'Amount',
             'payment' => 'Payment Type',
-            'cheque' => 'Cheque Number',
+            'cheque' => 'Reference Number',
             'link' => 'Link',
             'description' => 'Description',
             'stage' => 'Stage',

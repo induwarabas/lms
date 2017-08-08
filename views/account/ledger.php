@@ -10,15 +10,16 @@ use Zelenin\yii\SemanticUI\widgets\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $details \app\utils\AccountDetails */
 
-$this->title = 'Accounts';
+$this->title = 'Recent 10 Transactions';
+if ($history != null) {
+    $this->title = 'Transaction history';
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="account-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= Html::a('View History', ['history', 'id' => $details->account->id], ['class' => 'ui button blue']) ?>
 
     <?= $this->render('_details', [
         'details' => $details,
@@ -32,11 +33,15 @@ $this->params['breadcrumbs'][] = $this->title;
     } ?>
     <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            return ['id' => $model['txid'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['transaction/view', 'id' => $model['txid']]) . '";'];
+        },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            'txid',
             'timestamp',
             'type',
+            'payment',
             'description',
             ['attribute' => 'amount', 'format' => 'html', 'value' => function ($data) use ($details) {
                 if ($data->dr_account === $details->account->id) {
@@ -63,4 +68,13 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <?php Pjax::end(); ?>
+    <p align="right">
+    <?php
+    if ($history != null) {
+        echo Html::a('View Recent', ['ledger', 'id' => $details->account->id], ['class' => 'ui button blue']);
+    } else {
+        echo "<br/>";
+        echo Html::a('View History', ['history', 'id' => $details->account->id], ['class' => 'ui button blue']);
+    } ?>
+    </p>
 </div>

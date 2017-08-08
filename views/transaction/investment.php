@@ -30,14 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->stage == 1) { ?>
         <?php $form = ActiveForm::begin(['id' => 'frmx', 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
-        <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'amount')->hiddenInput()->label(false) ?>
-
         <?= $form->field($model, 'description')->hiddenInput()->label(false) ?>
 
         <?= DetailView::widget([
@@ -58,6 +50,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::submitButton('Confirm', ['class' => 'btn btn-success']) ?>
             </div>
         </div>
+        <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'amount')->hiddenInput()->label(false) ?>
         <?php ActiveForm::end(); ?>
     <?php } ?>
 
@@ -66,12 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php $form = ActiveForm::begin(['id' => 'frmx', 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
-            <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
+
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
 
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
@@ -81,7 +75,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::submitButton('Invest', ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
-
+            <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
             <?php ActiveForm::end(); ?>
 
         </div>

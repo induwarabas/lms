@@ -59,7 +59,7 @@ class TellerPayment extends \yii\base\Model
             'amount' => 'Amount',
             'payment' => 'Payment',
             'bankAccount' => 'Bank Account',
-            'cheque' => 'Cheque Number',
+            'cheque' => 'Reference Number',
             'description' => 'Description',
             'stage' => 'Stage',
             'link' => 'Link',

@@ -65,7 +65,7 @@ class ManualTransaction extends Model
             'dr_account' => 'Debit Account',
             'amount' => 'Amount',
             'payment' => 'Payment Type',
-            'cheque' => 'Cheque Number',
+            'cheque' => 'Reference Number',
             'link' => 'Link',
             'description' => 'Description',
             'stage' => 'Stage',

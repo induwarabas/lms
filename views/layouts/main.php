@@ -67,20 +67,21 @@ AppAsset::register($this);
                 ]
             ],
             [
-                'label' => 'Advanced',
+                'label' => 'Transaction',
                 'items' => [
-                    ['label' => 'General Accounts', 'url' => ['/general-account/index']],
                     ['label' => 'Manual Transaction', 'url' => ['/transaction/manual']],
                     ['label' => 'Investment', 'url' => ['/transaction/investment']],
                     ['label' => 'Safe -> Teller', 'url' => ['/transaction/safe-to-teller']],
                     ['label' => 'Teller -> Safe', 'url' => ['/transaction/teller-to-safe']],
                     ['label' => 'Safe -> Bank', 'url' => ['/transaction/safe-to-bank']],
                     ['label' => 'Bank -> Safe', 'url' => ['/transaction/bank-to-safe']],
+                    ['label' => 'Expenditure', 'url' => ['/teller/expenditure-payment']],
                 ]
             ],
             [
                 'label' => 'Configure',
                 'items' => [
+                    ['label' => 'General Accounts', 'url' => ['/general-account/index']],
                     ['label' => 'Areas', 'url' => ['/area/index']],
                     ['label' => 'Banks', 'url' => ['/bank/index']],
                     ['label' => 'Bank Accounts', 'url' => ['/bank-account/index']],

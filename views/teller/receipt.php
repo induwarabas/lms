@@ -81,9 +81,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <td>Payment type</td>
                 <td><?= $model->payment ?></td>
             </tr>
-            <?php if ($model->payment == PaymentType::CHEQUE) { ?>
+            <?php if (PaymentType::needReference($model->payment)) { ?>
                 <tr>
-                    <td>Cheque number</td>
+                    <td>Reference number</td>
                     <td><?= $model->cheque ?></td>
                 </tr>
             <?php } ?>
@@ -109,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>
 
-            <?= $form->field($model, 'payment')->dropDownList(['CASH' => 'CASH', 'CHEQUE' => 'CHEQUE']) ?>
+            <?= $form->field($model, 'payment')->dropDownList(PaymentType::getTellerItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
 

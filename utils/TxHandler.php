@@ -67,8 +67,8 @@ class TxHandler
             return false;
         }
 
-        if ($payment == PaymentType::CHEQUE && ($cheque == null || $cheque == '')) {
-            $this->error = "Cheque number not given";
+        if (PaymentType::needReference($payment) && ($cheque == null || $cheque == '')) {
+            $this->error = "Reference number not given";
             return false;
         }
 

@@ -52,7 +52,7 @@ class Transaction extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'txid' => 'Transaction ID',
+            'txid' => 'ID',
             'timestamp' => 'Transaction Time',
             'cr_account' => 'Credit Account',
             'dr_account' => 'Debit Account',
@@ -61,7 +61,7 @@ class Transaction extends \yii\db\ActiveRecord
             'amount' => 'Amount',
             'type' => 'Transaction Type',
             'payment' => 'Payment Type',
-            'cheque' => 'Cheque Number',
+            'cheque' => 'Reference Number',
             'txlink' => 'Link',
             'user' => 'User',
             'description' => 'Description',

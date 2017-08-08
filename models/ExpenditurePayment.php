@@ -5,22 +5,26 @@ namespace app\models;
 /**
  * This is the model class for table "account".
  *
- * @property string $txid
- * @property string $loanId
+ * @property integer $txid
+ * @property integer $drAccount
+ * @property integer $crAccount
  * @property double $amount
  * @property string $payment
- * @property double $cheque
  * @property string $description
+ * @property integer $bankAccount
+ * @property integer $cheque
  * @property integer $stage
  * @property string $link
  * @property string $user
  */
-class TellerReceipt extends \yii\base\Model
+class ExpenditurePayment extends \yii\base\Model
 {
     public $txid;
-    public $loanId;
+    public $drAccount;
+    public $crAccount;
     public $amount;
     public $payment;
+    public $bankAccount;
     public $cheque;
     public $description;
     public $stage;
@@ -33,10 +37,9 @@ class TellerReceipt extends \yii\base\Model
     public function rules()
     {
         return [
-            [['loanId', 'amount', 'description', 'stage', 'link', 'payment'], 'required'],
-            [['loanId', 'description', 'link', 'payment', 'user'], 'string'],
-            [['amount', 'stage', 'txid'], 'number', 'min' => 0],
-            [['loanId'], 'string', 'max' => 10],
+            [['amount', 'description', 'stage', 'link', 'drAccount'], 'required'],
+            [['description', 'link', 'payment', 'crAccount', 'drAccount'], 'string'],
+            [['amount', 'stage', 'txid', 'bankAccount'], 'number', 'min' => 0],
             [['cheque'], 'string', 'max' => 32],
         ];
     }
@@ -47,14 +50,16 @@ class TellerReceipt extends \yii\base\Model
     public function attributeLabels()
     {
         return [
-            'loanId' => 'Loan ID',
+            'txid' => 'Transaction ID',
+            'drAccount' => 'Debit Account',
+            'crAccount' => 'Credit Account',
             'amount' => 'Amount',
             'payment' => 'Payment',
+            'bankAccount' => 'Bank Account',
             'cheque' => 'Reference Number',
             'description' => 'Description',
             'stage' => 'Stage',
             'link' => 'Link',
-            'txid' => 'Transaction ID',
             'user' => 'User',
         ];
     }
