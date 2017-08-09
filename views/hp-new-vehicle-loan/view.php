@@ -85,6 +85,10 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a('View Schedule', ['loan/schedule', 'id' => $model->id], ['class' => 'ui button brown']);
         }
 
+        if (!$loan->paid) {
+            echo Html::a('Down Payment Receipt', '#', ['class' => 'ui button green', 'id' => 'btn-down-pay']);
+        }
+
         if (!$loan->paid && $loan->status == 'ACTIVE'&& User::hasPermission('loanpayment')) {
             echo Html::a('Pay', '#', ['class' => 'ui button red', 'id' => 'btn-loan-pay']);
         }
@@ -97,6 +101,12 @@ $this->params['breadcrumbs'][] = $this->title;
             <input type="hidden" name="_csrf" value="<?= Yii::$app->request->getCsrfToken() ?>"/>
             <input type="hidden" id="tellerpayment-loanid" name="TellerPayment[loanId]" value="<?= $loan->id ?>"/>
             <input type="hidden" id="tellerpayment-link" name="TellerPayment[link]" value="<?= uniqid() ?>"/>
+        </form>
+
+        <form action="<?= \yii\helpers\Url::to(['teller/down-payment-receipt']) ?>" method="post" id="down-pay">
+            <input type="hidden" name="_csrf" value="<?= Yii::$app->request->getCsrfToken() ?>"/>
+            <input type="hidden" id="tellerreceipt-loanid" name="TellerReceipt[loanId]" value="<?= $loan->id ?>"/>
+            <input type="hidden" id="tellerreceipt-link" name="TellerReceipt[link]" value="<?= uniqid() ?>"/>
         </form>
 
         <form action="<?= \yii\helpers\Url::to(['teller/receipt']) ?>" method="post" id="loan-receipt">
@@ -139,6 +149,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         return LoanStatus::label($data->status);
                     }],
                     ['attribute' => 'amount', 'value' => number_format($loan->amount, 2)],
+                    ['attribute' => 'charges', 'label' => 'Down Payment', 'value' => function ($data) use ($model) {
+                        return number_format($model->down_payment, 2);
+                    }],
                     ['attribute' => 'charges', 'label' => 'Sales commission', 'value' => function ($data) use ($model) {
                         return number_format($model->getSalesCommission(), 2);
                     }],
@@ -233,6 +246,11 @@ $this->registerJs("
 $('#btn-loan-pay').click(function(e){
     e.preventDefault();
     $('#loan-pay').submit();
+});
+
+$('#btn-down-pay').click(function(e){
+    e.preventDefault();
+    $('#down-pay').submit();
 });
 
 $('#btn-loan-receipt').click(function(e){

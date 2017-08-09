@@ -162,6 +162,10 @@ class TellerController extends LmsController
             }
 
             $model->amount = $loan->amount;
+            $loanex = HpNewVehicleLoan::findOne($loan->id);
+            if ($loanex != null) {
+                $model->amount = $loanex->loan_amount + $loanex->down_payment;
+            }
 
             if ($model->stage == 2 && $model->validate()) {
                 if ($model->amount == 0) {
@@ -209,8 +213,7 @@ class TellerController extends LmsController
             $balance = $savingAccount->balance - $due;
             $model->drAccount = GeneralAccounts::PAYABLE;
             $chequeWriteTo = "Cheques should be written directly to the customer " . CustomerView::widget(['customer' => $customer]);
-            if (LoanTypes::isVehicleLoan($loan->type)) {
-                $loanex = HpNewVehicleLoan::findOne($loan->id);
+            if ($loanex != null) {
                 if ($loanex->vehicle_no != null && $loanex->vehicle_no != '') {
                     $details .= " / " . $loanex->vehicle_no;
                 } else {
@@ -233,6 +236,7 @@ class TellerController extends LmsController
                 'model' => $model,
                 'details' => $details,
                 'loan' => $loan,
+                'loanex' => $loanex,
                 'customer' => $customer,
                 'balance' => $balance,
                 'error' => $error,
@@ -598,6 +602,121 @@ class TellerController extends LmsController
                 'model' => $model,
                 'error' => null,
                 'title' => "Expense Receipt"
+            ]);
+        }
+    }
+
+    public function actionDownPaymentReceipt()
+    {
+        $model = new TellerReceipt();
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate(['loanId'])) {
+            $error = null;
+            $loan = Loan::findOne($model->loanId);
+            if ($loan == null) {
+                $model->addError('loanId', "Invalid loan id.");
+                return $this->render('dp-receipt-account', [
+                    'model' => $model,
+                ]);
+            }
+
+            if ($loan->paid != 0) {
+                $model->addError('loanId', "The loan is already paid");
+                return $this->render('dp-receipt-account', [
+                    'model' => $model,
+                ]);
+            }
+
+            if (!LoanTypes::isVehicleLoan($loan->type)) {
+                $model->addError('loanId', "This is not a vehicle loan.");
+                return $this->render('dp-receipt-account', [
+                    'model' => $model,
+                ]);
+            }
+
+            $loanex = HpNewVehicleLoan::findOne($loan->id);
+            if ($loanex == null) {
+                $model->addError('loanId', "This is not a vehicle loan.");
+                return $this->render('dp-receipt-account', [
+                    'model' => $model,
+                ]);
+            }
+
+            if ($model->description == null || $model->description == '') {
+                $model->description = 'Loan down payment receipt #' . $loan->id;
+            }
+
+            if ($model->stage == 2 && $model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else if (PaymentType::needReference($model->payment) && ($model->cheque == null || $model->cheque == '')) {
+                    $model->addError('cheque', 'Reference number required for '.$model->payment.' transactions');
+                } else {
+                    $currentTx = Transaction::findOne(['txlink' => $model->link]);
+                    if ($currentTx != null) {
+                        $error = "Transaction is already done.";
+                        $model->txid = $currentTx->txid;
+                        $model->user = $currentTx->user;
+                        $model->stage = 3;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::PAYABLE, $model->amount, TxType::RECEIPT, $model->payment, $model->description, $model->link, $model->cheque)) {
+                            $loanex->down_payment = $loanex->down_payment + $model->amount;
+                            if ($loanex->save()) {
+                                $tx->commit();
+                                $model->stage = 3;
+                                $model->txid = $txHnd->txid;
+                                $model->user = Yii::$app->getUser()->getIdentity()->username;
+                            } else {
+                                $tx->rollBack();
+                                $error = "Failed to save loan down payment";
+                            }
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 2;
+            }
+
+
+            $customer = Customer::findOne($loan->customer_id);
+            $details = "#" . $loan->id . " / " . LoanType::findOne($loan->type)->name;
+            $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
+            $savingAccount = Account::findOne($loan->saving_account);
+            $balance = $savingAccount->balance - $due;
+            if (LoanTypes::isVehicleLoan($loan->type)) {
+                $loanex = HpNewVehicleLoan::findOne($loan->id);
+                if ($loanex->vehicle_no != null && $loanex->vehicle_no != '') {
+                    $details .= " / " . $loanex->vehicle_no;
+                } else {
+                    if ($loanex->engine_no != null && $loanex->engine_no != '') {
+                        $details .= " / " . $loanex->engine_no;
+                    }
+                    if ($loanex->chasis_no != null && $loanex->chasis_no != '') {
+                        $details .= " / " . $loanex->chasis_no;
+                    }
+                }
+            }
+
+            return $this->render('dp-receipt', [
+                'model' => $model,
+                'details' => $details,
+                'loan' => $loan,
+                'customer' => $customer,
+                'balance' => $balance,
+                'error' => $error,
+                'loanx' => $loanex
+            ]);
+        } else {
+            $model->stage = 0;
+            $model->link = uniqid();
+            return $this->render('dp-receipt-account', [
+                'model' => $model,
             ]);
         }
     }

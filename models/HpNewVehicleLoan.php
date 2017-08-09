@@ -14,6 +14,7 @@ namespace app\models;
  * @property integer $make
  * @property integer $supplier
  * @property number $price
+ * @property number $down_payment
  * @property number $loan_amount
  * @property number $charges
  * @property string $sales_commision_type
@@ -47,7 +48,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
         return [
             [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
             [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
-            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges'], 'number'],
+            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges', 'down_payment'], 'number'],
             [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
             [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
             [['rmv_sent_agent', 'rmv_sent_by', 'rmv_recv_agent', 'rmv_recv_by'], 'string', 'max' => 64],
@@ -69,6 +70,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             'make' => 'Make/Brand',
             'supplier' => 'Supplier',
             'price' => 'Selling Price',
+            'down_payment' => 'Down Payment',
             'loan_amount' => 'Loan Amount',
             'charges' => 'Charges',
             'sales_commision_type' => 'Sales Commission Type',
