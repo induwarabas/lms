@@ -43,6 +43,7 @@ AppAsset::register($this);
                 'items' =>
                     [
                         ['label' => 'Receipt', 'url' => ['/teller/receipt']],
+                        ['label' => 'Down Payment Receipt', 'url' => ['/teller/down-payment-receipt']],
                         ['label' => 'Expense Payment', 'url' => ['/teller/expense-payment']],
                         ['label' => 'Expense Receipt', 'url' => ['/teller/expense-receipt']]
                     ]
