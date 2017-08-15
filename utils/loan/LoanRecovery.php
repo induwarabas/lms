@@ -13,6 +13,7 @@ use app\models\Account;
 use app\models\CollectionMethod;
 use app\models\Loan;
 use app\models\LoanSchedule;
+use app\models\Setting;
 use app\utils\Doubles;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
@@ -37,7 +38,7 @@ class LoanRecovery
     {
         $tx = Yii::$app->getDb()->beginTransaction();
         if ($date === null) {
-            $date = date('Y-m-d');
+            $date = Setting::getDay();
         }
         $loan = Loan::findOne(['id' => $loanId]);
         if ($loan === null) {
@@ -212,7 +213,7 @@ class LoanRecovery
     public function recover($loanId, $date = null)
     {
         if ($date == null) {
-            $date = date('Y-m-d');
+            $date = Setting::getDay();
         }
         $this->linkId = uniqid();
         if (!$this->updateSchedule($loanId, $date)) {

@@ -6,6 +6,7 @@ use app\models\DisburseModel;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanSearch;
+use app\models\Setting;
 use app\utils\enums\LoanTypes;
 use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanDisbursement;
@@ -263,7 +264,7 @@ class LoanController extends LmsController
     {
         $date = Yii::$app->request->getQueryParam('date', null);
         if ($date == null) {
-            $date = date('Y-m-d');
+            $date = Setting::getDay();
         }
         $disbursement = new LoanRecovery();
         if ($disbursement->recover($id, $date)) {
@@ -271,6 +272,20 @@ class LoanController extends LmsController
         } else {
             echo $disbursement->error;
         }
+    }
+
+    public function actionRecoverx($id)
+    {
+        $ids = explode(',', $id);
+        $date = Setting::getDay();
+        foreach ($ids as $i) {
+            $disbursement = new LoanRecovery();
+            if (!$disbursement->recover($i, $date)) {
+                echo "failed";
+                return;
+            }
+        }
+        echo "success";
     }
 
     /**

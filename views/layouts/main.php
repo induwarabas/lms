@@ -28,13 +28,22 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
+    $options = [
+        'class' => 'navbar-inverse navbar-fixed-top',
+    ];
+
+    $day = \app\models\Setting::getDay();
+    $today = date("Y-m-d");
+    if ($day < $today) {
+        $options['style'] = 'background-color:	#8B0000';
+    } else if ($day >$today) {
+        $options['style'] = 'background-color:	#137113';
+    }
+
     NavBar::begin([
         'brandLabel' => 'Loan Management System',
         'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-            'style' => 'background-color:	#8B0000'
-        ],
+        'options' => $options,
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
@@ -83,6 +92,7 @@ AppAsset::register($this);
             [
                 'label' => 'Configure',
                 'items' => [
+                    ['label' => 'Day Start', 'url' => ['/maintenance/day-switch']],
                     ['label' => 'General Accounts', 'url' => ['/general-account/index']],
                     ['label' => 'Areas', 'url' => ['/area/index']],
                     ['label' => 'Banks', 'url' => ['/bank/index']],
@@ -131,7 +141,7 @@ AppAsset::register($this);
     ?>
 
     <div class="container">
-        <p align="right">Date: ASDAS</p>
+
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
@@ -142,8 +152,8 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-right"><?= $day ?></p>
+<!--        <p class="pull-right">--><?//= Yii::powered() ?><!--</p>-->
     </div>
 </footer>
 

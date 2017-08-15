@@ -53,4 +53,8 @@ class Setting extends \yii\db\ActiveRecord
     {
         return new SettingQuery(get_called_class());
     }
+
+    public static function getDay() {
+        return Setting::findOne(1)->value;
+    }
 }
