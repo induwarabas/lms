@@ -33,6 +33,7 @@ AppAsset::register($this);
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
+            'style' => 'background-color:	#8B0000'
         ],
     ]);
     echo Nav::widget([
@@ -88,6 +89,7 @@ AppAsset::register($this);
                     ['label' => 'Bank Accounts', 'url' => ['/bank-account/index']],
                     ['label' => 'Vehicle Types', 'url' => ['/vehicle-type/index']],
                     ['label' => 'Vehicle Brands', 'url' => ['/vehicle-brand/index']],
+                    ['label' => 'Templates', 'url' => ['/template/index']],
                 ]
             ],
             [
@@ -129,6 +131,7 @@ AppAsset::register($this);
     ?>
 
     <div class="container">
+        <p align="right">Date: ASDAS</p>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

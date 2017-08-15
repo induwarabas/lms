@@ -272,4 +272,20 @@ class TransactionController extends LmsController
             'model' => $model,
         ]);
     }
+
+    public function actionPrintReceipt($id) {
+        $transaction = Transaction::findOne($id);
+        if ($transaction == null) {
+            return "Invalid receipt";
+        }
+
+        if ($transaction->type !== TxType::RECEIPT) {
+            return "Invalid receipt";
+        }
+
+        if (substr($transaction->cr_account, 0, 1) != Account::getTypeId(Account::TYPE_SAVING)) {
+            return "Invalid receipt";
+        }
+        return $this->redirect(['/hp-new-vehicle-loan/print-receipt', 'id' => $id]);
+    }
 }

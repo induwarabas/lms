@@ -6,8 +6,17 @@ use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\HpNewVehicleLoanEx;
 use app\models\Loan;
+use app\models\LoanType;
+use app\models\Template;
+use app\models\Transaction;
+use app\models\VehicleBrand;
+use app\models\VehicleType;
+use app\utils\enums\LoanTypes;
+use app\utils\enums\TxType;
 use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanCreator;
+use app\utils\MustacheFormatter;
+use kartik\mpdf\Pdf;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -270,6 +279,72 @@ class HpNewVehicleLoanController extends LmsController
             'guarantor2' => $guarantor2,
             'guarantor3' => $guarantor3,
         ]);
+    }
+
+    public function actionPrintReceipt($id) {
+        $transaction = Transaction::findOne($id);
+        if ($transaction == null) {
+            return "Invalid receipt";
+        }
+
+        if ($transaction->type !== TxType::RECEIPT) {
+            return "Invalid receipt";
+        }
+
+        $loan = Loan::findOne(['saving_account' => $transaction->cr_account]);
+        if ($loan == null) {
+            return "Invalid receipt";
+        }
+
+        $description = LoanType::findOne($loan->type)->name;
+        if (LoanTypes::isVehicleLoan($loan->type)) {
+            $loanx = HpNewVehicleLoan::findOne($loan->id);
+            $description .= " - ".VehicleType::findOne($loanx->vehicle_type)->name." ".VehicleBrand::findOne($loanx->make)->name ." " .$loanx->model;
+            if (isset($loanx->vehicle_no) && $loanx->vehicle_no != null && $loanx->vehicle_no !== '') {
+                $description .= " - " . $loanx->vehicle_no;
+            }
+            $description .= " (" . $loanx->engine_no . "/".$loanx->chasis_no.")";
+        }
+        $customer = Customer::findOne($loan->customer_id);
+
+        $template = Template::findOne(1);
+        $m = new \Mustache_Engine();
+        $m->addHelper("format", new MustacheFormatter());
+        $text = $m->render($template->content);
+
+        $template = Template::findOne(2);
+        $text .= $m->render($template->content,['invoice_number' => str_pad($id, 10, "0", STR_PAD_LEFT),
+            'loan' => $loan,
+            'tx' => $transaction,
+            'description' => $description,
+            'customer' => $customer]);
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $text,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            'cssInline' => '.kv-heading-1{font-size:18px}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Cash Receipt'],
+            // call mPDF methods on the fly
+            'methods' => [
+//                'SetHeader'=>['Krajee Report Header'],
+//                'SetFooter'=>['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 
     /**

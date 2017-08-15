@@ -102,6 +102,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php } ?>
         </tbody>
     </table>
+
+    <?php if ($model->stage == 3) {
+        echo '<div style="text-align: right">';
+        echo Html::a("Print Receipt", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('".\yii\helpers\Url::to(['transaction/print-receipt', 'id' => $model->txid])."','MyWindow',width=700,height=300); return false;"]);
+        echo '</div>';
+    } ?>
     <?php if ($model->stage == 2) { ?>
         <div class="supplier-form">
 
