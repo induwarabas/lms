@@ -117,7 +117,12 @@ class LoanRecovery
         $remain = $savingAccount->balance;
 
         if ($remain > 0) {
-            $schedules = LoanSchedule::find()->where(["loan_id" => $loanId])->where(['status' => LoanScheduleStatus::ARREARS])->andWhere("penalty > 0")->orderBy("installment_id")->all();
+            $schedules = LoanSchedule::find()
+                ->where(["loan_id" => $loanId])
+                ->andWhere(['status' => LoanScheduleStatus::ARREARS])
+                ->andWhere("penalty > 0")
+                ->orderBy("installment_id")
+                ->all();
             $amount = 0.0;
 
             foreach ($schedules as $schedule) {
@@ -162,7 +167,11 @@ class LoanRecovery
         $savingAccount = Account::findOne(['id' => $loan->saving_account]);
         $remain = $savingAccount->balance;
 
-        $schedules = LoanSchedule::find()->where(["loan_id" => $loanId])->where("status in ('".LoanScheduleStatus::ARREARS."', '".LoanScheduleStatus::DEMANDED."')")->orderBy("installment_id")->all();
+        $schedules = LoanSchedule::find()
+            ->where(["loan_id" => $loanId])
+            ->andWhere("status in ('".LoanScheduleStatus::ARREARS."', '".LoanScheduleStatus::DEMANDED."')")
+            ->orderBy("installment_id")
+            ->all();
 
         foreach ($schedules as $schedule) {
 
