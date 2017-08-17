@@ -11,6 +11,7 @@ use app\models\ExpenditurePayment;
 use app\models\GeneralAccount;
 use app\models\HpNewVehicleLoan;
 use app\models\Loan;
+use app\models\LoanSchedule;
 use app\models\LoanType;
 use app\models\OtherChargesPayment;
 use app\models\SalesCommisionPayment;
@@ -35,6 +36,9 @@ use Yii;
  */
 class TellerController extends LmsController
 {
+    /**
+     * @return string
+     */
     public function actionReceipt()
     {
         $model = new TellerReceipt();
@@ -93,6 +97,31 @@ class TellerController extends LmsController
             $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
             $savingAccount = Account::findOne($loan->saving_account);
             $balance = $savingAccount->balance - $due;
+
+            $schedules = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(['status' => ['ARREARS', 'DEMANDED']])->orderBy(['installment_id' => SORT_ASC])->all();
+
+            /** @var LoanSchedule $scheduleData */
+            $scheduleData = null;
+
+            foreach ($schedules as $schedule) {
+                if ($scheduleData == null) {
+                    $scheduleData = $schedule;
+                    $scheduleData->installment_id = 1;
+                } else {
+                    $scheduleData->principal += $schedule->principal;
+                    $scheduleData->interest += $schedule->interest;
+                    $scheduleData->charges += $schedule->charges;
+                    $scheduleData->penalty += $schedule->penalty;
+                    $scheduleData->paid += $schedule->paid;
+                    $scheduleData->due += $schedule->due;
+                    $scheduleData->installment_id += 1;
+                }
+            }
+
+            if ($scheduleData == null) {
+                $scheduleData = new LoanSchedule(['installment_id' => 0, 'status' => 'PAYED']);
+            }
+
             if (LoanTypes::isVehicleLoan($loan->type)) {
                 $loanex = HpNewVehicleLoan::findOne($loan->id);
                 if ($loanex->vehicle_no != null && $loanex->vehicle_no != '') {
@@ -113,6 +142,7 @@ class TellerController extends LmsController
                 'loan' => $loan,
                 'customer' => $customer,
                 'balance' => $balance,
+                'schedule' => $scheduleData,
                 'error' => $error
             ]);
         } else {

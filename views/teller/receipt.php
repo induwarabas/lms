@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Account;
+use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\PaymentType;
 use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CustomerView;
@@ -16,6 +18,7 @@ use Zelenin\yii\SemanticUI\Elements;
 /* @var $details string */
 /* @var $balance double */
 /* @var $error string */
+/* @var $schedule \app\models\LoanSchedule */
 
 $this->title = 'Loan Receipt';
 $this->params['breadcrumbs'][] = ['label' => 'Teller', 'url' => ['index']];
@@ -52,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <td><?= Html::a($details, Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id]), ['target' => '_blank']) ?></td>
         </tr>
         <tr>
-            <td>Amount</td>
+            <td>Loan Amount</td>
             <td><?= number_format($loan->amount, 2) ?></td>
         </tr>
         <tr>
@@ -60,19 +63,45 @@ $this->params['breadcrumbs'][] = $this->title;
             <td><?= AccountIDView::widget(['accountId' => $loan->saving_account]) ?></td>
         </tr>
         <tr>
+            <td>Installments Due</td>
+            <td><?= AccountIDView::widget(['accountId' => $loan->saving_account]) ?></td>
+        </tr>
+        <tr>
             <td>Loan Account</td>
             <td><?= AccountIDView::widget(['accountId' => $loan->loan_account]) ?></td>
         </tr>
         <tr>
-            <td>Balance</td>
-            <td>
+            <td>Loan Status</td>
+            <td><?= LoanScheduleStatus::label($schedule->status). ' <span style="font-size: medium;font-weight: bold">('.$schedule->installment_id.')</span>' ?></td>
+        </tr>
+        <?php if ($schedule->status != 'PAYED') { ?>
+        <tr>
+            <td>Due</td>
+            <td><?= number_format($schedule->principal, 2) . " + "
+                .number_format($schedule->interest, 2) . " + "
+                . number_format($schedule->charges, 2) . " + "
+                . number_format($schedule->penalty, 2) . " - "
+                . number_format($schedule->paid, 2) . " = "
+                . '<span style="font-size: large;font-weight: bold">'.number_format($schedule->due, 2).'</span>' ?>
+            <br/>
+                (Principal + Interest + Charges + Penalty - Recovered = Due Amount)
+            </td>
+        </tr>
+        <?php } ?>
+        <tr>
+            <td>Balance Due</td>
+            <td><?= number_format($schedule->due, 2) ." - ".number_format(Account::findOne($loan->saving_account)->balance, 2) . " = " ?>
                 <?php
+                echo '<span style="font-size: large;font-weight: bold">';
                 if ($balance < 0) {
                     echo number_format(-$balance, 2) . ' ' . Elements::icon('minus square', ['class' => 'red']);
                 } else {
                     echo number_format($balance, 2) . ' ' . Elements::icon('plus square', ['class' => 'green']);
                 }
+                echo '</span>';
                 ?>
+                <br/>
+                (Due - Account Balance = Balance Due)
             </td>
         </tr>
 
