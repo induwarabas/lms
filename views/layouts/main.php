@@ -110,6 +110,7 @@ AppAsset::register($this);
                     ['label' => 'Permissions', 'url' => ['/user-management/permission/index']],
                     ['label' => 'Permission groups', 'url' => ['/user-management/auth-item-group/index']],
                     ['label' => 'Visit log', 'url' => ['/user-management/user-visit-log/index']],
+                    ['label' => 'Change own password', 'url' => ['/user-management/auth/change-own-password']],
                 ]
             ],
 //            [
