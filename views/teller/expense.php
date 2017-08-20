@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="supplier-form">
 
             <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
-            <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <?= $form->field($model, 'amount')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
             <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>

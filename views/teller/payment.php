@@ -132,7 +132,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'drAccount')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>
 
-            <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01', 'readonly' => true]) ?>
+            <?= $form->field($model, 'amount')->textInput(['maxlength' => true, 'readonly' => true]) ?>
 
             <?= $form->field($model, 'payment')->dropDownList(PaymentType::getItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>

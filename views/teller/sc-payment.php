@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
             <?= $form->field($model, 'supplier')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <?= $form->field($model, 'amount')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'payment')->dropDownList(PaymentType::getItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>

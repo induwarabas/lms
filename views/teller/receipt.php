@@ -146,7 +146,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= $form->field($model, 'payment')->dropDownList(PaymentType::getTellerItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <?= $form->field($model, 'amount')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
             <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
