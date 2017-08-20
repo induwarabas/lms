@@ -23,7 +23,7 @@ class TxType
     const EXPENSE = "EXPENSE";
     const MANUAL = "MANUAL";
     const INVESTMENT = "INVESTMENT";
-    const INTENAL = "INTENAL";
+    const INTERNAL = "INTERNAL";
     const BANK = "BANK";
 
     public static function items() {
@@ -40,7 +40,7 @@ class TxType
             TxType::EXPENSE => TxType::EXPENSE,
             TxType::MANUAL => TxType::MANUAL,
             TxType::INVESTMENT => TxType::INVESTMENT,
-            TxType::INTENAL => TxType::INTENAL,
+            TxType::INTERNAL => TxType::INTERNAL,
             TxType::BANK => TxType::BANK,
         ];
     }

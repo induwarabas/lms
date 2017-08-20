@@ -8,6 +8,7 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\ManualTransaction */
+/* @var $userItems array() */
 
 $this->title = 'Teller to safe';
 $this->params['breadcrumbs'][] = ['label' => 'Teller', 'url' => ['index']];
@@ -30,15 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->stage == 1) { ?>
         <?php $form = ActiveForm::begin(['id' => 'frmx', 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
-        <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
-        <?= $form->field($model, 'amount')->hiddenInput()->label(false) ?>
 
-        <?= $form->field($model, 'description')->hiddenInput()->label(false) ?>
 
         <?= DetailView::widget([
             'model' => $model,
@@ -59,6 +52,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::submitButton('Confirm', ['class' => 'btn btn-success']) ?>
             </div>
         </div>
+        <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'cr_account')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'amount')->hiddenInput()->label(false) ?>
+
+        <?= $form->field($model, 'description')->hiddenInput()->label(false) ?>
+
         <?php ActiveForm::end(); ?>
     <?php } ?>
 
@@ -67,14 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php $form = ActiveForm::begin(['id' => 'frmx', 'type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
-            <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'cr_account')->textInput(['maxlength' => true])->label("Teller account") ?>
-            <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'cr_account')->dropDownList($userItems)->label("Teller account") ?>
             <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
-
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
             <div class="form-group">
@@ -82,7 +79,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
-
+            <?= $form->field($model, 'cheque')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'dr_account')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'payment')->hiddenInput()->label(false) ?>
             <?php ActiveForm::end(); ?>
 
         </div>

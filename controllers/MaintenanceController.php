@@ -24,7 +24,7 @@ class MaintenanceController extends LmsController
             $setting = Setting::findOne(1);
             if ($setting->value > $model->date) {
                 $model->addError('date', "Cannot go back.");
-            } if (date('Y-m-d') < $model->date && !User::hasPermission('goFutureDate')) {
+            } else if (date('Y-m-d') < $model->date && !User::hasPermission('goFutureDate')) {
                 $model->addError('date', "You have no permission to go future");
             } else {
                 $setting->value = $model->date;
@@ -55,7 +55,8 @@ class MaintenanceController extends LmsController
                 }
             }
         }
-        $model->date = Setting::getDay();
+        $model->daily = (date('N') < 6);
+        $model->date = date('Y-m-d');
         return $this->render('day-start', ['model' => $model]);
     }
 }

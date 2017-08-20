@@ -11,6 +11,7 @@ use app\utils\enums\PaymentType;
 use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
+use webvimark\modules\UserManagement\models\User;
 use Yii;
 
 /**
@@ -105,6 +106,15 @@ class TransactionController extends LmsController
 
     public function actionTellerToSafe()
     {
+        $userQuery = User::find();
+        if (!Yii::$app->user->isSuperadmin) {
+            $userQuery->where(['superadmin' => 0]);
+        }
+        $users = $userQuery->all();
+        $userItems = [];
+        foreach ($users as $user) {
+            $userItems[Account::createAccountId(Account::TYPE_TELLER, $user->getId())] = $user->username;
+        }
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
@@ -119,7 +129,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTERNAL, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
@@ -142,11 +152,21 @@ class TransactionController extends LmsController
         }
         return $this->render('teller-to-safe', [
             'model' => $model,
+            'userItems' => $userItems
         ]);
     }
 
     public function actionSafeToTeller()
     {
+        $userQuery = User::find();
+        if (!Yii::$app->user->isSuperadmin) {
+            $userQuery->where(['superadmin' => 0]);
+        }
+        $users = $userQuery->all();
+        $userItems = [];
+        foreach ($users as $user) {
+            $userItems[Account::createAccountId(Account::TYPE_TELLER, $user->getId())] = $user->username;
+        }
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
@@ -161,7 +181,7 @@ class TransactionController extends LmsController
                     if ($model->stage == 1) {
                         $txHnd = new TxHandler();
                         $tx = Yii::$app->getDb()->beginTransaction();
-                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTENAL, $model->payment, $model->description)) {
+                        if ($txHnd->createTransaction($model->dr_account, $model->cr_account, $model->amount, TxType::INTERNAL, $model->payment, $model->description)) {
                             $tx->commit();
                             return $this->redirect(['transaction/view', 'id' => $txHnd->txid]);
                         }
@@ -184,6 +204,7 @@ class TransactionController extends LmsController
         }
         return $this->render('safe-to-teller', [
             'model' => $model,
+            'userItems' => $userItems
         ]);
     }
 
