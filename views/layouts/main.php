@@ -64,6 +64,7 @@ AppAsset::register($this);
                     ['label' => 'Customers', 'url' => ['/customer/index']],
                     ['label' => 'Suppliers', 'url' => ['/supplier/index']],
                     ['label' => 'Canvassers', 'url' => ['/canvasser/index']],
+                    ['label' => 'Collectors', 'url' => ['/collector/index']],
                 ]
             ],
             [
@@ -75,6 +76,8 @@ AppAsset::register($this);
                     ['label' => 'Sales Commission Payment', 'url' => ['/teller/sc-payment']],
                     ['label' => 'Canvassing Commission Payment', 'url' => ['/teller/cc-payment']],
                     ['label' => 'Charges Payment', 'url' => ['/teller/oc-payment']],
+                    ['label' => 'Collector Assign', 'url' => ['/loan/assign-collectors']],
+                    ['label' => 'Collections', 'url' => ['/collection/index']],
                 ]
             ],
             [

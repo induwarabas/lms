@@ -44,16 +44,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'area', 'value' => Area::findOne(['id' => $model->area])->name],
             'residential_address:ntext',
             'billing_address:ntext',
-            ['attribute' => 'phone', 'value' => function ($data) {
+            ['attribute' => 'phone', 'format' => 'html', 'value' => function ($data) {
                 return PhoneNoFormatter::format($data->phone);
             }],
-            ['attribute' => 'mobile', 'value' => function ($data) {
+            ['attribute' => 'mobile', 'format' => 'html', 'value' => function ($data) {
                 return PhoneNoFormatter::format($data->mobile);
             }],
             'email:email',
             'occupation',
             'work_address:ntext',
-            ['attribute' => 'work_phone', 'value' => function ($data) {
+            ['attribute' => 'work_phone', 'format' => 'html', 'value' => function ($data) {
                 return PhoneNoFormatter::format($data->work_phone);
             }],
             'work_email:email',

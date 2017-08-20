@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Collection;
+use app\models\CollectorAssignmentModel;
 use app\models\DisburseModel;
 use app\models\Loan;
 use app\models\LoanSchedule;
@@ -300,6 +302,43 @@ class LoanController extends LmsController
             }
         }
         echo "success";
+    }
+
+    public function actionAssignCollectors() {
+        $model = new CollectorAssignmentModel();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $loanIds = explode("\n", str_replace('\r', '', $model->loans));
+            $loans = Loan::find()->where(['IN', 'id', $loanIds])->all();
+            $tx = Yii::$app->getDb()->beginTransaction();
+            $failed = false;
+            $date = Setting::findOne(1)->value;
+            foreach ($loans as $loan) {
+                if ($loan->type != LoanTypes::DAILY_COLLECTION) {
+                    $model->addError('loans', "Loan ".$loan->id." is not a Daily Collection loan.");
+                    $tx->rollBack();
+                    $failed = true;
+                    break;
+                }
+                $col = Collection::findOne(['loan_id' => $loan->id, 'date' => $date]);
+                if ($col == null) {
+                    $col = new Collection(['loan_id' => $loan->id, 'date' => $date, 'amount' => 0.0, 'installments' => 0, 'status' => 'NOT_COLLECTED']);
+                }
+                $col->collector_id = $model->collector;
+                if (!$col->save()) {
+                    $model->addError('loans', "Failed to save ".$loan->id." data.");
+                    $tx->rollBack();
+                    $failed = true;
+                    break;
+                }
+            }
+            if (!$failed) {
+                $tx->commit();
+                return $this->redirect(['/collection/index', 'CollectionSearch[collector_id]' => $model->collector, 'CollectionSearch[date]' => $date]);
+            }
+        }
+        return $this->render('collector-assignment', [
+            'model' => $model
+        ]);
     }
 
     /**

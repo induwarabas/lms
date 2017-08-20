@@ -1,25 +1,25 @@
 <?php
 
 use app\models\Bank;
-use app\utils\enums\CanvasserStatus;
+use app\utils\enums\CollectorStatus;
 use app\utils\PhoneNoFormatter;
 use app\utils\widgets\AccountIDView;
 use yii\helpers\Html;
-use Zelenin\yii\SemanticUI\widgets\DetailView;
+use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Canvasser */
+/* @var $model app\models\Collector */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Canvassers', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Collectors'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="canvasser-view">
+<div class="collector-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']) ?>
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'ui button blue']) ?>
     </p>
 
     <?= DetailView::widget([
@@ -30,10 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             ['attribute' => 'account', 'format' => 'html', 'value' => AccountIDView::widget(['accountId' => $model->account])],
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
-                return CanvasserStatus::label($data->status);
+                return CollectorStatus::label($data->status);
             }],
             'address:ntext',
-            ['attribute' => 'phone', 'format' => 'html', 'value' => function ($data) {
+            ['attribute' => 'phone', 'format' => 'html','value' => function ($data) {
                 return PhoneNoFormatter::format($data->phone);
             }],
             ['attribute' => 'mobile', 'format' => 'html', 'value' => function ($data) {

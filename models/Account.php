@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CanvasserView;
+use app\utils\widgets\CollectorView;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
 use yii\helpers\Html;
@@ -23,6 +24,7 @@ class Account extends \yii\db\ActiveRecord
     const TYPE_LOAN = 'LOAN';
     const TYPE_SUPPLIER = 'SUPPLIER';
     const TYPE_CANVASSER = 'CANVASSER';
+    const TYPE_COLLECTOR = 'COLLECTOR';
     const TYPE_BANK = 'BANK';
     const TYPE_TELLER = 'TELLER';
     const TYPE_GENERAL = 'GENERAL';
@@ -39,6 +41,7 @@ class Account extends \yii\db\ActiveRecord
             Account::TYPE_LOAN => '2',
             Account::TYPE_SUPPLIER => '3',
             Account::TYPE_CANVASSER => '4',
+            Account::TYPE_COLLECTOR => '5',
             Account::TYPE_BANK => '7',
             Account::TYPE_TELLER => '8',
             Account::TYPE_GENERAL => '9',
@@ -148,6 +151,11 @@ class Account extends \yii\db\ActiveRecord
             $canvasser = Canvasser::findOne(['account' => $this->id]);
             if ($canvasser != null) {
                 return "Canvasser " . CanvasserView::widget(['canvasser' => $canvasser]);
+            }
+        } else if ($this->type == Account::TYPE_COLLECTOR) {
+            $collector = Collector::findOne(['account' => $this->id]);
+            if ($collector != null) {
+                return "Collector " . CollectorView::widget(['collector' => $collector]);
             }
         } else if ($this->type == Account::TYPE_TELLER) {
             $userid = intval(substr($this->id, 1));

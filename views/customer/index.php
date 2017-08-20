@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
             }, 'filter' => array_merge(['0' => 'All'], ArrayHelper::map(Area::find()->asArray()->all(), 'id', 'name')),],
             'nic',
             'gender',
-            ['attribute' => 'phone', 'content' => function ($data) {
+            ['attribute' => 'phone', 'format' => 'html', 'content' => function ($data) {
                 return PhoneNoFormatter::formatAll($data->phone, $data->mobile, $data->work_phone);
             }],
         ],

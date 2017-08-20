@@ -10,6 +10,7 @@ namespace app\utils\loan;
 
 
 use app\models\Account;
+use app\models\Collection;
 use app\models\CollectionMethod;
 use app\models\Loan;
 use app\models\LoanSchedule;
@@ -169,7 +170,7 @@ class LoanRecovery
         return true;
     }
 
-    public function recoverInstallments($loanId)
+    public function recoverInstallments($loanId, $date)
     {
         $tx = Yii::$app->getDb()->beginTransaction();
         $loan = Loan::findOne(['id' => $loanId]);
@@ -187,7 +188,7 @@ class LoanRecovery
             ->andWhere("status in ('".LoanScheduleStatus::ARREARS."', '".LoanScheduleStatus::DEMANDED."')")
             ->orderBy("installment_id")
             ->all();
-
+        $recoveredCount = 0;
         foreach ($schedules as $schedule) {
 
             if ($remain < $schedule->due) {
@@ -229,7 +230,14 @@ class LoanRecovery
             $schedule->due = 0.0;
             $schedule->status = LoanScheduleStatus::PAYED;
             $schedule->save();
+            ++$recoveredCount;
         }
+        $col = Collection::findOne(['loan_id' => $loanId, 'date' => $date]);
+        if ($col != null) {
+            $col->installments = $col->installments + $recoveredCount;
+            $col->save();
+        }
+
         $tx->commit();
         return true;
     }
@@ -248,7 +256,7 @@ class LoanRecovery
             return false;
         }
 
-        if (!$this->recoverInstallments($loanId)) {
+        if (!$this->recoverInstallments($loanId, $date)) {
             return false;
         }
 

@@ -6,6 +6,7 @@ use app\models\Account;
 use app\models\BankAccount;
 use app\models\Canvasser;
 use app\models\CanvassingCommisionPayment;
+use app\models\Collection;
 use app\models\Customer;
 use app\models\ExpenditurePayment;
 use app\models\GeneralAccount;
@@ -15,6 +16,7 @@ use app\models\LoanSchedule;
 use app\models\LoanType;
 use app\models\OtherChargesPayment;
 use app\models\SalesCommisionPayment;
+use app\models\Setting;
 use app\models\Supplier;
 use app\models\TellerGeneralExpence;
 use app\models\TellerPayment;
@@ -79,6 +81,13 @@ class TellerController extends LmsController
                             $model->txid = $txHnd->txid;
                             $model->user = Yii::$app->getUser()->getIdentity()->username;
                             $rec = new LoanRecovery();
+                            $date = Setting::findOne(1)->value;
+                            $col = Collection::findOne(['loan_id' => $loan->id, 'date' => $date]);
+                            if ($col != null) {
+                                $col->amount = $col->amount + $model->amount;
+                                $col->status = 'COLLECTED';
+                                $col->save();
+                            }
                             $rec->recover($loan->id);
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
                         } else {

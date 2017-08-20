@@ -11,15 +11,18 @@ namespace app\utils;
 
 class PhoneNoFormatter
 {
-    public static function format($phone) {
+    public static function format($phone)
+    {
         if (strlen($phone) != 12) {
-            return $phone;
+            $phF = $phone;
         } else {
-            return substr($phone, 0, 3)." (".substr($phone, 3, 2).") ".substr($phone, 5, 3)." ".substr($phone, 8);
+            $phF = substr($phone, 0, 3) . " (" . substr($phone, 3, 2) . ") " . substr($phone, 5, 3) . " " . substr($phone, 8);
         }
+        return '<a href="tel:' . $phone . '">' . $phF . '</a>';
     }
 
-    public static function formatAll($phone, $mobile, $work) {
+    public static function formatAll($phone, $mobile, $work)
+    {
         $phone = PhoneNoFormatter::format($phone);
         $mobile = PhoneNoFormatter::format($mobile);
         $work = PhoneNoFormatter::format($work);
@@ -28,13 +31,13 @@ class PhoneNoFormatter
             $val = $phone;
         }
         if ($mobile != null && $mobile != '') {
-            if($val != '') {
+            if ($val != '') {
                 $val .= '<br/>';
             }
             $val .= $mobile;
         }
         if ($work != null && $work != '') {
-            if($val != '') {
+            if ($val != '') {
                 $val .= '<br/>';
             }
             $val .= $work;

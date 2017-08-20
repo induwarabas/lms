@@ -34,10 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
             }],
             'contact',
             'address:ntext',
-            ['attribute' => 'phone', 'value' => function ($data) {
+            ['attribute' => 'phone', 'format' => 'html', 'value' => function ($data) {
                 return PhoneNoFormatter::format($data->phone);
             }],
-            ['attribute' => 'mobile', 'value' => function ($data) {
+            ['attribute' => 'mobile', 'format' => 'html', 'value' => function ($data) {
                 return PhoneNoFormatter::format($data->mobile);
             }],
             'email:email',
