@@ -10,6 +10,7 @@ namespace app\models;
 class DayStartModel extends \yii\base\Model
 {
     public $date;
+    public $daily;
 
     /**
      * @inheritdoc
@@ -17,8 +18,9 @@ class DayStartModel extends \yii\base\Model
     public function rules()
     {
         return [
-            [['date'], 'required'],
+            [['date', 'daily'], 'required'],
             [['date'], 'string'],
+            [['daily'], 'boolean'],
         ];
     }
 
@@ -29,6 +31,7 @@ class DayStartModel extends \yii\base\Model
     {
         return [
             'date' => 'Date',
+            'daily' => 'Daily Collection',
         ];
     }
 }

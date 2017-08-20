@@ -8,6 +8,7 @@ use app\models\Setting;
 use app\models\VehicleType;
 use app\models\VehicleTypeSearch;
 use app\utils\enums\LoanStatus;
+use webvimark\modules\UserManagement\models\User;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -21,31 +22,37 @@ class MaintenanceController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $setting = Setting::findOne(1);
-            $setting->value = $model->date;
-            if ($setting->save()){
-                $accounts = Loan::find()->where(['status' => LoanStatus::ACTIVE])->all();
-                $loans = [];
-                $batch = 10;
-                $current = 0;
-                $text = '';
-                foreach ($accounts as $account){
-                    if ($current == 0) {
-                        $text = $account->id;
-                    } else {
-                        $text .= ','.$account->id;
+            if ($setting->value > $model->date) {
+                $model->addError('date', "Cannot go back.");
+            } if (date('Y-m-d') < $model->date && !User::hasPermission('goFutureDate')) {
+                $model->addError('date', "You have no permission to go future");
+            } else {
+                $setting->value = $model->date;
+                if ($setting->save()) {
+                    $accounts = Loan::find()->where(['status' => LoanStatus::ACTIVE])->all();
+                    $loans = [];
+                    $batch = 10;
+                    $current = 0;
+                    $text = '';
+                    foreach ($accounts as $account) {
+                        if ($current == 0) {
+                            $text = $account->id;
+                        } else {
+                            $text .= ',' . $account->id;
+                        }
+                        ++$current;
+                        if ($current == $batch) {
+                            $loans[] = $text;
+                            $text = '';
+                            $current = 0;
+                        }
                     }
-                    ++$current;
-                    if ($current == $batch) {
+                    if ($text !== '') {
                         $loans[] = $text;
-                        $text = '';
-                        $current = 0;
                     }
-                }
-                if ($text !== '') {
-                    $loans[] = $text;
-                }
 
-                return $this->render('day-start-run', ['accounts' => $loans, 'date' => $model->date]);
+                    return $this->render('day-start-run', ['accounts' => $loans, 'daily' => $model->daily]);
+                }
             }
         }
         $model->date = Setting::getDay();

@@ -67,7 +67,7 @@ use Zelenin\yii\SemanticUI\Elements;
             <?= $form->field($model, 'loan_amount')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
             <?= $form->field($loan, 'interest')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
             <?= $form->field($loan, 'penalty')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
-            <?= $form->field($loan, 'collection_method')->dropDownList(ArrayHelper::map(CollectionMethod::find()->all(), 'id', 'name')) ?>
+            <?= $form->field($loan, 'collection_method')->hiddenInput()->label(false) ?>
             <?= $form->field($loan, 'period')->textInput(['type' => 'number', 'step' => '1']) ?>
             <?= $form->field($loan, 'disbursed_date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']])->label("Start Date") ?>
             <?= $form->field($model, 'charges')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>

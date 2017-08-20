@@ -36,6 +36,7 @@ class LoanCreator
 //        $loan->charges = $charges;
 //        $loan->penalty = $penalty;
 //        $loan->type = $type;
+        unset($loan->id);
         $loan->status = LoanStatus::PENDING;
         //$loan->collection_method = $collection_method;
         //$loan->period = $period;

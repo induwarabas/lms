@@ -14,6 +14,7 @@ use yii\helpers\Html;
     <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
 
     <?= $form->field($model, 'date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
+    <?= $form->field($model, 'daily')->checkbox() ?>
 
 
     <div class="form-group">

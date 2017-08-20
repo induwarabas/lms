@@ -6,6 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $accounts array */
 /* @var $date string */
+/* @var $daily boolean */
 
 $this->title = 'Day Start';
 //$this->params['breadcrumbs'][] = ['label' => 'Areas', 'url' => ['index']];
@@ -34,7 +35,7 @@ function processNext() {
          $('#progx').html('Complete');
         return;
     }
-    $.get( '".\yii\helpers\Url::to(['loan/recoverx'])."&id=' + loanIds[current], function( data, status ) {
+    $.get( '".\yii\helpers\Url::to(['loan/recoverx'])."&id=' + loanIds[current] + '&daily=' + $daily, function( data, status ) {
         if (status == 'success' && data =='success') {
         $('#prog').html('<div id=\"w0\" class=\"active progress-striped progress\"><div class=\"progress-bar-success progress-bar\" role=\"progressbar\" aria-valuenow=\"50\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:' + (current * 100 / loanIds.length) +'%\"><span class=\"sr-only\">70% Complete</span></div></div>');
         processNext();

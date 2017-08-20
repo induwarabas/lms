@@ -17,6 +17,7 @@ use app\models\Setting;
 use app\utils\Doubles;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
+use app\utils\enums\LoanTypes;
 use app\utils\enums\PaymentType;
 use app\utils\enums\TxType;
 use app\utils\GeneralAccounts;
@@ -34,7 +35,7 @@ class LoanRecovery
         return $schedule->principal + $schedule->interest + $schedule->charges;
     }
 
-    public function updateSchedule($loanId, $date)
+    public function updateSchedule($loanId, $date, $demandDaily)
     {
         $tx = Yii::$app->getDb()->beginTransaction();
         if ($date === null) {
@@ -91,7 +92,7 @@ class LoanRecovery
                 for ($i = $schedule->arrears; $i < $interval; ++$i) {
                     $amountToPay = $this->getAmountToPay($schedule);
                     $arrears = $amountToPay + $schedule->penalty - $schedule->paid;
-                    $penalty = round($arrears * $collectionMethod->penal / 100.0, 2);
+                    $penalty = round($arrears * $loan->penalty / 100.0, 2);
                     $schedule->penalty = $schedule->penalty + $penalty;
                     $schedule->arrears = $schedule->arrears + 1;
                     $schedule->due = $schedule->penalty + $amountToPay - $schedule->paid;
@@ -99,6 +100,20 @@ class LoanRecovery
                 $schedule->save();
             }
         }
+
+        if ($demandDaily && $loan->type == LoanTypes::DAILY_COLLECTION) {
+            $sch = LoanSchedule::findOne(['loan_id' => $loanId, 'demand_date' => $date]);
+            if ($sch == null) {
+                $schedule = LoanSchedule::find()->where(['loan_id' => $loanId, 'status' => LoanStatus::PENDING])->orderBy(['installment_id' => SORT_ASC])->one();
+                if ($schedule != null) {
+                    $schedule->status = LoanScheduleStatus::DEMANDED;
+                    $schedule->demand_date = $date;
+                    $schedule->due = $this->getAmountToPay($schedule);
+                    $schedule->save();
+                }
+            }
+        }
+
         $tx->commit();
         return true;
     }
@@ -219,13 +234,13 @@ class LoanRecovery
         return true;
     }
 
-    public function recover($loanId, $date = null)
+    public function recover($loanId, $date = null, $demandDaily = false)
     {
         if ($date == null) {
             $date = Setting::getDay();
         }
         $this->linkId = uniqid();
-        if (!$this->updateSchedule($loanId, $date)) {
+        if (!$this->updateSchedule($loanId, $date, $demandDaily)) {
             return false;
         }
 

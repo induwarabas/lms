@@ -13,6 +13,7 @@ use app\models\HpNewVehicleLoan;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\Supplier;
+use app\utils\Doubles;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
@@ -38,7 +39,6 @@ class LoanDisbursement
             return false;
         }
 
-        $amortization = new AmortizationCalculator();
         $interestTerms = 12;
         $timeAdd = "+1 month";
         if ($loan->collection_method === 2) //Weekly
@@ -51,7 +51,13 @@ class LoanDisbursement
             $timeAdd = "+1 day";
         }
 
-        $schedule = $amortization->calculate($loan->amount, $loan->interest, $loan->period, $interestTerms, $loan->charges);
+        if (LoanTypes::isVehicleLoan($loan->type)) {
+            $amortization = new AmortizationCalculator();
+            $schedule = $amortization->calculate($loan->amount, $loan->interest, $loan->period, $interestTerms, $loan->charges);
+        } else {
+            $amortization = new DailyScheduleCalculator();
+            $schedule = $amortization->calculate($loan->amount, $loan->interest, $loan->period);
+        }
 
         $loan->disbursed_date = $date;
 
@@ -66,18 +72,22 @@ class LoanDisbursement
             return false;
         }
 
-        for ($x = 1; $x <= $loan->period; $x++) {
+        $countx = count($schedule->schedule);
+        for ($x = 1; $x <= $countx; $x++) {
             $dt = date('Y-m-d', strtotime($timeAdd, strtotime($dt)));
             $installment = $schedule->schedule[$x - 1];
             $s = new LoanSchedule();
             $s->loan_id = $loan->id;
             $s->installment_id = $x;
             $s->status = LoanScheduleStatus::PENDING;
-            $s->demand_date = $dt;
+            if ($loan->type == LoanTypes::DAILY_COLLECTION) {
+                $s->demand_date = '9999-12-31';
+            } else {
+                $s->demand_date = $dt;
+            }
             $s->principal = $installment['principal'];
             $s->interest = $installment['interest'];
             $s->charges = $installment['charges'];
-            $s->balance = $installment['balance'];
             $s->penalty = 0.0;
             $s->paid = 0.0;
             $s->due = 0.0;
@@ -198,15 +208,17 @@ class LoanDisbursement
                 return false;
             }
 
-            if (!$txHnd->createTransaction(GeneralAccounts::PARK,
-                GeneralAccounts::CHARGES,
-                $loan->charges,
-                TxType::DISBURSE,
-                PaymentType::INTERNAL,
-                "Disbursement charges of the loan #" . $loan->id,
-                $link)) {
-                $this->error = $txHnd->error;
-                return false;
+            if (Doubles::compare($loan->charges, 0.0) > 0) {
+                if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+                    GeneralAccounts::CHARGES,
+                    $loan->charges,
+                    TxType::DISBURSE,
+                    PaymentType::INTERNAL,
+                    "Disbursement charges of the loan #" . $loan->id,
+                    $link)) {
+                    $this->error = $txHnd->error;
+                    return false;
+                }
             }
         }
 

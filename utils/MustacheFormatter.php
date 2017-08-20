@@ -24,7 +24,14 @@ class MustacheFormatter
         return function ($block, $render) {
             $val = $render($block);
             $fm = new \yii\i18n\Formatter();
-            return ucwords($fm->asSpellout($val));
+            $num = str_replace(",", "", number_format($val, 2));
+            $parts = explode(".", $num);
+            if ($parts[1] == "00") {
+                return ucwords($fm->asSpellout($parts[0]). " Rupees");
+            } else {
+                return ucwords($fm->asSpellout($parts[0]). " Rupees")." and ".ucwords($fm->asSpellout($parts[1])." Cents");
+            }
+
         };
     }
 }

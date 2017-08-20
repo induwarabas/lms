@@ -48,6 +48,8 @@ class LoanController extends LmsController
         $loan = $this->findModel($id);
         if (LoanTypes::isVehicleLoan($loan->type)) {
             return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
+        } else if ($loan->type == LoanTypes::DAILY_COLLECTION) {
+            return $this->redirect(['daily-collection-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
         }
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -76,6 +78,8 @@ class LoanController extends LmsController
 
         if (LoanTypes::isVehicleLoan($model->type)) {
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
+        } else if ($model->type == LoanTypes::DAILY_COLLECTION) {
+            return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -137,6 +141,11 @@ class LoanController extends LmsController
                 return $this->redirect(["hp-new-vehicle-loan/update", 'id' => $model->id]);
             }
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
+        } else if ($model->type == LoanTypes::DAILY_COLLECTION) {
+            if (isset($model->id) && $model->id > 0) {
+                return $this->redirect(["daily-collection-loan/update", 'id' => $model->id]);
+            }
+            return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -166,6 +175,8 @@ class LoanController extends LmsController
         }
         if (LoanTypes::isVehicleLoan($model->type)) {
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
+        } else  if ($model->type == LoanTypes::DAILY_COLLECTION) {
+            return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -219,7 +230,7 @@ class LoanController extends LmsController
             'query' => $query,
         ]);
         $dataProvider->pagination = array(
-            'pageSize' => 0,
+            'pageSize' => 72,
         );
 
         $loan = Loan::findOne($id);
@@ -266,21 +277,24 @@ class LoanController extends LmsController
         if ($date == null) {
             $date = Setting::getDay();
         }
+
+        $recoverDaily = Yii::$app->request->getQueryParam('daily', false);
+
         $disbursement = new LoanRecovery();
-        if ($disbursement->recover($id, $date)) {
+        if ($disbursement->recover($id, $date, $recoverDaily)) {
             return $this->redirect(["view", 'id' => $id]);
         } else {
             echo $disbursement->error;
         }
     }
 
-    public function actionRecoverx($id)
+    public function actionRecoverx($id, $daily)
     {
         $ids = explode(',', $id);
         $date = Setting::getDay();
         foreach ($ids as $i) {
             $disbursement = new LoanRecovery();
-            if (!$disbursement->recover($i, $date)) {
+            if (!$disbursement->recover($i, $date, $daily == 1)) {
                 echo "failed";
                 return;
             }
