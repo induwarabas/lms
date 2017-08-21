@@ -102,7 +102,7 @@ class LoanRecovery
             }
         }
 
-        if ($demandDaily && $loan->type == LoanTypes::DAILY_COLLECTION) {
+        if ($demandDaily && $loan->type == LoanTypes::DAILY_COLLECTION && $loan->disbursed_date < $date) {
             $sch = LoanSchedule::findOne(['loan_id' => $loanId, 'demand_date' => $date]);
             if ($sch == null) {
                 $schedule = LoanSchedule::find()->where(['loan_id' => $loanId, 'status' => LoanStatus::PENDING])->orderBy(['installment_id' => SORT_ASC])->one();
@@ -244,9 +244,20 @@ class LoanRecovery
 
     public function recover($loanId, $date = null, $demandDaily = false)
     {
+        $loan = Loan::findOne($loanId);
+        if ($loan == null) {
+            $this->error = "Loan ".$loanId." not found";
+            return false;
+        }
+
+        if ($loan->status != LoanStatus::ACTIVE || $loan->paid == 0) {
+            return true;
+        }
+
         if ($date == null) {
             $date = Setting::getDay();
         }
+
         $this->linkId = uniqid();
         if (!$this->updateSchedule($loanId, $date, $demandDaily)) {
             return false;
