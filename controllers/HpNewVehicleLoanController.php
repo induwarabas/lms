@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Account;
 use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\HpNewVehicleLoanEx;
@@ -312,12 +313,19 @@ class HpNewVehicleLoanController extends LmsController
         $m->addHelper("format", new MustacheFormatter());
         $text = $m->render($template->content);
 
+        $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
+        $savingAccount = Account::findOne($loan->saving_account);
+        $balance = $savingAccount->balance - $due;
+
         $template = Template::findOne(2);
         $text .= $m->render($template->content,['invoice_number' => str_pad($id, 10, "0", STR_PAD_LEFT),
             'loan' => $loan,
             'tx' => $transaction,
             'description' => $description,
-            'customer' => $customer]);
+            'customer' => $customer,
+            'balance' => $balance,
+            'printedAt' => date("Y-m-d H:i:s")]);
+
         $pdf = new Pdf([
             // set to use core fonts only
             'mode' => Pdf::MODE_UTF8,

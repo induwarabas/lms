@@ -44,9 +44,9 @@ class AccountIDView extends Widget
                 $balance = number_format($account->balance, 2) . ' ' . Elements::icon('add square', ['class' => 'green']);
             }
 
-            return Html::a($account->id, Yii::$app->getUrlManager()->createUrl(['account/ledger', 'id' => $account->id]), ['target' => '_blank']) . " (" . $balance . ")";
+            return Html::a($account->id, Yii::$app->getUrlManager()->createUrl(['account/ledger', 'id' => $account->id])) . " (" . $balance . ")";
         } else {
-            return Html::a($account->id, Yii::$app->getUrlManager()->createUrl(['account/ledger', 'id' => $account->id]), ['target' => '_blank']);
+            return Html::a($account->id, Yii::$app->getUrlManager()->createUrl(['account/ledger', 'id' => $account->id]));
         }
     }
 
