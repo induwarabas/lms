@@ -43,11 +43,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <tbody>
         <tr>
             <td>Customer</td>
-            <td><?= CustomerView::widget(['customer' => $customer, 'id' => $customer->id, 'target' => '_blank']) ?></td>
+            <td><?= CustomerView::widget(['customer' => $customer, 'id' => $customer->id]) ?></td>
         </tr>
         <tr>
             <td>Details</td>
-            <td><?= Html::a($details, Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id]), ['target' => '_blank']) ?></td>
+            <td><?= Html::a($details, Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id])) ?></td>
         </tr>
         <?php if ($loanex != null && \app\utils\Doubles::compare($loanex->down_payment, 0.0) != 0) { ?>
             <tr>

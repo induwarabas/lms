@@ -48,11 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php } ?>
         <tr>
             <td>Customer</td>
-            <td><?= CustomerView::widget(['customer' => $customer, 'id' => $customer->id, 'target' => '_blank']) ?></td>
+            <td><?= CustomerView::widget(['customer' => $customer, 'id' => $customer->id]) ?></td>
         </tr>
         <tr>
             <td>Details</td>
-            <td><?= Html::a($details, Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id]), ['target' => '_blank']) ?></td>
+            <td><?= Html::a($details, Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $loan->id])) ?></td>
         </tr>
         <tr>
             <td>Loan Amount</td>

@@ -185,11 +185,11 @@ class HpNewVehicleLoanController extends LmsController
             return $this->redirect(['updatex', 'id' => $id]);
         }
 
-        $loan->amount = $model->loan_amount;
         $loan->penalty = 0.0;
         $loan->charges = 0.0;
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post()) && $model->validate() && $loan->validate()) {
+            $loan->amount = $model->loan_amount;
             $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
             $tx = Yii::$app->getDb()->beginTransaction();
             $loan->save();
@@ -200,6 +200,7 @@ class HpNewVehicleLoanController extends LmsController
             Yii::$app->getSession()->remove("loanex");
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            $loan->amount = $model->loan_amount;
             $applicant = null;
             if (isset($loan->customer_id)) {
                 $applicant = Customer::findOne(['id' => $loan->customer_id]);
