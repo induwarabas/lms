@@ -41,7 +41,7 @@ AppAsset::register($this);
     }
 
     NavBar::begin([
-        'brandLabel' => 'Loan Management System',
+        'brandLabel' => \app\utils\Settings::brandLabel(),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => $options,
     ]);

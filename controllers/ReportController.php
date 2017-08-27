@@ -173,7 +173,7 @@ class ReportController extends LmsController
         $dataProvider->pagination = array(
             'pageSize' => 20,
         );
-        $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'penalty', 'due']];
+        $dataProvider->sort = ['attributes' => ['loan_id', 'txid', 'timestamp', 'loan_type', 'user', 'amount']];
 
         $total = $query->sum('transaction.amount');
 

@@ -13,6 +13,10 @@ use app\models\Setting;
 
 class Settings
 {
+    public static function brandLabel() {
+        return Setting::findOne(3)->value;
+    }
+
     public static function companyName() {
         return Setting::findOne(2)->value;
     }
