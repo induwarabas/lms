@@ -1,0 +1,19 @@
+table.ui{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.ui th {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.ui td {
+    border: 1px solid black;
+    padding: 5px;
+    vertical-align: top;
+}
+a {
+    color: black;
+    text-decoration: none;
+}

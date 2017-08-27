@@ -93,6 +93,16 @@ AppAsset::register($this);
                 ]
             ],
             [
+                'label' => 'Reports',
+                'items' => [
+                    ['label' => 'Arrears', 'url' => ['/report/arrears']],
+                    ['label' => 'To Pay', 'url' => ['/report/payment']],
+                    ['label' => 'To Disburse', 'url' => ['/report/disburse']],
+                    ['label' => 'Payments', 'url' => ['/report/payments', 'ReceiptSearch[from]' => date('Y-m-d')]],
+                    ['label' => 'Receipts', 'url' => ['/report/receipts', 'ReceiptSearch[from]' => date('Y-m-d')]],
+                ]
+            ],
+            [
                 'label' => 'Configure',
                 'items' => [
                     ['label' => 'Day Start', 'url' => ['/maintenance/day-switch']],

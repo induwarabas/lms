@@ -11,14 +11,19 @@ namespace app\utils;
 
 class PhoneNoFormatter
 {
-    public static function format($phone)
-    {
+    public static function formatPlainText($phone) {
         if (strlen($phone) != 12) {
             $phF = $phone;
         } else {
             $phF = substr($phone, 0, 3) . " (" . substr($phone, 3, 2) . ") " . substr($phone, 5, 3) . " " . substr($phone, 8);
         }
-        return '<a href="tel:' . $phone . '">' . $phF . '</a>';
+        return $phF;
+    }
+
+    public static function format($phone)
+    {
+
+        return '<a href="tel:' . $phone . '">' . PhoneNoFormatter::formatPlainText($phone) . '</a>';
     }
 
     public static function formatAll($phone, $mobile, $work)
