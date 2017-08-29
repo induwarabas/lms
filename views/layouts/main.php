@@ -100,6 +100,7 @@ AppAsset::register($this);
                     ['label' => 'To Disburse', 'url' => ['/report/disburse']],
                     ['label' => 'Payments', 'url' => ['/report/payments', 'ReceiptSearch[from]' => date('Y-m-d')]],
                     ['label' => 'Receipts', 'url' => ['/report/receipts', 'ReceiptSearch[from]' => date('Y-m-d')]],
+                    ['label' => 'Summary', 'url' => ['/report/summary']],
                 ]
             ],
             [
