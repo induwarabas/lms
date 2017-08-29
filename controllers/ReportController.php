@@ -11,6 +11,7 @@ use app\utils\Settings;
 use kartik\mpdf\Pdf;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\db\Query;
 
 class ReportController extends LmsController
@@ -100,7 +101,7 @@ class ReportController extends LmsController
                 $query->andFilterWhere(['type' => $searchModel->type]);
             }
             if ($searchModel->arrears != null) {
-                $query->andWhere('(arrears + demanded) >= :arr', [':arr' => $searchModel->arrears]);
+                $query->andWhere('arrears >= :arr', [':arr' => $searchModel->arrears]);
             }
         }
 
@@ -193,6 +194,58 @@ class ReportController extends LmsController
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
                 'total' => $total,
+                'print' => false
+            ]);
+        }
+    }
+
+    public function actionSummary()
+    {
+        $results = Yii::$app->getDb()->createCommand("SELECT status, sum(principal) as principal, sum(charges) as charges, sum(penalty) as penalty, sum(interest) as interest, sum(paid) as paid, sum(due) as due from loan_schedule where status != 'PAYED' group by status")->query();
+
+        $due = ['status'=> 'DUE','principal' => 0.0, 'charges' => 0.0, 'penalty' => 0.0, 'interest' => 0.0, 'due' => 0.0, 'paid' => 0.0];
+        $total = ['status'=> 'TOTAL','principal' => 0.0, 'charges' => 0.0, 'penalty' => 0.0, 'interest' => 0.0, 'due' => 0.0, 'paid' => 0.0];
+
+        $rows = [];
+
+        foreach ($results as $row) {
+            if ($row['status'] != 'PENDING') {
+                $due['principal'] += $row['principal'];
+                $due['charges'] += $row['charges'];
+                $due['penalty'] += $row['penalty'];
+                $due['interest'] += $row['interest'];
+                $due['due'] += $row['due'];
+                $due['paid'] += $row['paid'];
+            } else {
+                $row['due'] = $row['principal'] + $row['interest'] + $row['charges'] + $row['penalty'] - $row['paid'];
+            }
+            $rows[] = $row;
+            $total['principal'] += $row['principal'];
+            $total['charges'] += $row['charges'];
+            $total['penalty'] += $row['penalty'];
+            $total['interest'] += $row['interest'];
+            $total['paid'] += $row['paid'];
+        }
+
+        $total['due'] = $total['principal'] + $total['interest'] + $total['charges'] + $total['penalty'] - $total['paid'];
+        $rows[] = $due;
+        $rows[] = $total;
+
+        $dataProvider = new ArrayDataProvider(['allModels' => $rows]);
+
+
+        if (Yii::$app->getRequest()->getQueryParam("print") == "true") {
+            $dataProvider->pagination = array(
+                'pageSize' => 0,
+            );
+            // return the pdf output as per the destination setting
+            return $this->createPdf("Summary Report", $this->renderPartial('summary', [
+                'dataProvider' => $dataProvider,
+                'print' => true
+            ]));
+        } else {
+            return $this->render('summary', [
+                'dataProvider' => $dataProvider,
                 'print' => false
             ]);
         }

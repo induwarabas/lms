@@ -30,9 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
-            ['attribute' => 'name', 'content' => function ($data) {
-                return Html::a($data->name, ['view', 'id' => $data->id]);
-            }],
+            'full_name',
             ['attribute' => 'area', 'content' => function ($data) {
                 return Area::findOne(['id' => $data->area])->name;
             }, 'filter' => array_merge(['0' => 'All'], ArrayHelper::map(Area::find()->asArray()->all(), 'id', 'name')),],

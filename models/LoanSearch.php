@@ -53,11 +53,12 @@ class LoanSearch extends Model
         $query = Loan::find();
 
         $this->load($params);
-        $custid = null;
+        $custid = [];
         if (isset($this->customer_id) && $this->customer_id != '') {
-            $cust = Customer::find()->where("full_name like :fullname or (nic = :nic or nic = :oldnic)",
-                [':fullname' => '%'.$this->customer_id.'%', ':nic' => NICValidator::getNewNic($this->customer_id), ':oldnic' => NICValidator::getOldNic($this->customer_id)])->one();
-            $custid = ($cust != null) ? $cust->id : 0;
+            $custs = Customer::find()->where("full_name like :fullname or (nic like :nic or nic like :oldnic)",
+                [':fullname' => '%'.$this->customer_id.'%', ':nic' => NICValidator::getNewNic($this->customer_id)."%", ':oldnic' => NICValidator::getOldNic($this->customer_id)."%"])->all();
+            foreach ($custs as $cust)
+            $custid[] = ($cust != null) ? $cust->id : 0;
         }
 
         $dataProvider = new ActiveDataProvider([

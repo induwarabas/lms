@@ -87,7 +87,7 @@ class CustomerSearchEx extends Customer
             $query->andWhere("phone like '%" . $phone . "%' or work_phone like '%" . $phone . "%' or mobile like '%" . $phone . "%'");
         }
 
-        $query->andFilterWhere(['like', 'full_name', $this->name])
+        $query->andFilterWhere(['like', 'full_name', $this->full_name])
             ->andFilterWhere(['like', 'residential_address', $this->residential_address])
             ->andFilterWhere(['like', 'billing_address', $this->billing_address])
             ->andFilterWhere(['like', 'mobile', $this->mobile])
