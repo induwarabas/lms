@@ -23,6 +23,7 @@ namespace app\models;
  * @property string $canvassing_commision_type
  * @property number $canvassing_commision
  * @property number $insurance
+ * @property number $rmv_charges
  * @property string $rmv_sent_date
  * @property string $rmv_sent_agent
  * @property string $rmv_sent_by
@@ -48,7 +49,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
         return [
             [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
             [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
-            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges', 'down_payment'], 'number'],
+            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges', 'rmv_charges', 'down_payment'], 'number'],
             [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
             [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
             [['rmv_sent_agent', 'rmv_sent_by', 'rmv_recv_agent', 'rmv_recv_by'], 'string', 'max' => 64],
@@ -79,6 +80,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             'canvassing_commision_type' => 'Canvassing Commission Type',
             'canvassing_commision' => 'Canvassing Commission',
             'insurance' => 'Insurance Premium',
+            'rmv_charges' => 'RMV Charges',
             'rmv_sent_date' => 'RMV Sent Date',
             'rmv_sent_agent' => 'RMV Sent Agent',
             'rmv_sent_by' => 'RMV Sent By',

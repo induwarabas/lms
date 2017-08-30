@@ -485,6 +485,62 @@ class TellerController extends LmsController
         }
     }
 
+    public function actionRmvcPayment()
+    {
+        $model = new OtherChargesPayment();
+        $model->payment = PaymentType::CHEQUE;
+        $teller = Account::getTellerAccount();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $error = null;
+
+            if ($model->stage == 2 && $model->validate()) {
+                if ($model->amount == 0) {
+                    $model->addError('amount', 'Amount should be greater than 0');
+                } else if (PaymentType::needReference($model->payment) && $model->cheque == '') {
+                    $model->addError('cheque', 'Reference number cannot be blank for '.$model->payment.' payments');
+                } else if (PaymentType::needReference($model->payment) && ($model->bankAccount == null || $model->bankAccount == 0)) {
+                    $model->addError('bankAccount', 'Bank Account cannot be blank for '.$model->payment.' payments');
+                } else {
+                    $model->crAccount = $teller->id;
+                    if (PaymentType::needReference($model->payment)) {
+                        $model->crAccount = BankAccount::findOne($model->bankAccount)->account_id;
+                    }
+                    if (Transaction::findOne(['txlink' => $model->link]) != null) {
+                        $error = "Transaction is already done.";
+                        $model->stage = 3;
+                    } else {
+                        $tx = Yii::$app->getDb()->beginTransaction();
+                        $txHnd = new TxHandler();
+
+                        if ($txHnd->createTransaction(GeneralAccounts::RMV_CHARGES, $model->crAccount, $model->amount, TxType::PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
+                            $tx->commit();
+                            $model->stage = 3;
+                            //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
+                        } else {
+                            $tx->rollBack();
+                            $error = $txHnd->error;
+                        }
+                    }
+                }
+            } else {
+                $model->stage = 2;
+            }
+
+            return $this->render('rmv-payment', [
+                'model' => $model,
+                'error' => $error,
+            ]);
+        } else {
+            $model->stage = 2;
+            $model->link = uniqid();
+            return $this->render('rmv-payment', [
+                'model' => $model,
+                'error' => null,
+            ]);
+        }
+    }
+
     public function actionExpenditurePayment()
     {
         $model = new ExpenditurePayment();
@@ -701,7 +757,7 @@ class TellerController extends LmsController
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
-                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::PAYABLE, $model->amount, TxType::RECEIPT, $model->payment, $model->description, $model->link, $model->cheque)) {
+                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::PAYABLE, $model->amount, TxType::DOWN_PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
                             $loanex->down_payment = $loanex->down_payment + $model->amount;
                             if ($loanex->save()) {
                                 $tx->commit();

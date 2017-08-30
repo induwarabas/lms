@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'description',
         ],
     ]) ?>
-    <?php if ($model->type == TxType::RECEIPT && substr($model->cr_account,0, 1) == Account::getTypeId(Account::TYPE_SAVING)) {
+    <?php if (($model->type == TxType::RECEIPT || $model->type == TxType::DOWN_PAYMENT) && substr($model->cr_account,0, 1) == Account::getTypeId(Account::TYPE_SAVING)) {
         echo '<div style="text-align: right">';
         echo Html::a("Print Receipt", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('".\yii\helpers\Url::to(['transaction/print-receipt', 'id' => $model->txid])."','MyWindow',width=700,height=300); return false;"]);
         echo '</div>';

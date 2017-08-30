@@ -1,7 +1,6 @@
 <?php
 
 use app\models\Canvasser;
-use app\models\CollectionMethod;
 use app\models\Supplier;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
@@ -85,6 +84,12 @@ use Zelenin\yii\SemanticUI\Elements;
                 </div>
             </div>
             <div class="form-group field-loan-installment">
+                <label class="control-label col-md-2" for="rmv-charges">RMV Charges</label>
+                <div class='col-md-10'>
+                    <div id="rmv-charges" style="margin-top: 6px;margin-left: 10px"></div>
+                </div>
+            </div>
+            <div class="form-group field-loan-installment">
                 <label class="control-label col-md-2" for="total-charges">Charges</label>
                 <div class='col-md-10'>
                     <div id="total-charges" style="margin-top: 6px;margin-left: 10px"></div>
@@ -127,6 +132,7 @@ use Zelenin\yii\SemanticUI\Elements;
         <div class="ui segment">
             <?= Elements::header(Elements::icon('send') . '<div class="content">RMV<div class="sub header">RMV document tracking</div></div>', ['tag' => 'h2']) ?>
             <?= Elements::divider() ?>
+            <?= $form->field($model, 'rmv_charges')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01']) ?>
             <?= $form->field($model, 'rmv_sent_date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
             <?= $form->field($model, 'rmv_sent_agent')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'rmv_sent_by')->textInput(['maxlength' => true]) ?>
@@ -139,8 +145,8 @@ use Zelenin\yii\SemanticUI\Elements;
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-            <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
-            <?= Html::a("Cancel", ["loan/cancel"], ['id' => 'cancel', 'class' => 'ui button']) ?>
+                <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'ui button green' : 'ui button blue']) ?>
+                <?= Html::a("Cancel", ["loan/cancel"], ['id' => 'cancel', 'class' => 'ui button']) ?>
             </div>
         </div>
 
@@ -214,11 +220,19 @@ $this->registerJs("
          if (charges == '') {
             charges = 0;
         }
+        
          var chargesPerTerm = (charges/terms);
          $('#total-charges').text(charges + ' / ' + terms + ' = ' + (chargesPerTerm).toFixed(2));
          
+         var rmv_charges = $('#hpnewvehicleloan-rmv_charges').val();
+         if (rmv_charges == '') {
+            rmv_charges = 0;
+        }
+        
+        var rmvChargesPerTerm = (rmv_charges/terms);
+         $('#rmv-charges').text(rmv_charges + ' / ' + terms + ' = ' + (rmvChargesPerTerm).toFixed(2));
          
-         $('#total-installment').text(payment.toFixed(2) + ' + ' + commisionPerTerm.toFixed(2) + ' + ' + chargesPerTerm.toFixed(2) + ' = ' + (payment + commisionPerTerm + chargesPerTerm).toFixed(2));
+         $('#total-installment').text(payment.toFixed(2) + ' + ' + commisionPerTerm.toFixed(2) + ' + ' + rmvChargesPerTerm.toFixed(2) + ' + ' + chargesPerTerm.toFixed(2) + ' = ' + (payment + commisionPerTerm + chargesPerTerm + rmvChargesPerTerm).toFixed(2));
     }
     
     $('#hpnewvehicleloan-loan_amount').on('input', function(e) {
@@ -226,6 +240,10 @@ $this->registerJs("
     });
     
     $('#hpnewvehicleloan-charges').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#hpnewvehicleloan-rmv_charges').on('input', function(e) {
         updateContents();
     });
     

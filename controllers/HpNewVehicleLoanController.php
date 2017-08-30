@@ -103,7 +103,7 @@ class HpNewVehicleLoanController extends LmsController
             if ($model->charges == null) {
                 $model->charges = 0;
             }
-            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
+            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges + $model->rmv_charges;
             if ($model->validate() && $loan->validate()) {
                 $tx = Yii::$app->getDb()->beginTransaction();
                 $loanCreator = new LoanCreator();
@@ -190,7 +190,7 @@ class HpNewVehicleLoanController extends LmsController
 
         if ($model->load(Yii::$app->request->post()) && $loan->load(Yii::$app->request->post()) && $model->validate() && $loan->validate()) {
             $loan->amount = $model->loan_amount;
-            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges;
+            $loan->charges = $model->getSalesCommission() + $model->getCanvassingCommission() + $model->charges + $model->rmv_charges;
             $tx = Yii::$app->getDb()->beginTransaction();
             $loan->save();
             $model->id = $loan->primaryKey;
@@ -289,7 +289,7 @@ class HpNewVehicleLoanController extends LmsController
             return "Invalid receipt";
         }
 
-        if ($transaction->type !== TxType::RECEIPT) {
+        if ($transaction->type !== TxType::RECEIPT && $transaction->type !== TxType::DOWN_PAYMENT) {
             return "Invalid receipt";
         }
 

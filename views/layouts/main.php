@@ -76,6 +76,7 @@ AppAsset::register($this);
                     ['label' => 'Sales Commission Payment', 'url' => ['/teller/sc-payment']],
                     ['label' => 'Canvassing Commission Payment', 'url' => ['/teller/cc-payment']],
                     ['label' => 'Charges Payment', 'url' => ['/teller/oc-payment']],
+                    ['label' => 'RMV Charges Payment', 'url' => ['/teller/rmvc-payment']],
                     ['label' => 'Collector Assign', 'url' => ['/loan/assign-collectors']],
                     ['label' => 'Collections', 'url' => ['/collection/index']],
                 ]

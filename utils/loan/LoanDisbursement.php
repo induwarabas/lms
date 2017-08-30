@@ -117,7 +117,7 @@ class LoanDisbursement
 
         if (LoanTypes::isVehicleLoan($loan->type)) {
             $loanex = HpNewVehicleLoan::findOne($loan->id);
-            $total = $loanex->charges;
+            $total = $loanex->charges + $loanex->rmv_charges;
 
             if (!$txHnd->createTransaction(GeneralAccounts::PARK,
                 GeneralAccounts::PAYABLE,
@@ -137,6 +137,19 @@ class LoanDisbursement
                     TxType::DISBURSE,
                     PaymentType::INTERNAL,
                     "Disbursement other charges of the loan #" . $loan->id,
+                    $link)) {
+                    $this->error = $txHnd->error;
+                    return false;
+                }
+            }
+
+            if ($loanex->rmv_charges != null && $loanex->rmv_charges != 0) {
+                if (!$txHnd->createTransaction(GeneralAccounts::PARK,
+                    GeneralAccounts::RMV_CHARGES,
+                    $loanex->rmv_charges,
+                    TxType::DISBURSE,
+                    PaymentType::INTERNAL,
+                    "Disbursement rmv charges of the loan #" . $loan->id,
                     $link)) {
                     $this->error = $txHnd->error;
                     return false;

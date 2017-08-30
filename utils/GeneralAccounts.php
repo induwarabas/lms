@@ -20,6 +20,7 @@ class GeneralAccounts
     const INVESTMENT = '9000000007';
     const SALARY = '9000000008';
     const CHARGES = '9000000009';
+    const RMV_CHARGES = '9000000010';
 
     const names = [
         GeneralAccounts::PAYABLE => 'PAYABLE',
@@ -31,5 +32,6 @@ class GeneralAccounts
         GeneralAccounts::INVESTMENT => 'INVESTMENT',
         GeneralAccounts::SALARY => 'SALARY',
         GeneralAccounts::CHARGES => 'CHARGES',
+        GeneralAccounts::RMV_CHARGES => 'RMV_CHARGES',
     ];
 }

@@ -158,10 +158,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['attribute' => 'charges', 'label' => 'Canvassing commission', 'value' => function ($data) use ($model) {
                         return number_format($model->getCanvassingCommission(), 2);
                     }],
+                    ['attribute' => 'rmv_charges', 'label' => 'RMV Charges', 'value' => function ($data) use ($model) {
+                        return number_format($model->rmv_charges, 2);
+                    }],
                     ['attribute' => 'charges', 'label' => 'Other Charges', 'value' => function ($data) use ($model) {
                         return number_format($model->charges, 2);
                     }],
-                    ['attribute' => 'charges', 'label' => 'Total Charges', 'value' => number_format($loan->charges, 2) . "  (Sales Commission + Canvassing Commission + Other Charges)"],
+                    ['attribute' => 'charges', 'label' => 'Total Charges', 'value' => number_format($loan->charges, 2) . "  (Sales Commission + Canvassing Commission + RMV Charges + Other Charges)"],
                     ['attribute' => 'amount', 'label' => 'Loan Amount', 'format' => 'html', 'value' => function ($data) {
                         return number_format($data->amount + $data->charges, 2) . " (Total Charges + Amount)";
                     }],
@@ -223,6 +226,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model' => $model,
                 'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
                 'attributes' => [
+                    ['attribute' => 'charges', 'label' => 'RMV Charges', 'value' => function ($data) use ($model) {
+                        return number_format($model->rmv_charges, 2);
+                    }],
                     'rmv_sent_date',
                     ['attribute' => 'rmv_sent_agent', 'format' => 'html', 'value' => function ($data) {
                         return isset($data->rmv_sent_agent) && $data->rmv_sent_agent != '' ? $data->rmv_sent_agent : '<span class="not-set">(not set)</span>';

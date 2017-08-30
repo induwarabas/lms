@@ -101,6 +101,7 @@ use Zelenin\yii\SemanticUI\widgets\DetailView;
     <div class="ui segment">
         <?= Elements::header(Elements::icon('send') . '<div class="content">RMV<div class="sub header">RMV document tracking</div></div>', ['tag' => 'h2']) ?>
         <?= Elements::divider() ?>
+        <?= $form->field($model, 'rmv_charges')->textInput(['maxlength' => true, 'type' => 'number', 'step' => '0.01', 'readonly' => true]) ?>
         <?= $form->field($model, 'rmv_sent_date')->widget(DatePicker::className(), ['clientOptions' => ['autoclose' => true, 'format' => 'yyyy-mm-dd']]) ?>
         <?= $form->field($model, 'rmv_sent_agent')->textInput(['maxlength' => true]) ?>
         <?= $form->field($model, 'rmv_sent_by')->textInput(['maxlength' => true]) ?>

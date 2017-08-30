@@ -15,6 +15,7 @@ class TxType
     const CHARGES = "CHARGES";
     const PAYMENT = "PAYMENT";
     const RECEIPT = "RECEIPT";
+    const DOWN_PAYMENT = "DOWN_PAYMENT";
     const PENALTY = "PENALTY";
     const RECOVERY = "RECOVERY";
     const CAPITAL_RECOVERY = "CAPITAL";
@@ -33,6 +34,7 @@ class TxType
             TxType::PAYMENT => TxType::PAYMENT,
             TxType::RECEIPT => TxType::RECEIPT,
             TxType::PENALTY => TxType::PENALTY,
+            TxType::DOWN_PAYMENT => TxType::DOWN_PAYMENT,
             TxType::RECOVERY => TxType::RECOVERY,
             TxType::CAPITAL_RECOVERY => TxType::CAPITAL_RECOVERY,
             TxType::INTEREST_RECOVERY => TxType::INTEREST_RECOVERY,
