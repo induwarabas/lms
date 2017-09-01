@@ -109,7 +109,16 @@ class Account extends \yii\db\ActiveRecord
      */
     public static function getTellerAccount()
     {
-        $accountID = Account::createAccountId(Account::TYPE_TELLER, \Yii::$app->getUser()->id);
+        return Account::getTellerAccountById(\Yii::$app->getUser()->id);
+    }
+
+    /**
+     * Get the teller account
+     * @return \app\models\Account
+     */
+    public static function getTellerAccountById($id)
+    {
+        $accountID = Account::createAccountId(Account::TYPE_TELLER, $id);
         $account = Account::findOne($accountID);
         if ($account == null) {
             $account = new Account();

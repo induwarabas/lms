@@ -1,5 +1,8 @@
 <?php
 
+use app\models\Account;
+use app\utils\widgets\AccountIDView;
+use app\utils\widgets\AccountView;
 use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
 use yii\helpers\Html;
@@ -37,8 +40,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'template' => '<tr><td style="width: 1%;white-space:nowrap;">{label}</td><td>{value}</td></tr>',
             'attributes' => [
-                ['attribute' => 'dr_account', 'value' => $model->dr_account . " : " . \app\models\Account::findOne($model->dr_account)->getAccountName()],
-                ['attribute' => 'cr_account', 'value' => $model->cr_account . " : " . \app\models\Account::findOne($model->cr_account)->getAccountName()],
+                ['attribute' => 'dr_account', 'format' => 'html', 'value' => AccountView::widget(['accountId' => $model->dr_account]) . " : " . Account::findOne($model->dr_account)->getAccountName()],
+                ['attribute' => 'cr_account', 'format' => 'html', 'value' => AccountView::widget(['accountId' => Account::createAccountId(Account::TYPE_TELLER, $model->cr_account)]) . " : " . Account::findOne(Account::createAccountId(Account::TYPE_TELLER, $model->cr_account))->getAccountName()],
                 'payment',
                 'cheque',
                 ['attribute' => 'amount', 'value' => number_format($model->amount, 2)],

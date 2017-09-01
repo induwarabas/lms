@@ -113,12 +113,12 @@ class TransactionController extends LmsController
         $users = $userQuery->all();
         $userItems = [];
         foreach ($users as $user) {
-            $userItems[Account::createAccountId(Account::TYPE_TELLER, $user->getId())] = $user->username;
+            $userItems[$user->getId()] = $user->username;
         }
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $crAcc = Account::findOne($model->cr_account);
+                $crAcc = Account::getTellerAccountById($model->cr_account);
                 if ($crAcc == null) {
                     $model->error = "Invalid account id " . $model->cr_account;
                 } else if ($crAcc->type != Account::TYPE_TELLER) {
@@ -165,12 +165,12 @@ class TransactionController extends LmsController
         $users = $userQuery->all();
         $userItems = [];
         foreach ($users as $user) {
-            $userItems[Account::createAccountId(Account::TYPE_TELLER, $user->getId())] = $user->username;
+            $userItems[$user->getId()] = $user->username;
         }
         $model = new ManualTransaction();
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $drAcc = Account::findOne($model->dr_account);
+                $drAcc = Account::getTellerAccountById($model->dr_account);
                 if ($drAcc == null) {
                     $model->error = "Invalid account id " . $model->dr_account;
                 } else if ($drAcc->type != Account::TYPE_TELLER) {
