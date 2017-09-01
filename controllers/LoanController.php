@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Account;
 use app\models\Collection;
 use app\models\CollectorAssignmentModel;
 use app\models\DisburseModel;
@@ -239,12 +240,14 @@ class LoanController extends LmsController
 
         $result = Yii::$app->db->createCommand("SELECT SUM(penalty) as penalty, SUM(paid) as paid, SUM(due) as due FROM loan_schedule where loan_id = :loanId", [':loanId' => $id])->queryOne();
         $result2 = Yii::$app->db->createCommand("SELECT SUM(principal) as principal, SUM(charges) as charges, SUM(interest) as interest, SUM(penalty) as penalty FROM loan_schedule where loan_id = :loanId and status = 'PAYED'", [':loanId' => $id])->queryOne();
+        $accountBalance = Account::findOne($loan->saving_account)->balance;
 
         return $this->render('schedule', [
             'dataProvider' => $dataProvider,
             'loan' => $loan,
             'total' => $result,
-            'payed' => $result2
+            'payed' => $result2,
+            'balance' => $accountBalance
         ]);
     }
 
