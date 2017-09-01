@@ -97,9 +97,9 @@ class ReportController extends LmsController
         if ($searchModel->validate()) {
             $query->andFilterWhere(['area' => $searchModel->area]);
             if ($searchModel->type == 100) {
-                $query->andFilterWhere(['type' => [LoanTypes::HP_REG_VEHICLE_REFINANCE, LoanTypes::HP_REG_VEHICLE_OTHER, LoanTypes::HP_NEW_VEHICLE]]);
+                $query->andFilterWhere(['loan.type' => [LoanTypes::HP_REG_VEHICLE_REFINANCE, LoanTypes::HP_REG_VEHICLE_OTHER, LoanTypes::HP_NEW_VEHICLE]]);
             } else {
-                $query->andFilterWhere(['type' => $searchModel->type]);
+                $query->andFilterWhere(['loan.type' => $searchModel->type]);
             }
             if ($searchModel->arrears != null) {
                 $query->andWhere('arrears >= :arr', [':arr' => $searchModel->arrears]);
@@ -136,6 +136,71 @@ class ReportController extends LmsController
     }
 
     public function actionReceipts()
+    {
+        $searchModel = new ReceiptSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+
+        $query = new Query();
+        $query->select(['transaction.*', 'loan.id as loan_id', 'loan.type as loan_type', 'customer.*'])
+            ->from('transaction')
+            ->innerJoin('loan', 'transaction.cr_account = loan.saving_account')
+            ->innerJoin('customer', 'loan.customer_id = customer.id')
+            ->where(["transaction.type" => TxType::RECEIPT]);
+
+        if ($searchModel->validate()) {
+            $query->andFilterWhere(['area' => $searchModel->area, 'user' => $searchModel->teller]);
+            if ($searchModel->type == 100) {
+                $query->andFilterWhere(['loan.type' => [LoanTypes::HP_REG_VEHICLE_REFINANCE, LoanTypes::HP_REG_VEHICLE_OTHER, LoanTypes::HP_NEW_VEHICLE]]);
+            } else {
+                $query->andFilterWhere(['loan.type' => $searchModel->type]);
+            }
+            $from = $searchModel->from;
+            $to = $searchModel->to;
+            if ($from != null || $to != null) {
+                if ($from == null && $to != null) {
+                    $from = $to;
+                }
+
+                if ($to == null) {
+                    $to = $from;
+                }
+
+                $tox = date('Y-m-d', strtotime("+1 day", strtotime($to)));
+
+                $query->andWhere(['>', "timestamp", $from])->andWhere(['<', "timestamp", $tox]);
+            }
+        }
+
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        $dataProvider->pagination = array(
+            'pageSize' => 20,
+        );
+        $dataProvider->sort = ['attributes' => ['loan_id', 'txid', 'timestamp', 'loan_type', 'user', 'amount']];
+
+        $total = $query->sum('transaction.amount');
+
+        if (Yii::$app->getRequest()->getQueryParam("print") == "true") {
+            $dataProvider->pagination = array(
+                'pageSize' => 0,
+            );
+            // return the pdf output as per the destination setting
+            return $this->createPdf("Receipt Report", $this->renderPartial('receipts', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'total' => $total,
+                'print' => true
+            ]));
+        } else {
+            return $this->render('receipts', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'total' => $total,
+                'print' => false
+            ]);
+        }
+    }
+
+    public function actionRmvCharges()
     {
         $searchModel = new ReceiptSearch();
         $searchModel->load(Yii::$app->request->queryParams);

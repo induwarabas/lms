@@ -356,6 +356,17 @@ class HpNewVehicleLoanController extends LmsController
         return $pdf->render();
     }
 
+    public function actionPrintLetter($id, $templateId) {
+        $loan = Loan::findOne($id);
+        $loanx = HpNewVehicleLoan::findOne($id);
+        $customer = Customer::findOne($loan->customer_id);
+        $template = Template::findOne($templateId);
+        $m = new \Mustache_Engine();
+        $m->addHelper("format", new MustacheFormatter());
+        $text = $m->render($template->content, ['loan' => $loan, 'loan']);
+
+    }
+
     /**
      * Finds the HpNewVehicleLoan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
