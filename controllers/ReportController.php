@@ -87,10 +87,11 @@ class ReportController extends LmsController
         $searchModel->load(Yii::$app->request->queryParams);
 
         $query = new Query();
-        $query->select(['loan_due.*', 'loan.type', 'customer.*'])
+        $query->select(['loan_due.*', 'loan.type', 'customer.*', 'account.balance'])
             ->from('loan_due')
             ->innerJoin('loan', 'loan_due.loan_id = loan.id')
             ->innerJoin('customer', 'loan.customer_id = customer.id')
+            ->innerJoin('account', 'loan.saving_account = account.id')
             ->where('loan_due.due > 0');
 
         if ($searchModel->validate()) {
@@ -111,7 +112,7 @@ class ReportController extends LmsController
         );
         $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'penalty', 'due']];
 
-        $total = $query->sum('due');
+        $total = $query->sum('due - balance');
 
         if (Yii::$app->getRequest()->getQueryParam("print") == "true") {
             $dataProvider->pagination = array(
