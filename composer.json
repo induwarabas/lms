@@ -25,7 +25,8 @@
         "kartik-v/yii2-widgets": "*",
         "kartik-v/yii2-mpdf": "*",
         "2amigos/yii2-ckeditor-widget": "^1.0@dev",
-        "cedx/yii2-mustache": "^0.4.3"
+        "cedx/yii2-mustache": "^0.4.3",
+        "robregonm/yii2-pdf": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
