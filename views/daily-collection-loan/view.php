@@ -3,14 +3,9 @@
 use app\models\CollectionMethod;
 use app\models\DisburseModel;
 use app\models\LoanType;
-use app\models\VehicleBrand;
-use app\models\VehicleType;
 use app\utils\enums\LoanStatus;
 use app\utils\widgets\AccountIDView;
-use app\utils\widgets\CanvasserView;
-use app\utils\widgets\CommissionView;
 use app\utils\widgets\CustomerView;
-use app\utils\widgets\SupplierView;
 use dosamigos\datepicker\DatePicker;
 use kartik\form\ActiveForm;
 use webvimark\modules\UserManagement\models\User;
@@ -84,13 +79,15 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a('Down Payment Receipt', '#', ['class' => 'ui button green', 'id' => 'btn-down-pay']);
         }
 
-        if (!$loan->paid && $loan->status == 'ACTIVE'&& User::hasPermission('loanpayment')) {
+        if (!$loan->paid && $loan->status == 'ACTIVE' && User::hasPermission('loanpayment')) {
             echo Html::a('Pay', '#', ['class' => 'ui button red', 'id' => 'btn-loan-pay']);
         }
-        if ($loan->status == 'ACTIVE'&& User::hasPermission('tellerTransactions')) {
+        if ($loan->status == 'ACTIVE' && User::hasPermission('tellerTransactions')) {
             echo Html::a('Receipt', '#', ['class' => 'ui button blue', 'id' => 'btn-loan-receipt']);
         }
-        echo Html::a("Welcome Letter", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('".\yii\helpers\Url::to(['welcome-letter', 'id' => $loan->id])."','MyWindow',width=700,height=300); return false;"]);
+        if ($loan->status == 'ACTIVE') {
+            echo Html::a("Welcome Letter", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('" . \yii\helpers\Url::to(['welcome-letter', 'id' => $loan->id]) . "','MyWindow',width=700,height=300); return false;"]);
+        }
         ?>
 
         <form action="<?= \yii\helpers\Url::to(['teller/payment']) ?>" method="post" id="loan-pay">
