@@ -34,4 +34,12 @@ class MustacheFormatter
 
         };
     }
+
+    public function newline()
+    {
+        return function ($block, $render) {
+            $val = $render($block);
+            return str_replace("\n", "<br/>", $val);
+        };
+    }
 }

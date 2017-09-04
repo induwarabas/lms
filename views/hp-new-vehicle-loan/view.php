@@ -95,6 +95,9 @@ $this->params['breadcrumbs'][] = $this->title;
         if ($loan->status == 'ACTIVE'&& User::hasPermission('tellerTransactions')) {
             echo Html::a('Receipt', '#', ['class' => 'ui button blue', 'id' => 'btn-loan-receipt']);
         }
+        if ($loan->status == 'ACTIVE'&& User::hasPermission('tellerTransactions')) {
+            echo Html::a("Welcome", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('".\yii\helpers\Url::to(['welcome-letter', 'id' => $loan->id])."','MyWindow',width=700,height=300); return false;"]);
+        }
         ?>
 
         <form action="<?= \yii\helpers\Url::to(['teller/payment']) ?>" method="post" id="loan-pay">

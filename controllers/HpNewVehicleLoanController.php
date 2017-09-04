@@ -356,14 +356,20 @@ class HpNewVehicleLoanController extends LmsController
         return $pdf->render();
     }
 
-    public function actionPrintLetter($id, $templateId) {
+    public function actionWelcomeLetter($id) {
+        $template = Template::findOne(1);
+        $m = new \Mustache_Engine();
+        $m->addHelper("format", new MustacheFormatter());
+        $text = $m->render($template->content);
+
         $loan = Loan::findOne($id);
         $loanx = HpNewVehicleLoan::findOne($id);
         $customer = Customer::findOne($loan->customer_id);
-        $template = Template::findOne($templateId);
-        $m = new \Mustache_Engine();
-        $m->addHelper("format", new MustacheFormatter());
-        $text = $m->render($template->content, ['loan' => $loan, 'loanx' => $loanx, 'customer' => $customer]);
+        $template = Template::findOne(3);
+        $vehicleType = VehicleType::findOne($loanx->vehicle_type)->name;
+        $vehicleBrand = VehicleBrand::findOne($loanx->make)->name;
+        $day = explode('-', $loan->disbursed_date)[2];
+        $text .= $m->render($template->content, ['loan' => $loan, 'loanx' => $loanx, 'customer' => $customer, 'vehicleType' => $vehicleType, 'brand' => $vehicleBrand, 'day' => $day]);
         $pdf = new Pdf([
             // set to use core fonts only
             'mode' => Pdf::MODE_UTF8,
@@ -387,8 +393,6 @@ class HpNewVehicleLoanController extends LmsController
 //                'SetHeader'=>['Krajee Report Header'],
 //                'SetFooter'=>['{PAGENO}'],
             ],
-            'defaultFont' => 'kaputaunicode.ttf',
-            'options' => ['currentLang' =>  'sin']
         ]);
 
         // return the pdf output as per the destination setting

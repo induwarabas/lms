@@ -1,5 +1,11 @@
 @font-face {
     font-family: 'FMAbhaya';
-    src: url('../fonts/fm_abhay.TTF') format('truetype');
+    src: url('../fonts/FMAbhaya.TTF') format('truetype');
     font-weight: normal;
+}
+
+@font-face {
+    font-family: 'FMAbhaya';
+    src: url('../fonts/FMAbhayaBold.ttf') format('truetype');
+    font-weight: bold;
 }
