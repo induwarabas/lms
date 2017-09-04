@@ -48,7 +48,7 @@ class Loan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'customer_id', 'amount', 'interest', 'penalty', 'charges', 'collection_method', 'period'], 'required'],
+            [['type', 'customer_id', 'amount', 'interest', 'penalty', 'charges', 'collection_method', 'period','disbursed_date'], 'required'],
             [['type', 'customer_id', 'collection_method', 'period', 'paid'], 'integer'],
             [['amount', 'interest', 'penalty', 'charges', 'installment', 'total_interest', 'total_payment', 'guarantor_1', 'guarantor_2', 'guarantor_3'], 'number'],
             [['status'], 'string'],
