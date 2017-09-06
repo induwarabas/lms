@@ -3,15 +3,18 @@
 namespace app\controllers;
 
 use app\models\Account;
+use app\models\CollectionMethod;
 use app\models\Customer;
 use app\models\HpNewVehicleLoan;
 use app\models\HpNewVehicleLoanEx;
 use app\models\Loan;
+use app\models\LoanSchedule;
 use app\models\LoanType;
 use app\models\Template;
 use app\models\Transaction;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
+use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\TxType;
 use app\utils\loan\AmortizationCalculator;
@@ -283,7 +286,8 @@ class HpNewVehicleLoanController extends LmsController
         ]);
     }
 
-    public function actionPrintReceipt($id) {
+    public function actionPrintReceipt($id)
+    {
         $transaction = Transaction::findOne($id);
         if ($transaction == null) {
             return "Invalid receipt";
@@ -301,11 +305,11 @@ class HpNewVehicleLoanController extends LmsController
         $description = LoanType::findOne($loan->type)->name;
         if (LoanTypes::isVehicleLoan($loan->type)) {
             $loanx = HpNewVehicleLoan::findOne($loan->id);
-            $description .= " - ".VehicleType::findOne($loanx->vehicle_type)->name." ".VehicleBrand::findOne($loanx->make)->name ." " .$loanx->model;
+            $description .= " - " . VehicleType::findOne($loanx->vehicle_type)->name . " " . VehicleBrand::findOne($loanx->make)->name . " " . $loanx->model;
             if (isset($loanx->vehicle_no) && $loanx->vehicle_no != null && $loanx->vehicle_no !== '') {
                 $description .= " - " . $loanx->vehicle_no;
             }
-            $description .= " (" . $loanx->engine_no . "/".$loanx->chasis_no.")";
+            $description .= " (" . $loanx->engine_no . "/" . $loanx->chasis_no . ")";
         }
         $customer = Customer::findOne($loan->customer_id);
 
@@ -314,12 +318,12 @@ class HpNewVehicleLoanController extends LmsController
         $m->addHelper("format", new MustacheFormatter());
         $text = $m->render($template->content);
 
-        $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
+        $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule WHERE loan_id = :id", [':id' => $loan->id])->queryScalar();
         $savingAccount = Account::findOne($loan->saving_account);
         $balance = $savingAccount->balance - $due;
 
         $template = Template::findOne(2);
-        $text .= $m->render($template->content,['invoice_number' => str_pad($id, 10, "0", STR_PAD_LEFT),
+        $text .= $m->render($template->content, ['invoice_number' => str_pad($id, 10, "0", STR_PAD_LEFT),
             'loan' => $loan,
             'tx' => $transaction,
             'description' => $description,
@@ -356,7 +360,8 @@ class HpNewVehicleLoanController extends LmsController
         return $pdf->render();
     }
 
-    public function actionWelcomeLetter($id) {
+    public function actionLetter($id, $letter)
+    {
         $template = Template::findOne(1);
         $m = new \Mustache_Engine();
         $m->addHelper("format", new MustacheFormatter());
@@ -365,11 +370,49 @@ class HpNewVehicleLoanController extends LmsController
         $loan = Loan::findOne($id);
         $loanx = HpNewVehicleLoan::findOne($id);
         $customer = Customer::findOne($loan->customer_id);
-        $template = Template::findOne(3);
+        $template = Template::findOne(['name' => $letter]);
         $vehicleType = VehicleType::findOne($loanx->vehicle_type)->name;
         $vehicleBrand = VehicleBrand::findOne($loanx->make)->name;
         $day = explode('-', $loan->disbursed_date)[2];
-        $text .= $m->render($template->content, ['loan' => $loan, 'loanx' => $loanx, 'customer' => $customer, 'vehicleType' => $vehicleType, 'brand' => $vehicleBrand, 'day' => $day]);
+
+        $schedule = LoanSchedule::find()->where(['loan_id' => $loan->id, 'status' => LoanScheduleStatus::DEMANDED])->orderBy(['demand_date' => SORT_ASC])->limit(1)->one();
+        $dueDate = "N/A";
+        if ($schedule == null) {
+            $schedule = LoanSchedule::find()->where(['loan_id' => $loan->id, 'status' => LoanScheduleStatus::PENDING])->orderBy(['demand_date' => SORT_ASC])->limit(1)->one();
+        }
+
+
+        if($schedule == null) {
+            $demandDate = date("Y-m-") + $day;
+        } else {
+            $demandDate = $schedule->demand_date;
+        }
+
+        $collectionMethod = CollectionMethod::findOne(['id' => $loan->collection_method]);
+        if ($schedule != null) {
+            $dueDate = date('Y-m-d', strtotime("+" . $collectionMethod->penal_after . " " . $collectionMethod->penal_after_unit, strtotime($demandDate)));
+        }
+
+        if (date("Y-m-d") > $dueDate) {
+            $dueDate = date('Y-m-d', strtotime("+1 month", strtotime($dueDate)));
+        }
+
+        $due = LoanSchedule::find()->where(['loan_id' => $loan->id])->sum('due');
+
+        $balance = Account::findOne($loan->saving_account)->balance;
+        $due -= $balance;
+
+        $text .= $m->render($template->content, [
+            'loan' => $loan,
+            'loanx' => $loanx,
+            'customer' => $customer,
+            'vehicleType' => $vehicleType,
+            'brand' => $vehicleBrand,
+            'day' => $day,
+            'dueDate' => $dueDate,
+            'due' => $due,
+            'date' => date('Y-m-d')
+        ]);
         $pdf = new Pdf([
             // set to use core fonts only
             'mode' => Pdf::MODE_UTF8,
@@ -398,6 +441,50 @@ class HpNewVehicleLoanController extends LmsController
         // return the pdf output as per the destination setting
         return $pdf->render();
     }
+
+//    public function actionWelcomeLetter($id)
+//    {
+//        $template = Template::findOne(1);
+//        $m = new \Mustache_Engine();
+//        $m->addHelper("format", new MustacheFormatter());
+//        $text = $m->render($template->content);
+//
+//        $loan = Loan::findOne($id);
+//        $loanx = HpNewVehicleLoan::findOne($id);
+//        $customer = Customer::findOne($loan->customer_id);
+//        $template = Template::findOne(3);
+//        $vehicleType = VehicleType::findOne($loanx->vehicle_type)->name;
+//        $vehicleBrand = VehicleBrand::findOne($loanx->make)->name;
+//        $day = explode('-', $loan->disbursed_date)[2];
+//        $text .= $m->render($template->content, ['loan' => $loan, 'loanx' => $loanx, 'customer' => $customer, 'vehicleType' => $vehicleType, 'brand' => $vehicleBrand, 'day' => $day]);
+//        $pdf = new Pdf([
+//            // set to use core fonts only
+//            'mode' => Pdf::MODE_UTF8,
+//            // A4 paper format
+//            'format' => Pdf::FORMAT_A4,
+//            // portrait orientation
+//            'orientation' => Pdf::ORIENT_PORTRAIT,
+//            // stream to browser inline
+//            'destination' => Pdf::DEST_BROWSER,
+//            // your html content input
+//            'content' => $text,
+//            // format content from your own css file if needed or use the
+//            // enhanced bootstrap css built by Krajee for mPDF formatting
+//            'cssFile' => 'css/report.css',
+//            // any css to be embedded if required
+//            'cssInline' => '.kv-heading-1{font-size:18px}',
+//            // set mPDF properties on the fly
+//            'options' => ['title' => 'Cash Receipt'],
+//            // call mPDF methods on the fly
+//            'methods' => [
+////                'SetHeader'=>['Krajee Report Header'],
+////                'SetFooter'=>['{PAGENO}'],
+//            ],
+//        ]);
+//
+//        // return the pdf output as per the destination setting
+//        return $pdf->render();
+//    }
 
     /**
      * Finds the HpNewVehicleLoan model based on its primary key value.

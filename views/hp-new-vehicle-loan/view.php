@@ -15,6 +15,7 @@ use dosamigos\datepicker\DatePicker;
 use kartik\form\ActiveForm;
 use webvimark\modules\UserManagement\models\User;
 use yii\bootstrap\Alert;
+use yii\bootstrap\ButtonDropdown;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -96,7 +97,16 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a('Receipt', '#', ['class' => 'ui button blue', 'id' => 'btn-loan-receipt']);
         }
         if ($loan->status == 'ACTIVE') {
-            echo Html::a("Welcome Letter", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('" . \yii\helpers\Url::to(['welcome-letter', 'id' => $loan->id]) . "','MyWindow',width=700,height=300); return false;"]);
+            echo ButtonDropdown::widget([
+                'label' => 'Letter',
+                'options' => ['class' => 'ui button blue'],
+                'dropdown' => [
+                    'items' => [
+                        ['label' => 'Welcome', 'url' => ['letter', 'id' => $loan->id, 'letter' => 'welcome-vehicle']],
+                        ['label' => 'Arrears', 'url' => ['letter', 'id' => $loan->id, 'letter' => 'arrears-vehicle']],
+                    ],
+                ],
+            ]);
         }
         ?>
 
