@@ -51,7 +51,7 @@ class LoanDisbursement
             $timeAdd = "+1 day";
         }
 
-        if (LoanTypes::isVehicleLoan($loan->type)) {
+        if (LoanTypes::isVehicleLoan($loan->type) || $loan->type == LoanTypes::PERSONAL) {
             $amortization = new AmortizationCalculator();
             $schedule = $amortization->calculate($loan->amount, $loan->interest, $loan->period, $interestTerms, $loan->charges);
         } else {

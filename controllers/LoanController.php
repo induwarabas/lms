@@ -53,6 +53,8 @@ class LoanController extends LmsController
             return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
         } else if ($loan->type == LoanTypes::DAILY_COLLECTION) {
             return $this->redirect(['daily-collection-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
+        } else if ($loan->type == LoanTypes::PERSONAL) {
+            return $this->redirect(['personal-loan/view', 'id' => $id, 'error' => Yii::$app->request->getQueryParam("error")]);
         }
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -83,6 +85,8 @@ class LoanController extends LmsController
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
         } else if ($model->type == LoanTypes::DAILY_COLLECTION) {
             return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
+        }else if ($model->type == LoanTypes::PERSONAL) {
+            return $this->redirect(['personal-loan/create', 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -149,6 +153,11 @@ class LoanController extends LmsController
                 return $this->redirect(["daily-collection-loan/update", 'id' => $model->id]);
             }
             return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
+        } else if ($model->type == LoanTypes::PERSONAL) {
+            if (isset($model->id) && $model->id > 0) {
+                return $this->redirect(["personal-loan/update", 'id' => $model->id]);
+            }
+            return $this->redirect(["personal-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [
@@ -180,6 +189,8 @@ class LoanController extends LmsController
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
         } else  if ($model->type == LoanTypes::DAILY_COLLECTION) {
             return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
+        } else  if ($model->type == LoanTypes::PERSONAL) {
+            return $this->redirect(["personal-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
             return $this->render('create', [

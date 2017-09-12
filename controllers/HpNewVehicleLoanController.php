@@ -6,7 +6,6 @@ use app\models\Account;
 use app\models\CollectionMethod;
 use app\models\Customer;
 use app\models\HpNewVehicleLoan;
-use app\models\HpNewVehicleLoanEx;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanType;
@@ -382,7 +381,7 @@ class HpNewVehicleLoanController extends LmsController
         }
 
 
-        if($schedule == null) {
+        if ($schedule == null) {
             $demandDate = date("Y-m-") + $day;
         } else {
             $demandDate = $schedule->demand_date;
