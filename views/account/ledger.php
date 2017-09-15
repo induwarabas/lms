@@ -34,7 +34,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
-            return ['id' => $model['txid'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['transaction/view', 'id' => $model['txid']]) . '";'];
+            $options = ['id' => $model['txid'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['transaction/view', 'id' => $model['txid']]) . '";'];
+            if ($model['reverted'] != 0) {
+                $options['style'] = 'text-decoration: line-through;font-style: italic;color: gray';
+            }
+            return $options;
         },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [

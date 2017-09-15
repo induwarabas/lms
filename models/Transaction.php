@@ -16,6 +16,7 @@ namespace app\models;
  * @property string $payment
  * @property string $cheque
  * @property string $txlink
+ * @property integer $reverted
  * @property string $user
  * @property string $description
  */
@@ -38,6 +39,7 @@ class Transaction extends \yii\db\ActiveRecord
             [['timestamp'], 'safe'],
             [['cr_account', 'dr_account', 'cr_balance', 'dr_balance', 'amount', 'type', 'txlink', 'description', 'payment', 'user'], 'required'],
             [['cr_balance', 'dr_balance', 'amount'], 'number'],
+            [['reverted'], 'integer'],
             [['cr_account', 'dr_account'], 'string', 'max' => 12],
             [['type', 'payment'], 'string', 'max' => 10],
             [['cheque', 'user'], 'string', 'max' => 32],
@@ -63,6 +65,7 @@ class Transaction extends \yii\db\ActiveRecord
             'payment' => 'Payment Type',
             'cheque' => 'Reference Number',
             'txlink' => 'Link',
+            'reverted' => 'Reverted',
             'user' => 'User',
             'description' => 'Description',
         ];

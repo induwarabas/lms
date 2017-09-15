@@ -26,6 +26,7 @@ class TxType
     const INVESTMENT = "INVESTMENT";
     const INTERNAL = "INTERNAL";
     const BANK = "BANK";
+    const REVERT = "REVERT";
 
     public static function items() {
         return [
@@ -44,6 +45,7 @@ class TxType
             TxType::INVESTMENT => TxType::INVESTMENT,
             TxType::INTERNAL => TxType::INTERNAL,
             TxType::BANK => TxType::BANK,
+            TxType::REVERT => TxType::REVERT,
         ];
     }
 }

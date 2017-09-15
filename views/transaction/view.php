@@ -3,8 +3,10 @@
 use app\models\Account;
 use app\utils\enums\TxType;
 use app\utils\widgets\AccountIDView;
+use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\Elements;
+use Zelenin\yii\SemanticUI\helpers\Size;
 use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 
@@ -17,7 +19,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="supplier-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if ($model->reverted != 0) { ?>
+        <h3>This transaction has been reverted
+            by <?= Html::a("#" . $model->reverted, ['transaction/view', 'id' => $model->reverted]) ?>.</h3>
+    <?php } ?>
     <?= DetailView::widget([
         'model' => $model,
         'template' => '<tr><td style="width: 1%;white-space:nowrap;min-width: 150px">{label}</td><td>{value}</td></tr>',
@@ -70,9 +75,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'description',
         ],
     ]) ?>
-    <?php if (($model->type == TxType::RECEIPT || $model->type == TxType::DOWN_PAYMENT) && substr($model->cr_account,0, 1) == Account::getTypeId(Account::TYPE_SAVING)) {
-        echo '<div style="text-align: right">';
-        echo Html::a("Print Receipt", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('".\yii\helpers\Url::to(['transaction/print-receipt', 'id' => $model->txid])."','MyWindow',width=700,height=300); return false;"]);
-        echo '</div>';
-    } ?>
+    <div style="text-align: right">
+        <?php if ($model->reverted == 0) { ?>
+            <?php $modal = Modal::begin([
+                'size' => Size::TINY,
+                'header' => '<h2 style="text-align: left">Revert transaction</h2>',
+                'toggleButton' => ['label' => 'Revert', 'class' => 'ui button red'],
+                'footer' => Html::a("Revert", ['transaction/revert', 'id' => $model->txid], ['class' => 'ui button red']).Elements::button('Nope', ['class' => 'ui button default', 'data-dismiss' => 'modal'])
+
+            ]); ?>
+        <div style="text-align: left">
+            <p class="description">Are you sure you want to revert this transaction?</p>
+            <b>Note:</b> This action cannot be undone.
+        </div>
+            <?php $modal::end(); ?>
+        <?php } ?>
+        <?php if (($model->type == TxType::RECEIPT || $model->type == TxType::DOWN_PAYMENT) && substr($model->cr_account, 0, 1) == Account::getTypeId(Account::TYPE_SAVING)) {
+            echo Html::a("Print Receipt", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('" . \yii\helpers\Url::to(['transaction/print-receipt', 'id' => $model->txid]) . "','MyWindow',width=700,height=300); return false;"]);
+        } ?>
+    </div>
 </div>

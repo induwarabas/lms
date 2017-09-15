@@ -154,17 +154,25 @@ class LoanRecovery
                     $schedule->paid += $chargeAmount;
                     $schedule->due -= $chargeAmount;
                     $schedule->save();
+                    if($chargeAmount > 0) {
+                        $txHnd = new TxHandler();
+                        if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, PaymentType::INTERNAL, "Penalty charge of loan #" . $loanId." for ".$schedule->demand_date, $this->linkId)) {
+                            $tx->rollBack();
+                            $this->error = $txHnd->error;
+                            return false;
+                        }
+                    }
                 }
             }
 
-            if ($amount > 0) {
-                $txHnd = new TxHandler();
-                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, PaymentType::INTERNAL, "Penalty charge for loan #" . $loanId, $this->linkId)) {
-                    $tx->rollBack();
-                    $this->error = $txHnd->error;
-                    return false;
-                }
-            }
+//            if ($amount > 0) {
+//                $txHnd = new TxHandler();
+//                if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, PaymentType::INTERNAL, "Penalty charge for loan #" . $loanId, $this->linkId)) {
+//                    $tx->rollBack();
+//                    $this->error = $txHnd->error;
+//                    return false;
+//                }
+//            }
         }
         $tx->commit();
         return true;
@@ -204,7 +212,7 @@ class LoanRecovery
                 return false;
             }
 
-            if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $schedule->due, TxType::RECOVERY, PaymentType::INTERNAL, "Installment recovery of loan #" . $loanId . " for " . $schedule->demand_date, $this->linkId)) {
+            if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $schedule->due, TxType::RECOVERY, PaymentType::INTERNAL, $schedule->status." Installment recovery of loan #" . $loanId . " for " . $schedule->demand_date, $this->linkId)) {
                 $tx->rollBack();
                 $this->error = $txHnd->error;
                 return false;

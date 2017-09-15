@@ -34,7 +34,7 @@ class TxHandler
         return uniqid();
     }
 
-    public function createTransaction($dr, $cr, $amount, $type, $payment, $description, $link = null, $cheque = null)
+    public function createTransaction($dr, $cr, $amount, $type, $payment, $description, $link = null, $cheque = null, $revert = null)
     {
         if($amount == 0) {
             return true;
@@ -84,6 +84,9 @@ class TxHandler
         $transaction->payment = $payment;
         $transaction->cheque = $cheque;
         $transaction->txlink = $link;
+        if ($revert != null) {
+            $transaction->reverted = $revert;
+        }
         $transaction->user = Yii::$app->getUser()->identity->username;
         if (!$transaction->save()) {
             foreach ($transaction->errors as $key => $value) {

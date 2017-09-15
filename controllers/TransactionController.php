@@ -5,6 +5,8 @@ namespace app\controllers;
 use app\models\Account;
 use app\models\BankAccount;
 use app\models\BankTransaction;
+use app\models\Loan;
+use app\models\LoanSchedule;
 use app\models\ManualTransaction;
 use app\models\Transaction;
 use app\utils\enums\PaymentType;
@@ -13,6 +15,7 @@ use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
 use webvimark\modules\UserManagement\models\User;
 use Yii;
+use yii\web\NotFoundHttpException;
 
 /**
  * TellerController
@@ -59,9 +62,106 @@ class TransactionController extends LmsController
     public function actionView($id)
     {
         $tx = Transaction::findOne($id);
+        if ($tx == null) {
+            return $this->render('error', ['error' => 'The requested transaction does not exist.']);
+        }
+
         return $this->render('view', [
             'model' => $tx,
         ]);
+    }
+
+    public function actionRevert($id) {
+        $tx = Transaction::findOne($id);
+        if ($tx == null) {
+            return $this->render('error', ['error' => 'The requested transaction #'.$id.' does not exist.']);
+        }
+
+        if ($tx->reverted != 0) {
+            return $this->render('error', ['error' => 'The transaction already reverted by #'.$tx->reverted."."]);
+        }
+
+        $txs = Transaction::find()->where(['txlink' => $tx->txlink])->orderBy(['txid' =>SORT_DESC])->all();
+
+        $txHnd = new TxHandler();
+        $dbtx = Yii::$app->getDb()->beginTransaction();
+
+        foreach ($txs as $txx) {
+            $txHnd->createTransaction($txx->cr_account,
+                $txx->dr_account,
+                $txx->amount,
+                TxType::REVERT,
+                PaymentType::INTERNAL,
+                "Revert of #" . $txx->txid,
+                'REV-' . $txx->txlink,
+                null,
+                $txx->txid);
+            if ($txHnd->error != null) {
+                $dbtx->rollBack();
+                return $this->render('error', ['error' => $txHnd->error]);
+            }
+            $txx->reverted = $txHnd->txid;
+            if (!$txx->save()) {
+                $dbtx->rollBack();
+                return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+            }
+
+            if ($txx->type == TxType::RECOVERY) {
+                $parts = explode(" ", $txx->description);
+                if (count($parts) != 8) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+                $status = $parts[0];
+                $date = $parts[7];
+                $loan = Loan::findOne(['saving_account' => $txx->dr_account]);
+                if ($loan == null) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+                $schedule = LoanSchedule::findOne(['loan_id' => $loan->id, 'demand_date' => $date]);
+                if ($schedule == null) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+                $schedule->status = $status;
+                $schedule->due = $schedule->due + $txx->amount;
+                $schedule->paid = $schedule->paid - $txx->amount;
+                if (!$schedule->save()) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+            }
+
+            if ($txx->type == TxType::PENALTY) {
+                $parts = explode(" ", $txx->description);
+                if (count($parts) != 7) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+                $date = $parts[6];
+                $loan = Loan::findOne(['saving_account' => $txx->dr_account]);
+                if ($loan == null) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+                $schedule = LoanSchedule::findOne(['loan_id' => $loan->id, 'demand_date' => $date]);
+                if ($schedule == null) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+                $schedule->due = $schedule->due + $txx->amount;
+                $schedule->paid = $schedule->paid - $txx->amount;
+                if (!$schedule->save()) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                }
+            }
+        }
+
+        $dbtx->commit();
+
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     public function actionInvestment()
