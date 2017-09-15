@@ -15,6 +15,7 @@ use app\utils\GeneralAccounts;
 use app\utils\TxHandler;
 use webvimark\modules\UserManagement\models\User;
 use Yii;
+use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -78,7 +79,7 @@ class TransactionController extends LmsController
         }
 
         if ($tx->reverted != 0) {
-            return $this->render('error', ['error' => 'The transaction already reverted by #'.$tx->reverted."."]);
+            return $this->render('error', ['error' => 'The transaction already reverted by '.Html::a("#".$tx->reverted, ['transaction/view', 'id'=>$tx->reverted])."."]);
         }
 
         $txs = Transaction::find()->where(['txlink' => $tx->txlink])->orderBy(['txid' =>SORT_DESC])->all();
@@ -100,62 +101,89 @@ class TransactionController extends LmsController
                 $dbtx->rollBack();
                 return $this->render('error', ['error' => $txHnd->error]);
             }
-            $txx->reverted = $txHnd->txid;
-            if (!$txx->save()) {
-                $dbtx->rollBack();
-                return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
-            }
 
             if ($txx->type == TxType::RECOVERY) {
+                $newTx = Transaction::find()
+                    ->where([
+                        'dr_account' => $txx->dr_account,
+                        'type' => [TxType::RECOVERY, TxType::PENALTY],
+                        'reverted' => 0
+                    ])
+                    ->orderBy(['txid' => SORT_DESC])->one();
+                if ($newTx != null && $newTx->txlink != $txx->txlink) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])
+                        .". Need to revert the transaction "
+                        .Html::a("#".$newTx->txid, ['transaction/view', 'id'=>$newTx->txid]). " before."]);
+                }
                 $parts = explode(" ", $txx->description);
                 if (count($parts) != 8) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
                 $status = $parts[0];
                 $date = $parts[7];
                 $loan = Loan::findOne(['saving_account' => $txx->dr_account]);
                 if ($loan == null) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
                 $schedule = LoanSchedule::findOne(['loan_id' => $loan->id, 'demand_date' => $date]);
                 if ($schedule == null) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
                 $schedule->status = $status;
                 $schedule->due = $schedule->due + $txx->amount;
                 $schedule->paid = $schedule->paid - $txx->amount;
                 if (!$schedule->save()) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
             }
 
             if ($txx->type == TxType::PENALTY) {
+                $newTx = Transaction::find()
+                    ->where([
+                        'dr_account' => $txx->dr_account,
+                        'type' => [TxType::RECOVERY, TxType::PENALTY],
+                        'reverted' => 0
+                    ])
+                    ->orderBy(['txid' => SORT_DESC])->one();
+                if ($newTx != null && $newTx->txlink != $txx->txlink) {
+                    $dbtx->rollBack();
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])
+                        .". Need to revert the transaction "
+                        .Html::a("#".$newTx->txid, ['transaction/view', 'id'=>$newTx->txid]). " before."]);
+                }
                 $parts = explode(" ", $txx->description);
                 if (count($parts) != 7) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
                 $date = $parts[6];
                 $loan = Loan::findOne(['saving_account' => $txx->dr_account]);
                 if ($loan == null) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
                 $schedule = LoanSchedule::findOne(['loan_id' => $loan->id, 'demand_date' => $date]);
                 if ($schedule == null) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
                 $schedule->due = $schedule->due + $txx->amount;
                 $schedule->paid = $schedule->paid - $txx->amount;
                 if (!$schedule->save()) {
                     $dbtx->rollBack();
-                    return $this->render('error', ['error' => 'Failed to revert #'.$txx->txid."."]);
+                    return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
                 }
+            }
+            $txx->reverted = $txHnd->txid;
+            $txx->description = "[Reverted] ".$txx->description;
+            if (!$txx->save()) {
+                $dbtx->rollBack();
+                return $this->render('error', ['error' => 'Failed to revert '.Html::a("#".$txx->txid, ['transaction/view', 'id'=>$txx->txid])."."]);
             }
         }
 

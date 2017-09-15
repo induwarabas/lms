@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'rowOptions' => function ($model, $key, $index, $grid) {
             $options = ['id' => $model['txid'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['transaction/view', 'id' => $model['txid']]) . '";'];
             if ($model['reverted'] != 0) {
-                $options['style'] = 'text-decoration: line-through;font-style: italic;color: gray';
+                $options['style'] = 'font-style: italic;color: gray';
             }
             return $options;
         },
@@ -53,7 +53,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 } else {
                     return number_format($data->amount, 2) . ' ' . Elements::icon('add square', ['class' => 'green']);
                 }
-            }, 'contentOptions' => array('style' => 'text-align: right;')],
+            }, 'contentOptions' => function ($data) {
+                if ($data->reverted != 0) return array('style' => 'text-decoration: line-through;text-align: right;');
+                else return array('style' => 'text-align: right;');
+            }],
             ['attribute' => 'amount', 'label' => 'Balance', 'format' => 'html', 'value' => function ($data) use ($details) {
                 if ($data->dr_account === $details->account->id) {
                     if (Doubles::compare($data->dr_balance, 0.0) < 0) {
@@ -68,17 +71,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         return number_format($data->cr_balance, 2) . ' ' . Elements::icon('add square', ['class' => 'green']);
                     }
                 }
-            }, 'contentOptions' => array('style' => 'text-align: right;')],
+            }, 'contentOptions' => function ($data) {
+                if ($data->reverted != 0) return array('style' => 'text-decoration: line-through;text-align: right;');
+                else return array('style' => 'text-align: right;');
+            }],
         ],
     ]); ?>
     <?php Pjax::end(); ?>
     <p align="right">
-    <?php
-    if ($history != null) {
-        echo Html::a('View Recent', ['ledger', 'id' => $details->account->id], ['class' => 'ui button blue']);
-    } else {
-        echo "<br/>";
-        echo Html::a('View History', ['history', 'id' => $details->account->id], ['class' => 'ui button blue']);
-    } ?>
+        <?php
+        if ($history != null) {
+            echo Html::a('View Recent', ['ledger', 'id' => $details->account->id], ['class' => 'ui button blue']);
+        } else {
+            echo "<br/>";
+            echo Html::a('View History', ['history', 'id' => $details->account->id], ['class' => 'ui button blue']);
+        } ?>
     </p>
 </div>
