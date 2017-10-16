@@ -13,6 +13,7 @@ use app\models\Template;
 use app\models\Transaction;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
+use app\utils\Doubles;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\TxType;
@@ -320,6 +321,12 @@ class HpNewVehicleLoanController extends LmsController
         $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule WHERE loan_id = :id", [':id' => $loan->id])->queryScalar();
         $savingAccount = Account::findOne($loan->saving_account);
         $balance = $savingAccount->balance - $due;
+        $balanceType = "Arrears";
+        if (Doubles::compare($balance, 0.0) > 0) {
+            $balanceType = "Balance";
+        } else {
+            $balance = -$balance;
+        }
 
         $template = Template::findOne(2);
         $text .= $m->render($template->content, ['invoice_number' => str_pad($id, 10, "0", STR_PAD_LEFT),
@@ -328,6 +335,7 @@ class HpNewVehicleLoanController extends LmsController
             'description' => $description,
             'customer' => $customer,
             'balance' => $balance,
+            'balance_type' => $balanceType,
             'printedAt' => date("Y-m-d H:i:s")]);
 
         $pdf = new Pdf([
