@@ -83,6 +83,9 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         if ($loan->status == 'ACTIVE') {
             echo Html::a('Recover', ['loan/recover', 'id' => $model->id], ['class' => 'ui button green']);
+        }
+
+        if ($loan->status != 'PENDING') {
             echo Html::a('View Schedule', ['loan/schedule', 'id' => $model->id], ['class' => 'ui button brown']);
         }
 
