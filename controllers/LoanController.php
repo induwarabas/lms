@@ -10,10 +10,16 @@ use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanSearch;
 use app\models\Setting;
+use app\utils\Doubles;
+use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
+use app\utils\enums\PaymentType;
+use app\utils\enums\TxType;
+use app\utils\GeneralAccounts;
 use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanDisbursement;
 use app\utils\loan\LoanRecovery;
+use app\utils\TxHandler;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
@@ -316,6 +322,40 @@ class LoanController extends LmsController
             }
         }
         echo "success";
+    }
+
+    public function actionClose($id)
+    {
+        $loan = Loan::findOne($id);
+        if ($loan == null) {
+            throw new NotFoundHttpException('The loan #'.$id." not found.");
+        }
+
+        if ($loan->status !== LoanStatus::COMPLETED) {
+            throw new NotFoundHttpException('The loan #'.$id." is not in COMPLETED state.");
+        }
+
+        $balance = Account::findOne($loan->saving_account)->balance;
+
+        $tx = Yii::$app->getDb()->beginTransaction();
+        if (Doubles::compare($balance, 0.0) > 0) {
+            $txHnd = new TxHandler();
+            if (!$txHnd->createTransaction($loan->saving_account,
+                GeneralAccounts::CLOSE_BALANCE,
+                $balance,
+                TxType::CLOSE_ACCOUNT,
+                PaymentType::INTERNAL,
+                "Close loan #".$loan->id.".")) {
+                $tx->rollBack();
+                throw new NotFoundHttpException('Failed to transfer balance of #'.$id.". ".$txHnd->error);
+            }
+        }
+        $loan->status = LoanStatus::CLOSED;
+        if (!$loan->save()) {
+            throw new NotFoundHttpException('Failed to save loan #'.$id.".");
+        }
+        $tx->commit();
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     public function actionAssignCollectors() {

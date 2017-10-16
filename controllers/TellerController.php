@@ -32,6 +32,7 @@ use app\utils\TxHandler;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
 use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * TellerController
@@ -80,7 +81,6 @@ class TellerController extends LmsController
                             $model->stage = 3;
                             $model->txid = $txHnd->txid;
                             $model->user = Yii::$app->getUser()->getIdentity()->username;
-                            $rec = new LoanRecovery();
                             $date = Setting::findOne(1)->value;
                             $col = Collection::findOne(['loan_id' => $loan->id, 'date' => $date]);
                             if ($col != null) {
@@ -88,7 +88,8 @@ class TellerController extends LmsController
                                 $col->status = 'COLLECTED';
                                 $col->save();
                             }
-                            $rec->recover($loan->id);
+//                            $rec = new LoanRecovery();
+//                            $rec->recover($loan->id);
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
                         } else {
                             $tx->rollBack();
@@ -815,4 +816,12 @@ class TellerController extends LmsController
             ]);
         }
     }
+
+//    public function actionView() {
+//        $accounts = Account::findAll(['type' => Account::TYPE_TELLER]);
+//        $dataProvider = new ArrayDataProvider(['allModels' => $accounts, 'pagination' => 0]);
+//        return $this->render('view', [
+//            'dataProvider' => $dataProvider,
+//        ]);
+//    }
 }

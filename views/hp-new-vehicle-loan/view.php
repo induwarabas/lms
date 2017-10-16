@@ -108,6 +108,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]);
         }
+
+        if ($loan->status == LoanStatus::COMPLETED && User::hasPermission("closeLoan")) {
+            echo Html::a('Close', ['loan/close', 'id' => $loan->id], ['class' => 'ui button red', 'id' => 'btn-close-loan']);
+        }
         ?>
 
         <form action="<?= \yii\helpers\Url::to(['teller/payment']) ?>" method="post" id="loan-pay">

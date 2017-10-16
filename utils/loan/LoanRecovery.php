@@ -64,6 +64,8 @@ class LoanRecovery
             ->orderBy(['installment_id' => SORT_ASC])
             ->all();
 
+        $savingBalance = Account::findOne($loan->saving_account)->balance;
+
         foreach ($schedules as $schedule) {
             $diff = date_diff(new DateTime($schedule->demand_date), new DateTime($recoveryDate));
 
@@ -88,15 +90,20 @@ class LoanRecovery
                 continue;
             }
 
+            $amountToPay = $this->getAmountToPay($schedule) - $schedule->paid + $schedule->penalty;
+            if (Doubles::compare($savingBalance, 0.0) > 0) {
+                $amountToReduce = min($amountToPay, $savingBalance);
+                $amountToPay -= $amountToReduce;
+                $savingBalance -= $amountToReduce;
+            }
+
             if ($schedule->arrears < $interval) {
                 $schedule->status = LoanScheduleStatus::ARREARS;
                 for ($i = $schedule->arrears; $i < $interval; ++$i) {
-                    $amountToPay = $this->getAmountToPay($schedule);
-                    $arrears = $amountToPay + $schedule->penalty - $schedule->paid;
-                    $penalty = round($arrears * $loan->penalty / 100.0, 2);
+                    $penalty = round($amountToPay * $loan->penalty / 100.0, 2);
                     $schedule->penalty = $schedule->penalty + $penalty;
                     $schedule->arrears = $schedule->arrears + 1;
-                    $schedule->due = $schedule->penalty + $amountToPay - $schedule->paid;
+                    $schedule->due = $this->getAmountToPay($schedule) - $schedule->paid + $schedule->penalty;
                 }
                 $schedule->save();
             }
@@ -244,6 +251,16 @@ class LoanRecovery
         if ($col != null) {
             $col->installments = $col->installments + $recoveredCount;
             $col->save();
+        }
+
+        $notPayedCount = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(array("<>", "status", LoanScheduleStatus::PAYED))->count();
+        if ($notPayedCount == 0) {
+            $loan->status = LoanStatus::COMPLETED;
+            if (!$loan->save()) {
+                $tx->rollBack();
+                $this->error = "Failed to complete the loan";
+                return false;
+            }
         }
 
         $tx->commit();

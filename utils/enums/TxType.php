@@ -15,7 +15,7 @@ class TxType
     const CHARGES = "CHARGES";
     const PAYMENT = "PAYMENT";
     const RECEIPT = "RECEIPT";
-    const DOWN_PAYMENT = "DOWN_PAYMENT";
+    const DOWN_PAYMENT = "DOWN_PAY";
     const PENALTY = "PENALTY";
     const RECOVERY = "RECOVERY";
     const CAPITAL_RECOVERY = "CAPITAL";
@@ -27,6 +27,7 @@ class TxType
     const INTERNAL = "INTERNAL";
     const BANK = "BANK";
     const REVERT = "REVERT";
+    const CLOSE_ACCOUNT = "CLOSE_ACC";
 
     public static function items() {
         return [
@@ -46,6 +47,7 @@ class TxType
             TxType::INTERNAL => TxType::INTERNAL,
             TxType::BANK => TxType::BANK,
             TxType::REVERT => TxType::REVERT,
+            TxType::CLOSE_ACCOUNT => TxType::CLOSE_ACCOUNT,
         ];
     }
 }
