@@ -140,9 +140,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->stage == 2) { ?>
         <div class="supplier-form">
 
-            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
+            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL, 'id' => 'receipt-form']); ?>
 
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'recover')->hiddenInput()->label(false) ?>
 
             <?= $form->field($model, 'payment')->dropDownList(PaymentType::getTellerItems()) ?>
             <?= $form->field($model, 'cheque')->textInput(['maxlength' => true]) ?>
@@ -154,7 +155,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <?= Html::submitButton('Receipt', ['class' => 'btn btn-success']) ?>
+                    <?= Html::submitButton('Receipt Only', ['class' => 'ui button blue']) ?>
+                    <?= Html::button('Receipt And Recover', ['id'=>'recover', 'class' => 'ui button green']) ?>
                 </div>
             </div>
 
@@ -163,3 +165,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php } ?>
 </div>
+<?php
+$this->registerJs("
+$('#recover').click(function(e){
+    e.preventDefault();
+    $('input[id=tellerreceipt-recover]').val(1);
+    $('#receipt-form').submit();
+});
+")
+?>

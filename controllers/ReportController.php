@@ -92,7 +92,7 @@ class ReportController extends LmsController
             ->innerJoin('loan', 'loan_due.loan_id = loan.id')
             ->innerJoin('customer', 'loan.customer_id = customer.id')
             ->innerJoin('account', 'loan.saving_account = account.id')
-            ->where('loan_due.due > 0');
+            ->where('loan_due.due > account.balance');
 
         if ($searchModel->validate()) {
             $query->andFilterWhere(['area' => $searchModel->area]);

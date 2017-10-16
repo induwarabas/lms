@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </td>
             <td>
                 <span style="font-weight: bold;">Due</span><br/>
-                <span style="font-size: x-large;"><?= number_format(abs($balance - $total['due']), 2) . Elements::icon( $total['due'] > $balance ? 'minus square' : 'plus square', ['class' => ($total['due']) > 0 ? 'red' : 'green']) ?></span>
+                <span style="font-size: x-large;"><?= number_format(abs($balance - $total['due']), 2) . Elements::icon( $total['due'] > $balance ? 'minus square' : 'plus square', ['class' => ($total['due']) > $balance ? 'red' : 'green']) ?></span>
                 <br/>
                 <?= number_format($balance, 2) . Elements::icon('add square', ['class' => 'green']) ?>
                 <br/>

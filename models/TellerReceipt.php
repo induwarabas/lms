@@ -14,6 +14,7 @@ namespace app\models;
  * @property integer $stage
  * @property string $link
  * @property string $user
+ * @property integer $recover
  */
 class TellerReceipt extends \yii\base\Model
 {
@@ -26,6 +27,7 @@ class TellerReceipt extends \yii\base\Model
     public $stage;
     public $link;
     public $user;
+    public $recover;
 
     /**
      * @inheritdoc
@@ -33,7 +35,7 @@ class TellerReceipt extends \yii\base\Model
     public function rules()
     {
         return [
-            [['loanId', 'amount', 'description', 'stage', 'link', 'payment'], 'required'],
+            [['loanId', 'amount', 'description', 'stage', 'link', 'payment', 'recover'], 'required'],
             [['loanId', 'description', 'link', 'payment', 'user'], 'string'],
             [['amount', 'stage', 'txid'], 'number', 'min' => 0],
             [['loanId'], 'string', 'max' => 10],
@@ -55,6 +57,7 @@ class TellerReceipt extends \yii\base\Model
             'stage' => 'Stage',
             'link' => 'Link',
             'txid' => 'Transaction ID',
+            'recover' => 'Recover Loan',
             'user' => 'User',
         ];
     }

@@ -45,6 +45,7 @@ class TellerController extends LmsController
     public function actionReceipt()
     {
         $model = new TellerReceipt();
+        $model->recover = 0;
         $teller = Account::getTellerAccount();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate(['loanId'])) {
@@ -88,8 +89,10 @@ class TellerController extends LmsController
                                 $col->status = 'COLLECTED';
                                 $col->save();
                             }
-//                            $rec = new LoanRecovery();
-//                            $rec->recover($loan->id);
+                            if($model->recover == 1) {
+                                $rec = new LoanRecovery();
+                                $rec->recover($loan->id);
+                            }
                             //return $this->redirect(['teller/view-payment', 'id' => $txHnd->txid]);
                         } else {
                             $tx->rollBack();
