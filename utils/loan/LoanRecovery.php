@@ -146,7 +146,7 @@ class LoanRecovery
                 ->andWhere("penalty > 0")
                 ->orderBy("installment_id")
                 ->all();
-            $amount = 0.0;
+            //$amount = 0.0;
 
             foreach ($schedules as $schedule) {
                 $duePenalty = $schedule->penalty - $schedule->paid;
@@ -156,14 +156,14 @@ class LoanRecovery
                         $chargeAmount = $remain;
                     }
 
-                    $amount += $chargeAmount;
+                    //$amount += $chargeAmount;
                     $remain -= $chargeAmount;
                     $schedule->paid += $chargeAmount;
                     $schedule->due -= $chargeAmount;
                     $schedule->save();
-                    if($chargeAmount > 0) {
+                    if($chargeAmount > 0 && $remain >= 0) {
                         $txHnd = new TxHandler();
-                        if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $amount, TxType::PENALTY, PaymentType::INTERNAL, "Penalty charge of loan #" . $loanId." for ".$schedule->demand_date, $this->linkId)) {
+                        if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $chargeAmount, TxType::PENALTY, PaymentType::INTERNAL, "Penalty charge of loan #" . $loanId." for ".$schedule->demand_date, $this->linkId)) {
                             $tx->rollBack();
                             $this->error = $txHnd->error;
                             return false;
