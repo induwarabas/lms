@@ -145,7 +145,8 @@ class ReportController extends LmsController
             ->from('transaction')
             ->innerJoin('loan', 'transaction.cr_account = loan.saving_account')
             ->innerJoin('customer', 'loan.customer_id = customer.id')
-            ->where(["transaction.type" => TxType::RECEIPT]);
+            ->where(["transaction.type" => TxType::RECEIPT])
+            ->andWhere(["transaction.reverted" => 0]);
 
         if ($searchModel->validate()) {
             $query->andFilterWhere(['area' => $searchModel->area, 'user' => $searchModel->teller]);
@@ -267,10 +268,10 @@ class ReportController extends LmsController
 
     public function actionSummary()
     {
-        $results = Yii::$app->getDb()->createCommand("SELECT status, sum(principal) as principal, sum(charges) as charges, sum(penalty) as penalty, sum(interest) as interest, sum(paid) as paid, sum(due) as due from loan_schedule where status != 'PAYED' group by status")->query();
+        $results = Yii::$app->getDb()->createCommand("SELECT status, sum(principal) AS principal, sum(charges) AS charges, sum(penalty) AS penalty, sum(interest) AS interest, sum(paid) AS paid, sum(due) AS due FROM loan_schedule WHERE status != 'PAYED' GROUP BY status")->query();
 
-        $due = ['status'=> 'DUE','principal' => 0.0, 'charges' => 0.0, 'penalty' => 0.0, 'interest' => 0.0, 'due' => 0.0, 'paid' => 0.0];
-        $total = ['status'=> 'TOTAL','principal' => 0.0, 'charges' => 0.0, 'penalty' => 0.0, 'interest' => 0.0, 'due' => 0.0, 'paid' => 0.0];
+        $due = ['status' => 'DUE', 'principal' => 0.0, 'charges' => 0.0, 'penalty' => 0.0, 'interest' => 0.0, 'due' => 0.0, 'paid' => 0.0];
+        $total = ['status' => 'TOTAL', 'principal' => 0.0, 'charges' => 0.0, 'penalty' => 0.0, 'interest' => 0.0, 'due' => 0.0, 'paid' => 0.0];
 
         $rows = [];
 
