@@ -22,6 +22,7 @@ class GeneralAccounts
     const CHARGES = '9000000009';
     const RMV_CHARGES = '9000000010';
     const CLOSE_BALANCE = '9000000011';
+    const PRINCIPAL_LOSS = '9000000012';
 
     const names = [
         GeneralAccounts::PAYABLE => 'PAYABLE',
@@ -35,5 +36,6 @@ class GeneralAccounts
         GeneralAccounts::CHARGES => 'CHARGES',
         GeneralAccounts::RMV_CHARGES => 'RMV_CHARGES',
         GeneralAccounts::CLOSE_BALANCE => 'CLOSE_BALANCE',
+        GeneralAccounts::PRINCIPAL_LOSS => 'PRINCIPAL_LOSS',
     ];
 }

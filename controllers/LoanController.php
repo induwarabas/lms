@@ -5,10 +5,12 @@ namespace app\controllers;
 use app\models\Account;
 use app\models\Collection;
 use app\models\CollectorAssignmentModel;
+use app\models\Customer;
 use app\models\DisburseModel;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanSearch;
+use app\models\LoanSettlement;
 use app\models\Setting;
 use app\utils\Doubles;
 use app\utils\enums\LoanStatus;
@@ -393,6 +395,124 @@ class LoanController extends LmsController
         return $this->render('collector-assignment', [
             'model' => $model
         ]);
+    }
+
+    public function actionSettlement() {
+        $model = new LoanSettlement();
+        $model->stage = 1;
+        $loaded = false;
+        $error = null;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $loaded = true;
+            if ($model->validate()) {
+                $loan = Loan::findOne($model->loanId);
+                if ($loan->status != LoanStatus::ACTIVE) {
+                    throw new NotFoundHttpException("Loan is not active");
+                }
+
+                $savingAccount = Account::findOne($loan->saving_account);
+                if ($savingAccount->balance < ($model->principal + $model->interest + $model->charges + $model->penalty)) {
+                    $error = "No enough funds in the saving account.";
+                } else {
+                    $loanAccount = Account::findOne($loan->loan_account);
+                    if (Doubles::compare(-$loanAccount->balance, $model->principal) < 0) {
+                        $error = "Principal amount is greater than the loan account balance";
+                    } else {
+                        $principalLoss = -$loanAccount->balance - $model->principal;
+                        $description = "Settlement of loan #".$loan->id;
+                        $tx = Yii::$app->db->beginTransaction();
+                        $txHnd = new TxHandler();
+                        $link = $txHnd->createLink();
+                        $total = ($model->principal + $model->interest + $model->charges + $model->penalty);
+                        if (!$txHnd->createTransaction($loan->saving_account, GeneralAccounts::PARK, $total, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                            $tx->rollBack();
+                            throw new NotFoundHttpException($txHnd->error);
+                        }
+
+                        if (Doubles::compare($model->principal, 0.0) > 0) {
+                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, $loan->loan_account, $model->principal, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                                $tx->rollBack();
+                                throw new NotFoundHttpException($txHnd->error);
+                            }
+                        }
+
+                        if (Doubles::compare($principalLoss, 0.0) > 0) {
+                            if (!$txHnd->createTransaction(GeneralAccounts::PRINCIPAL_LOSS, $loan->loan_account, $principalLoss, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                                $tx->rollBack();
+                                throw new NotFoundHttpException($txHnd->error);
+                            }
+                        }
+
+                        if (Doubles::compare($model->interest, 0.0) > 0) {
+                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::INTEREST, $model->interest, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                                $tx->rollBack();
+                                throw new NotFoundHttpException($txHnd->error);
+                            }
+                        }
+
+                        if (Doubles::compare($model->charges, 0.0) > 0) {
+                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::CHARGES, $model->charges, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                                $tx->rollBack();
+                                throw new NotFoundHttpException($txHnd->error);
+                            }
+                        }
+
+                        if (Doubles::compare($model->penalty, 0.0) > 0) {
+                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::PENALTY, $model->penalty, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                                $tx->rollBack();
+                                throw new NotFoundHttpException($txHnd->error);
+                            }
+                        }
+
+                        $loan->status = LoanStatus::COMPLETED;
+                        if (!$loan->save()) {
+                            $tx->rollBack();
+                            throw new NotFoundHttpException("Failed to save the loan.");
+                        }
+
+                        $schedules = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(['<>', 'status', 'PAYED'])->all();
+                        foreach ($schedules as $schedule) {
+                            $schedule->status = 'PAYED';
+                            $schedule->due = 0;
+                            if(!$schedule->save()) {
+                                $tx->rollBack();
+                                throw new NotFoundHttpException("Failed to save the loan schedule.");
+                            }
+                        }
+                        $tx->commit();
+                        $model->stage = 2;
+                        return $this->redirect(['loan/view', 'id' => $loan->id]);
+                    }
+                }
+                //$this->redirect(['settlement', 'id' => $model->loan, 'error' => $disbursement->error]);
+            }
+        }
+
+        if (!isset($model->loanId)) {
+            $model->loanId = Yii::$app->request->getQueryParam('id');
+        }
+
+        $outstanding = Yii::$app->db->createCommand("SELECT SUM(principal) as principal, SUM(charges) as charges, SUM(interest) as interest, SUM(penalty) as penalty FROM loan_schedule where loan_id = :loanId and status != 'PAYED'", [':loanId' => $model->loanId])->queryOne();
+        $outstanding["total"] = $outstanding["principal"] + $outstanding["charges"] + $outstanding["interest"] + $outstanding["penalty"];
+
+        if (!$loaded) {
+            $model->principal = $outstanding["principal"];
+            $model->charges = $outstanding["charges"];
+            $model->interest = $outstanding["interest"];
+            $model->penalty = $outstanding["penalty"];
+        }
+
+        $loan = Loan::findOne($model->loanId);
+        if ($loan == null || $loan->status != LoanStatus::ACTIVE) {
+            throw new NotFoundHttpException("Loan is not active");
+        }
+
+        return $this->render('settlement', ['model' => $model,
+            'loan' => $loan,
+            'outstanding' => $outstanding,
+            'customer' => Customer::findOne($loan->customer_id),
+            'error' => $error]);
     }
 
     /**

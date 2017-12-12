@@ -28,6 +28,7 @@ class TxType
     const BANK = "BANK";
     const REVERT = "REVERT";
     const CLOSE_ACCOUNT = "CLOSE_ACC";
+    const SETTLEMENT = "SETTLEMENT";
 
     public static function items() {
         return [
