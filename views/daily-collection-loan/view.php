@@ -67,8 +67,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <hr/>
 
         <?php
-        if ($loan->status == 'PENDING') {
-            echo Html::a('Update', ['update', 'id' => $loan->id], ['class' => 'ui button blue']);
+        if (User::hasPermission('editafterdisburse')) {
+            if ($loan->status == 'ACTIVE') {
+                echo Html::a('Settle', ['loan/settlement', 'id' => $model->id], ['class' => 'ui button red']);
+            }
+            echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
+        } else {
+            if ($loan->status == 'PENDING') {
+                echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
+            }
         }
         if ($loan->status == 'ACTIVE') {
             echo Html::a('Recover', ['loan/recover', 'id' => $loan->id], ['class' => 'ui button green']);
@@ -90,6 +97,9 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         if ($loan->status == 'ACTIVE') {
             echo Html::a("Welcome Letter", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('" . \yii\helpers\Url::to(['welcome-letter', 'id' => $loan->id]) . "','MyWindow',width=700,height=300); return false;"]);
+        }
+        if ($loan->status == LoanStatus::COMPLETED && User::hasPermission("closeLoan")) {
+            echo Html::a('Close', ['loan/close', 'id' => $loan->id], ['class' => 'ui button red', 'id' => 'btn-close-loan']);
         }
         ?>
 

@@ -204,7 +204,7 @@ class LoanDisbursement
                 }
             }
 
-            if ($total != $loan->charges) {
+            if (Doubles::compare($total, $loan->charges) != 0) {
                 $this->error = "Charges not matching";
                 return false;
             }
