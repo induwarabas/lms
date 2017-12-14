@@ -69,12 +69,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         if (User::hasPermission('editafterdisburse')) {
             if ($loan->status == 'ACTIVE') {
-                echo Html::a('Settle', ['loan/settlement', 'id' => $model->id], ['class' => 'ui button red']);
+                echo Html::a('Settle', ['loan/settlement', 'id' => $loan->id], ['class' => 'ui button red']);
             }
-            echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
+            echo Html::a('Update', ['update', 'id' => $loan->id], ['class' => 'ui button blue']);
         } else {
             if ($loan->status == 'PENDING') {
-                echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
+                echo Html::a('Update', ['update', 'id' => $loan->id], ['class' => 'ui button blue']);
             }
         }
         if ($loan->status == 'ACTIVE') {
