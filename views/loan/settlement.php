@@ -5,7 +5,10 @@ use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CustomerView;
 use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
+use yii\bootstrap\Modal;
 use yii\helpers\Html;
+use Zelenin\yii\SemanticUI\Elements;
+use Zelenin\yii\SemanticUI\helpers\Size;
 
 
 /* @var $this yii\web\View */
@@ -101,12 +104,23 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <?= Html::submitButton('Settle', ['class' => 'ui button blue']) ?>
+                    <?php $modal = Modal::begin([
+                        'size' => Size::TINY,
+                        'header' => '<h2>Disburse loan</h2>',
+                        'toggleButton' => ['label' => 'Settle', 'class' => 'ui button blue'],
+                        'footer' => Html::submitButton('Settle', ['class' => 'ui button blue'])
+                            . Elements::button('Nope', ['class' => 'ui button default', 'data-dismiss' => 'modal'])
+
+                    ]); ?>
+                    <p class="description">Are you sure you want to settle this loan?</p>
+                    <b>Note:</b> This action cannot be undone.
+                    <?php $modal::end(); ?>
+
+                    <?php ActiveForm::end(); ?>
+                    <?= Html::a('Cancel', ['loan/view', 'id' => $model->loanId], ['class' => 'ui button gray']) ?>
                 </div>
             </div>
 
-
-            <?php ActiveForm::end(); ?>
 
         </div>
     <?php } ?>
