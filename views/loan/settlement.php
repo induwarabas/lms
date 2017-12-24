@@ -1,15 +1,11 @@
 <?php
 
-use app\models\Account;
 use app\models\LoanType;
-use app\utils\enums\LoanScheduleStatus;
-use app\utils\enums\PaymentType;
 use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CustomerView;
 use kartik\form\ActiveForm;
 use yii\bootstrap\Alert;
 use yii\helpers\Html;
-use Zelenin\yii\SemanticUI\Elements;
 
 
 /* @var $this yii\web\View */
@@ -94,11 +90,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL, 'id' => 'receipt-form']); ?>
 
             <?= $form->field($model, 'loanId')->hiddenInput()->label(false) ?>
-            <?= $form->field($model, 'principal')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'interest')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'charges')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'penalty')->textInput(['maxlength' => true]) ?>
-
+            <?= $form->field($model, 'principal')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <?= $form->field($model, 'interest')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <?= $form->field($model, 'charges')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <?= $form->field($model, 'penalty')->textInput(['type' => 'number', 'maxlength' => true, 'step' => '0.01']) ?>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?= Html::label("total", null, ['name'=> 'lbltotal', 'id' => 'lbltotal', 'style'=>"font-size:20px"]) ?>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <?= Html::submitButton('Settle', ['class' => 'ui button blue']) ?>
@@ -111,3 +111,35 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php } ?>
 </div>
+
+<?php
+$this->registerJs("  
+    function updateContents() {
+        var principal = $('#" . Html::getInputId($model, 'principal') . "').val();
+        var interest = $('#" . Html::getInputId($model, 'interest') . "').val();
+        var charges = $('#" . Html::getInputId($model, 'charges') . "').val();
+        var penalty = $('#" . Html::getInputId($model, 'penalty') . "').val();
+        var total = parseFloat(principal) + parseFloat(interest) + parseFloat(charges) + parseFloat(penalty);
+        
+        $('#lbltotal').text(total.toFixed(2));
+        
+    }
+    
+    $('#" . Html::getInputId($model, 'principal') . "').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#" . Html::getInputId($model, 'interest') . "').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#" . Html::getInputId($model, 'charges') . "').on('input', function(e) {
+        updateContents();
+    });
+    
+    $('#" . Html::getInputId($model, 'penalty') . "').on('input', function(e) {
+        updateContents();
+    });
+    updateContents();
+");
+?>
