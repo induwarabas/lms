@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             }, 'filter' => ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name'),
                 'contentOptions' => ['style' => 'max-width: 140px;'], 'headerOptions' => ['style' => 'max-width: 140px;'], 'filterOptions' => ['style' => 'max-width: 140px;']],
             ['attribute' => 'customer_id', 'content' => function ($data) {
-                return CustomerView::widget(['customer' => Customer::findOne(['id' => $data->customer_id]), 'fullname' => true]);
+                return CustomerView::widget(['customer' => Customer::findOne(['id' => $data->customer_id]), 'fullname' => true, 'url' => false]);
             }],
             'amount',
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {

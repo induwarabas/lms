@@ -18,14 +18,17 @@ class CustomerView extends Widget
     /* @var \app\models\Customer */
     public $customer;
 
-    /* @var boolean */
+    /* @var string */
     public $target = '';
 
-    /* @var string */
+    /* @var boolean */
     public $fullname = false;
 
     /* @var boolean */
     public $print = false;
+
+    /* @var boolean */
+    public $url = true;
 
     public function init()
     {
@@ -46,12 +49,19 @@ class CustomerView extends Widget
         if ($this->print) {
             return $name . " (" . $this->customer->nic . ")";
         }
-        $customerUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $this->customer->id]);
+        $customerUrl = Yii::$app->getUrlManager()->createUrl(['customer/view', 'id' => $this->customer->id, 'sort' => '-id']);
         $target = '';
         if ($this->target != '') {
             $target = ' target="'.$this->target.'"';
         }
-        $out = '<a href="'.$customerUrl.'" '.$target.' style="color: #1e70bf; margin-right: 20px;">'.$name . " (" . $this->customer->nic . ")".'</a>';
+        $out = '';
+        if ($this->url) {
+            $out .= '<a href="'.$customerUrl.'" '.$target.' style="color: #1e70bf; margin-right: 20px;">';
+        }
+        $out .= $name . " (" . $this->customer->nic . ")";
+        if ($this->url) {
+            $out .= '</a>';
+        }
         return $out;
     }
 
