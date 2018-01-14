@@ -49,6 +49,9 @@ class CustomerController extends LmsController
 
         $loanModel = new CustomerLoanSearch(['cust_id' => $id]);
         $dataProvider = $loanModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination = array(
+            'pageSize' => 10,
+        );
         return $this->render('view', [
             'model' => $this->findModel($id),
             'loans' => $dataProvider,
