@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => new \app\models\CustomerLoanSearch(),
+        'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
             return ['id' => $model['id'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $model['id']]) . '";'];
         },
