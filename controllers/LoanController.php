@@ -13,6 +13,7 @@ use app\models\LoanSearch;
 use app\models\LoanSettlement;
 use app\models\Setting;
 use app\utils\Doubles;
+use app\utils\enums\LoanPaymentStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\PaymentType;
@@ -466,6 +467,7 @@ class LoanController extends LmsController
                         }
 
                         $loan->status = LoanStatus::COMPLETED;
+                        $loan->payment_status = LoanPaymentStatus::DONE;
                         if (!$loan->save()) {
                             $tx->rollBack();
                             throw new NotFoundHttpException("Failed to save the loan.");

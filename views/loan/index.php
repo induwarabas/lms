@@ -2,6 +2,7 @@
 
 use app\models\Customer;
 use app\models\LoanType;
+use app\utils\enums\LoanPaymentStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\widgets\CustomerView;
 use yii\grid\GridView;
@@ -26,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'filterModel' => new \app\models\CustomerLoanSearch(),
         'rowOptions' => function ($model, $key, $index, $grid) {
             return ['id' => $model['id'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $model['id']]) . '";'];
         },
@@ -44,7 +45,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
                 return LoanStatus::label($data->status);
             }, 'filter'=>['PENDING' => 'PENDING', 'ACTIVE' => 'ACTIVE','COMPLETED' => 'COMPLETED', 'CLOSED' => 'CLOSED'],
+                'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
+            ['attribute' => 'payment_status', 'format' => 'html', 'value' => function ($data) {
+                return LoanPaymentStatus::label($data->payment_status);
+            }, 'filter'=>['DONE' => 'DONE', 'DEMANDED' => 'DEMANDED','ARREARS' => 'ARREARS'],
                 'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']]
+
             // 'collection_method',
             // 'period',
             // 'status',

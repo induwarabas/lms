@@ -16,6 +16,7 @@ use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\Setting;
 use app\utils\Doubles;
+use app\utils\enums\LoanPaymentStatus;
 use app\utils\enums\LoanScheduleStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
@@ -65,7 +66,7 @@ class LoanRecovery
             ->all();
 
         $savingBalance = Account::findOne($loan->saving_account)->balance;
-
+        $paymentStatus = LoanPaymentStatus::DONE;
         foreach ($schedules as $schedule) {
             $diff = date_diff(new DateTime($schedule->demand_date), new DateTime($recoveryDate));
 
@@ -82,7 +83,7 @@ class LoanRecovery
             if ($schedule->status == LoanScheduleStatus::PENDING && $schedule->demand_date <= $date) {
                 $schedule->status = LoanScheduleStatus::DEMANDED;
                 $schedule->due = $this->getAmountToPay($schedule);
-
+                $paymentStatus = LoanPaymentStatus::DEMANDED;
                 $schedule->save();
             }
 
@@ -99,6 +100,7 @@ class LoanRecovery
 
             if ($schedule->arrears < $interval) {
                 $schedule->status = LoanScheduleStatus::ARREARS;
+                $paymentStatus = LoanPaymentStatus::ARREARS;
                 for ($i = $schedule->arrears; $i < $interval; ++$i) {
                     $penalty = round($amountToPay * $loan->penalty / 100.0, 2);
                     $schedule->penalty = $schedule->penalty + $penalty;
@@ -114,6 +116,9 @@ class LoanRecovery
             if ($sch == null) {
                 $schedule = LoanSchedule::find()->where(['loan_id' => $loanId, 'status' => LoanStatus::PENDING])->orderBy(['installment_id' => SORT_ASC])->one();
                 if ($schedule != null) {
+                    if ($paymentStatus == LoanPaymentStatus::DONE) {
+                        $paymentStatus = LoanPaymentStatus::DEMANDED;
+                    }
                     $schedule->status = LoanScheduleStatus::DEMANDED;
                     $schedule->demand_date = $date;
                     $schedule->due = $this->getAmountToPay($schedule);
@@ -121,7 +126,8 @@ class LoanRecovery
                 }
             }
         }
-
+        $loan->payment_status = $paymentStatus;
+        $loan->save();
         $tx->commit();
         return true;
     }
@@ -256,13 +262,30 @@ class LoanRecovery
         $notPayedCount = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(array("<>", "status", LoanScheduleStatus::PAYED))->count();
         if ($notPayedCount == 0) {
             $loan->status = LoanStatus::COMPLETED;
+            $loan->payment_status = LoanPaymentStatus::DONE;
             if (!$loan->save()) {
                 $tx->rollBack();
                 $this->error = "Failed to complete the loan";
                 return false;
             }
+        } else {
+            $schedule = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(['IN', 'status', [LoanScheduleStatus::DEMANDED, LoanScheduleStatus::ARREARS]])->orderBy('installment_id')->one();
+            if ($schedule == null) {
+                $loan->payment_status = LoanPaymentStatus::DONE;
+                if (!$loan->save()) {
+                    $tx->rollBack();
+                    $this->error = "Failed to complete the loan";
+                    return false;
+                }
+            } else {
+                $loan->payment_status = $schedule->status;
+                if (!$loan->save()) {
+                    $tx->rollBack();
+                    $this->error = "Failed to complete the loan";
+                    return false;
+                }
+            }
         }
-
         $tx->commit();
         return true;
     }

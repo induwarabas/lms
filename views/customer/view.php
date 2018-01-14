@@ -1,15 +1,24 @@
 <?php
 
 use app\models\Area;
+use app\models\Customer;
+use app\models\LoanType;
 use app\utils\DbUtils;
+use app\utils\enums\LoanPaymentStatus;
+use app\utils\enums\LoanStatus;
 use app\utils\NICValidator;
 use app\utils\PhoneNoFormatter;
+use app\utils\widgets\CustomerView;
+use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 use Zelenin\yii\SemanticUI\Elements;
 use Zelenin\yii\SemanticUI\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Customer */
+/* @var $loans yii\data\ActiveDataProvider */
 /* @var $loan_req string */
 
 $this->title = $model->name;
@@ -71,4 +80,45 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <?php Pjax::begin(); ?>    <?= GridView::widget([
+        'dataProvider' => $loans,
+        'filterModel' => $loansSearchModel,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            return ['id' => $model['id'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['loan/view', 'id' => $model['id']]) . '";'];
+        },
+        'tableOptions' => ['class' => 'ui table table-striped table-hover'],
+        'columns' => [
+            ['attribute' => 'id', 'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
+            ['attribute' => 'type', 'content' => function ($data) {
+                return LoanType::findOne(['id' => $data->type])->name;
+            }, 'filter' => ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name'),
+                'contentOptions' => ['style' => 'max-width: 140px;'], 'headerOptions' => ['style' => 'max-width: 140px;'], 'filterOptions' => ['style' => 'max-width: 140px;']],
+            ['attribute' => 'customer_id', 'content' => function ($data) {
+                return CustomerView::widget(['customer' => Customer::findOne(['id' => $data->customer_id]), 'fullname' => false]);
+            }],
+            ['attribute' => 'guarantor_1', 'label' => 'Participation','content' => function ($data) use ($model) {
+                if ($model->id == $data->customer_id) {
+                    return Elements::label("CUSTOMER", ['class' => 'green']);
+                }
+                return  Elements::label("GUARANTOR", ['class' => 'blue']);
+            }, 'filter'=>['CUSTOMER' => 'CUSTOMER', 'GUARANTOR' => 'GUARANTOR'],
+                'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
+            'amount',
+            ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
+                return LoanStatus::label($data->status);
+            }, 'filter'=>['PENDING' => 'PENDING', 'ACTIVE' => 'ACTIVE','COMPLETED' => 'COMPLETED', 'CLOSED' => 'CLOSED'],
+                'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
+            ['attribute' => 'payment_status', 'format' => 'html', 'value' => function ($data) {
+                return LoanPaymentStatus::label($data->payment_status);
+            }, 'filter'=>['DONE' => 'DONE', 'DEMANDED' => 'DEMANDED','ARREARS' => 'ARREARS'],
+                'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']]
+
+            // 'collection_method',
+            // 'period',
+            // 'status',
+            // 'disbursed_date',
+            // 'closed_date',
+        ],
+    ]); ?>
+    <?php Pjax::end(); ?>
 </div>

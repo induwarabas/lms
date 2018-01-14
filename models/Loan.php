@@ -19,6 +19,7 @@ use app\utils\LoanCustomerValidator;
  * @property integer $collection_method
  * @property integer $period
  * @property string $status
+ * @property integer $payment_status
  * @property string $disbursed_date
  * @property string $closed_date
  * @property number $installment
@@ -51,7 +52,7 @@ class Loan extends \yii\db\ActiveRecord
             [['type', 'customer_id', 'amount', 'interest', 'penalty', 'charges', 'collection_method', 'period','disbursed_date'], 'required'],
             [['type', 'customer_id', 'collection_method', 'period', 'paid'], 'integer'],
             [['amount', 'interest', 'penalty', 'charges', 'installment', 'total_interest', 'total_payment', 'guarantor_1', 'guarantor_2', 'guarantor_3'], 'number'],
-            [['status'], 'string'],
+            [['status', 'payment_status'], 'string'],
             [['disbursed_date', 'closed_date'], 'safe'],
             [['saving_account', 'loan_account'], 'string', 'max' => 12],
             [['collection_method'], 'exist', 'skipOnError' => true, 'targetClass' => CollectionMethod::className(), 'targetAttribute' => ['collection_method' => 'id']],
@@ -78,6 +79,7 @@ class Loan extends \yii\db\ActiveRecord
             'collection_method' => 'Collection Method',
             'period' => 'Period',
             'status' => 'Status',
+            'payment_status' => 'Payment Status',
             'disbursed_date' => 'Disbursed Date',
             'closed_date' => 'Closed Date',
             'installment' => 'Installment',

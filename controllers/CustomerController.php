@@ -3,9 +3,13 @@
 namespace app\controllers;
 
 use app\models\Customer;
+use app\models\CustomerLoanSearch;
 use app\models\CustomerSearchEx;
+use app\models\Loan;
+use app\models\LoanSearch;
 use app\utils\NICValidator;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -35,8 +39,20 @@ class CustomerController extends LmsController
      */
     public function actionView($id)
     {
+//        $loans = Loan::find()->where(['customer_id' => $id])
+//            ->orWhere(['guarantor_1' => $id])
+//            ->orWhere(['guarantor_2' => $id])
+//            ->orWhere(['guarantor_3' => $id]);
+//        $dataProvider = new ActiveDataProvider([
+//            'query' => $loans,
+//        ]);
+
+        $loanModel = new CustomerLoanSearch(['cust_id' => $id]);
+        $dataProvider = $loanModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'loans' => $dataProvider,
+            'loansSearchModel' => $loanModel,
             'loan_req' => Yii::$app->getSession()->get('loan-req')
         ]);
     }

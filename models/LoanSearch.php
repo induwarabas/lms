@@ -13,6 +13,7 @@ use yii\data\ActiveDataProvider;
  * @property string $customer_id
  * @property integer $type
  * @property string $status
+ * @property string $payment_status
  */
 class LoanSearch extends Model
 {
@@ -20,6 +21,7 @@ class LoanSearch extends Model
     public $customer_id;
     public $type;
     public $status;
+    public $payment_status;
 
     /**
      * @inheritdoc
@@ -28,7 +30,7 @@ class LoanSearch extends Model
     {
         return [
             [['id', 'type'], 'integer'],
-            [['customer_id', 'status'], 'string'],
+            [['customer_id', 'status', 'payment_status'], 'string'],
         ];
     }
 
@@ -78,7 +80,8 @@ class LoanSearch extends Model
             'id' => $this->id,
             'customer_id' => $custid,
             'type' => $this->type,
-            'status' => $this->status
+            'status' => $this->status,
+            'payment_status' => $this->payment_status
         ]);
 
 //        $query->andFilterWhere(['like', 'saving_account', $this->saving_account])
