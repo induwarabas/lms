@@ -35,7 +35,7 @@ class TellerReceipt extends \yii\base\Model
     public function rules()
     {
         return [
-            [['loanId', 'amount', 'description', 'stage', 'link', 'payment', 'recover'], 'required'],
+            [['loanId', 'amount', 'description', 'stage', 'link', 'payment'], 'required'],
             [['loanId', 'description', 'link', 'payment', 'user'], 'string'],
             [['amount', 'stage', 'txid'], 'number', 'min' => 0],
             [['loanId'], 'string', 'max' => 10],

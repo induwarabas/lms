@@ -113,6 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
             <?= $form->field($model, 'stage')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'recover')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'link')->hiddenInput()->label(false) ?>
 
             <div class="form-group">

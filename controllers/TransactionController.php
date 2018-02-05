@@ -428,7 +428,7 @@ class TransactionController extends LmsController
             return "Invalid receipt";
         }
 
-        if ($transaction->type !== TxType::RECEIPT) {
+        if ($transaction->type !== TxType::RECEIPT && $transaction->type !== TxType::DOWN_PAYMENT ) {
             return "Invalid receipt";
         }
 

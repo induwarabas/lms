@@ -761,16 +761,22 @@ class TellerController extends LmsController
                     } else {
                         $tx = Yii::$app->getDb()->beginTransaction();
                         $txHnd = new TxHandler();
-                        if ($txHnd->createTransaction($teller->id, GeneralAccounts::PAYABLE, $model->amount, TxType::DOWN_PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
-                            $loanex->down_payment = $loanex->down_payment + $model->amount;
-                            if ($loanex->save()) {
-                                $tx->commit();
-                                $model->stage = 3;
-                                $model->txid = $txHnd->txid;
-                                $model->user = Yii::$app->getUser()->getIdentity()->username;
+                        if ($txHnd->createTransaction($teller->id, $loan->saving_account, $model->amount, TxType::DOWN_PAYMENT, $model->payment, $model->description, $model->link, $model->cheque)) {
+                            $txid = $txHnd->txid;
+                            if ($txHnd->createTransaction($loan->saving_account, GeneralAccounts::PAYABLE, $model->amount, TxType::INTERNAL, $model->payment, $model->description, $model->link, $model->cheque)) {
+                                $loanex->down_payment = $loanex->down_payment + $model->amount;
+                                if ($loanex->save()) {
+                                    $tx->commit();
+                                    $model->stage = 3;
+                                    $model->txid = $txid;
+                                    $model->user = Yii::$app->getUser()->getIdentity()->username;
+                                } else {
+                                    $tx->rollBack();
+                                    $error = "Failed to save loan down payment";
+                                }
                             } else {
                                 $tx->rollBack();
-                                $error = "Failed to save loan down payment";
+                                $error = $txHnd->error;
                             }
                         } else {
                             $tx->rollBack();
@@ -780,6 +786,9 @@ class TellerController extends LmsController
                 }
             } else {
                 $model->stage = 2;
+                if ($model->hasErrors()) {
+                    $error = $model->errors[0];
+                }
             }
 
 
@@ -813,6 +822,7 @@ class TellerController extends LmsController
             ]);
         } else {
             $model->stage = 0;
+            $model->recover = false;
             $model->link = uniqid();
             return $this->render('dp-receipt-account', [
                 'model' => $model,
