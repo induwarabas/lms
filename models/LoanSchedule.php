@@ -9,6 +9,7 @@ namespace app\models;
  * @property integer $installment_id
  * @property string $status
  * @property string $demand_date
+ * @property string $pay_date
  * @property number $principal
  * @property number $interest
  * @property number $charges
@@ -52,6 +53,7 @@ class LoanSchedule extends \yii\db\ActiveRecord
             'installment_id' => 'Installment ID',
             'status' => 'Status',
             'demand_date' => 'Demand Date',
+            'pay_date' => 'Payed Date',
             'principal' => 'Principal',
             'interest' => 'Interest',
             'charges' => 'Charges',

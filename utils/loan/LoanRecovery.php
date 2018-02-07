@@ -250,6 +250,7 @@ class LoanRecovery
 //            }
             $schedule->due = 0.0;
             $schedule->status = LoanScheduleStatus::PAYED;
+            $schedule->pay_date = date('Y-m-d');
             $schedule->save();
             ++$recoveredCount;
         }

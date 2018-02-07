@@ -169,8 +169,10 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJs("
 $('#recover').click(function(e){
     e.preventDefault();
-    $('input[id=tellerreceipt-recover]').val(1);
-    $('#receipt-form').submit();
+    $('#tellerreceipt-recover').val(1);
+    //$('input[id=tellerreceipt-recover]').val(1);
+   // $('#receipt-form').submit();
+    $('#receipt-form').attr('action', '" . \yii\helpers\Url::to(['teller/receipt', 'recover' => '1']) . "').submit();
 });
 ")
 ?>

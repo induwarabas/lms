@@ -69,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             ['attribute' => 'demand_date', 'value' => function($data) {return ($data->demand_date == '9999-12-31') ? 'N/A' : $data->demand_date; }],
+            'pay_date',
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
                 return LoanScheduleStatus::label($data->status);
             }],

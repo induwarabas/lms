@@ -89,7 +89,7 @@ class TellerController extends LmsController
                                 $col->status = 'COLLECTED';
                                 $col->save();
                             }
-                            if($model->recover == 1) {
+                            if(Yii::$app->getRequest()->getQueryParam("recover", 0) == 1) {
                                 $rec = new LoanRecovery();
                                 $rec->recover($loan->id);
                             }
