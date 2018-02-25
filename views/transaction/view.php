@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
     <div style="text-align: right">
-        <?php if ($model->reverted == 0 && $model->type == TxType::SETTLEMENT && $model->type == TxType::CLOSE_ACCOUNT) { ?>
+        <?php if ($model->reverted == 0 && $model->type != TxType::SETTLEMENT && $model->type != TxType::CLOSE_ACCOUNT) { ?>
             <?php $modal = Modal::begin([
                 'size' => Size::TINY,
                 'header' => '<h2 style="text-align: left">Revert transaction</h2>',
