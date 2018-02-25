@@ -18,6 +18,7 @@ namespace app\models;
  * @property number $paid
  * @property number $due
  * @property number $balance
+ * @property integer $settled
  */
 class LoanSchedule extends \yii\db\ActiveRecord
 {
@@ -36,7 +37,7 @@ class LoanSchedule extends \yii\db\ActiveRecord
     {
         return [
             [['loan_id', 'installment_id', 'status', 'demand_date', 'principal', 'interest', 'charges', 'arrears', 'penalty', 'paid', 'due', 'balance'], 'required'],
-            [['loan_id', 'installment_id', 'arrears'], 'integer'],
+            [['loan_id', 'installment_id', 'arrears','settled'], 'integer'],
             [['status'], 'string'],
             [['demand_date'], 'safe'],
             [['principal', 'interest', 'charges', 'penalty', 'paid', 'due', 'balance'], 'number'],
@@ -62,6 +63,7 @@ class LoanSchedule extends \yii\db\ActiveRecord
             'paid' => 'Paid',
             'due' => 'Due',
             'balance' => 'Balance',
+            'settled' => 'Settled',
         ];
     }
 
