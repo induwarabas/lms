@@ -476,6 +476,10 @@ class LoanController extends LmsController
                         $schedules = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(['<>', 'status', 'PAYED'])->all();
                         foreach ($schedules as $schedule) {
                             $schedule->status = 'PAYED';
+                            if ($schedule->arrears == 0) {
+                                $schedule->arrears = -1;
+                            }
+                            $schedule->pay_date = date('Y-m-d');
                             $schedule->due = 0;
                             if(!$schedule->save()) {
                                 $tx->rollBack();

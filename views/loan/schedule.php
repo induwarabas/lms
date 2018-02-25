@@ -1,5 +1,6 @@
 <?php
 
+use app\utils\Doubles;
 use app\utils\enums\LoanScheduleStatus;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
@@ -71,13 +72,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'demand_date', 'value' => function($data) {return ($data->demand_date == '9999-12-31') ? 'N/A' : $data->demand_date; }],
             'pay_date',
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
-                return LoanScheduleStatus::label($data->status);
+                if ($data->arrears == -1) {
+                    return Elements::label("SETTLED", ['class' => 'green']);
+                } else if ($data->arrears > 0 && Doubles::compare($data->principal + $data->interest + $data->charges + $data->penalty, $data->paid) > 0) {
+                    return Elements::label("SETTLED", ['class' => 'orange']);
+                } else {
+                    return LoanScheduleStatus::label($data->status);
+                }
             }],
             //['attribute' => "principal", 'label' => 'Installment', 'value' => function($data) {return $data->principal + $data->interest + $data->charges;}, 'contentOptions'=>array('style' => 'text-align: right;'), 'format'=>['decimal',2]],
             ['attribute' => "principal", 'value' => 'principal', 'contentOptions' => array('style' => 'text-align: right;'), 'format' => ['decimal', 2]],
             ['attribute' => "interest", 'value' => 'interest', 'contentOptions' => array('style' => 'text-align: right;'), 'format' => ['decimal', 2]],
             ['attribute' => "charges", 'value' => 'charges', 'contentOptions' => array('style' => 'text-align: right;'), 'format' => ['decimal', 2]],
-            'arrears',
+            ['attribute' => 'arrears', 'format' => 'html', 'contentOptions' => array('style' => 'text-align: right;'), 'value' => function ($data) {
+                if ($data->arrears > 0) {
+                    return $data->arrears;
+                } else {
+                    return "-";
+                }
+            }],
             ['attribute' => "penalty", 'value' => 'penalty', 'contentOptions' => array('style' => 'text-align: right;'), 'format' => ['decimal', 2]],
             ['attribute' => "paid", 'value' => 'paid', 'contentOptions' => array('style' => 'text-align: right;'), 'format' => ['decimal', 2]],
             ['attribute' => "due", 'value' => 'due', 'contentOptions' => array('style' => 'text-align: right;'), 'format' => ['decimal', 2]],
