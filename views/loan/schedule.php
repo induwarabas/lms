@@ -72,10 +72,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'demand_date', 'value' => function($data) {return ($data->demand_date == '9999-12-31') ? 'N/A' : $data->demand_date; }],
             'pay_date',
             ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
-                if ($data->arrears == -1) {
-                    return Elements::label("SETTLED", ['class' => 'green']);
-                } else if ($data->arrears > 0 && Doubles::compare($data->principal + $data->interest + $data->charges + $data->penalty, $data->paid) > 0) {
-                    return Elements::label("SETTLED", ['class' => 'orange']);
+                if ($data->settled == 1) {
+                    if ($data->arrears == 0) {
+                        return Elements::label("SETTLED", ['class' => 'green']);
+                    } else {
+                        return Elements::label("SETTLED", ['class' => 'orange']);
+                    }
                 } else {
                     return LoanScheduleStatus::label($data->status);
                 }
