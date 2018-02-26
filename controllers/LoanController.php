@@ -12,6 +12,7 @@ use app\models\LoanSchedule;
 use app\models\LoanSearch;
 use app\models\LoanSettlement;
 use app\models\Setting;
+use app\models\Transaction;
 use app\utils\Doubles;
 use app\utils\enums\LoanPaymentStatus;
 use app\utils\enums\LoanStatus;
@@ -69,6 +70,24 @@ class LoanController extends LmsController
             'model' => $this->findModel($id),
             'error' => Yii::$app->request->getQueryParam("error")
         ]);
+    }
+
+    public function actionFixschedules() {
+        $txs = Transaction::find()->where(['type' => 'CAPITAL'])->all();
+        foreach ($txs as $tx) {
+            $p1 = explode(' ', $tx->description);
+            $loan_id = substr($p1[4], 1);
+            $demand_date = $p1[6];
+            $schedule = LoanSchedule::find()->where(['loan_id' => $loan_id, 'demand_date' => $demand_date])->one();
+            if ($schedule != null && $schedule->pay_date == null) {
+                $schedule->pay_date = explode(' ', $tx->timestamp)[0];
+                $schedule->save();
+                //print_r($tx);
+                //print_r(explode(' ', $tx->timestamp));
+                //break;
+            }
+        }
+        echo "Done";
     }
 
     /**
