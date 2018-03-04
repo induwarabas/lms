@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\ArrearsSearch;
 use app\models\Loan;
 use app\models\ReceiptSearch;
+use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\TxType;
 use app\utils\Settings;
@@ -110,7 +111,7 @@ class ReportController extends LmsController
         $dataProvider->pagination = array(
             'pageSize' => 20,
         );
-        $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'penalty', 'due']];
+        $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'penalty', 'due', 'balance']];
 
         $total = $query->sum('due - balance');
 

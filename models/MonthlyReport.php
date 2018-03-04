@@ -9,23 +9,33 @@ use Yii;
  *
  * @property integer $year
  * @property integer $month
- * @property string $principal_exp
- * @property string $interest_exp
- * @property string $charges_exp
- * @property string $penalty_exp
- * @property string $arrears_exp
- * @property string $total_exp
- * @property string $profit_exp
- * @property string $principal_recv
- * @property string $interest_recv
- * @property string $charges_recv
- * @property string $penalty_recv
- * @property string $arrears_recv
- * @property string $total_recv
- * @property string $profit_recv
- * @property string $arrears
  * @property integer $loan_count
  * @property string $loan_value
+ * @property string $exp_principal
+ * @property string $exp_charges
+ * @property string $exp_interest
+ * @property string $exp_penalty
+ * @property string $exp_total
+ * @property string $exp_arr_principal
+ * @property string $exp_arr_charges
+ * @property string $exp_arr_interest
+ * @property string $exp_arr_penalty
+ * @property string $exp_arr_total
+ * @property string $receivable
+ * @property string $recv_principal
+ * @property string $recv_charges
+ * @property string $recv_interest
+ * @property string $recv_penalty
+ * @property string $recv_total
+ * @property string $recv_arr_principal
+ * @property string $recv_arr_charges
+ * @property string $recv_arr_interest
+ * @property string $recv_arr_penalty
+ * @property string $recv_arr_total
+ * @property string $received
+ * @property string $arrears
+ * @property integer $settlment_count
+ * @property string $settlment_amount
  */
 class MonthlyReport extends \yii\db\ActiveRecord
 {
@@ -43,9 +53,9 @@ class MonthlyReport extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['year', 'month', 'principal_exp', 'interest_exp', 'charges_exp', 'penalty_exp', 'arrears_exp', 'total_exp', 'profit_exp', 'principal_recv', 'interest_recv', 'charges_recv', 'penalty_recv', 'arrears_recv', 'total_recv', 'profit_recv', 'arrears', 'loan_count', 'loan_value'], 'required'],
-            [['year', 'month', 'loan_count'], 'integer'],
-            [['principal_exp', 'interest_exp', 'charges_exp', 'penalty_exp', 'arrears_exp', 'total_exp', 'profit_exp', 'principal_recv', 'interest_recv', 'charges_recv', 'penalty_recv', 'arrears_recv', 'total_recv', 'profit_recv', 'arrears', 'loan_value'], 'number'],
+            [['year', 'month', 'loan_count', 'loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'arrears', 'settlment_count', 'settlment_amount'], 'required'],
+            [['year', 'month', 'loan_count', 'settlment_count'], 'integer'],
+            [['loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'arrears', 'settlment_amount'], 'number'],
         ];
     }
 
@@ -57,23 +67,33 @@ class MonthlyReport extends \yii\db\ActiveRecord
         return [
             'year' => 'Year',
             'month' => 'Month',
-            'principal_exp' => 'Expected Principal',
-            'interest_exp' => 'Expected Interest',
-            'charges_exp' => 'Expected Charges',
-            'penalty_exp' => 'Expected Penalty',
-            'arrears_exp' => 'Expected Arrears',
-            'total_exp' => 'Expected Total',
-            'profit_exp' => 'Expected Profit',
-            'principal_recv' => 'Received Principal',
-            'interest_recv' => 'Received Interest',
-            'charges_recv' => 'Received Charges',
-            'penalty_recv' => 'Received Penalty',
-            'arrears_recv' => 'Received Arrears',
-            'total_recv' => 'Received Total',
-            'profit_recv' => 'Received Profit',
-            'arrears' => 'Arrears',
             'loan_count' => 'Loan Count',
             'loan_value' => 'Loan Value',
+            'exp_principal' => 'Expected Principal',
+            'exp_charges' => 'Expected Charges',
+            'exp_interest' => 'Expected Interest',
+            'exp_penalty' => 'Expected Penalty',
+            'exp_total' => 'Expected Total',
+            'exp_arr_principal' => 'Expected Arrears Principal',
+            'exp_arr_charges' => 'Expected Arrears Charges',
+            'exp_arr_interest' => 'Expected Arrears Interest',
+            'exp_arr_penalty' => 'Expected Arrears Penalty',
+            'exp_arr_total' => 'Expected Arrears Total',
+            'receivable' => 'Receivable',
+            'recv_principal' => 'Received Principal',
+            'recv_charges' => 'Received Charges',
+            'recv_interest' => 'Received Penalty',
+            'recv_penalty' => 'Received Penalty',
+            'recv_total' => 'Received Total',
+            'recv_arr_principal' => 'Received Arrears Principal',
+            'recv_arr_charges' => 'Received Arrears Interest',
+            'recv_arr_interest' => 'Received Arrears Interest',
+            'recv_arr_penalty' => 'Received Arrears Penalty',
+            'recv_arr_total' => 'Received Arrears Total',
+            'received' => 'Received',
+            'arrears' => 'Arrears',
+            'settlment_count' => 'Settlement Count',
+            'settlment_amount' => 'Settlement Amount',
         ];
     }
 

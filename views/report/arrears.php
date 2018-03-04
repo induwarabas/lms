@@ -119,8 +119,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'penalty', 'value' => function ($model) {
                 return number_format($model['paid'] - $model['penalty'], 2);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
-            ['attribute' => 'due', 'value' => function ($model) {
-                return number_format($model['balance'] - $model['due'], 2);
+            ['attribute' => 'balance', 'value' => function ($model) {
+                return number_format($model['balance'], 2);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
             // 'collection_method',
             // 'period',

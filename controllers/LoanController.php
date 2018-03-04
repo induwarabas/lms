@@ -89,6 +89,7 @@ class LoanController extends LmsController
 //            }
 //        }
 
+        MonthlyReportGenerator::generate(2017, 7)->save();
         MonthlyReportGenerator::generate(2017, 8)->save();
         MonthlyReportGenerator::generate(2017, 9)->save();
         MonthlyReportGenerator::generate(2017, 10)->save();
