@@ -50,7 +50,7 @@ class TxHandler
             return false;
         }
 
-        if ($drAccount->protection == 'PLUS' && $drAccount->balance - $amount < 0.0) {
+        if ($drAccount->protection == 'PLUS' && Doubles::compare($drAccount->balance - $amount, 0.0) < 0) {
             $this->error = $drAccount->getAccountHtml() . " has no funds to do the transaction";
             return false;
         }
@@ -62,7 +62,7 @@ class TxHandler
             return false;
         }
 
-        if ($crAccount->protection == 'MINUS' && $crAccount->balance + $amount > 0.0) {
+        if ($crAccount->protection == 'MINUS' && Doubles::compare($crAccount->balance + $amount, 0.0) > 0) {
             $this->error = $crAccount->getAccountHtml() . " has no funds to do the transaction";
             return false;
         }
