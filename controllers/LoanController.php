@@ -436,10 +436,11 @@ class LoanController extends LmsController
                     $error = "No enough funds in the saving account.";
                 } else {
                     $loanAccount = Account::findOne($loan->loan_account);
-                    if (Doubles::compare(-$loanAccount->balance, $model->principal) < 0) {
+                    $principal = $model->principal + $model->charges;
+                    if (Doubles::compare(-$loanAccount->balance, $principal) < 0) {
                         $error = "Principal amount is greater than the loan account balance";
                     } else {
-                        $principalLoss = -$loanAccount->balance - $model->principal;
+                        $principalLoss = -$loanAccount->balance - $principal;
                         $description = "Settlement of loan #".$loan->id;
                         $tx = Yii::$app->db->beginTransaction();
                         $txHnd = new TxHandler();
@@ -450,8 +451,8 @@ class LoanController extends LmsController
                             throw new NotFoundHttpException($txHnd->error);
                         }
 
-                        if (Doubles::compare($model->principal, 0.0) > 0) {
-                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, $loan->loan_account, $model->principal, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
+                        if (Doubles::compare($principal, 0.0) > 0) {
+                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, $loan->loan_account, $principal, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
                                 $tx->rollBack();
                                 throw new NotFoundHttpException($txHnd->error);
                             }
@@ -466,13 +467,6 @@ class LoanController extends LmsController
 
                         if (Doubles::compare($model->interest, 0.0) > 0) {
                             if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::INTEREST, $model->interest, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
-                                $tx->rollBack();
-                                throw new NotFoundHttpException($txHnd->error);
-                            }
-                        }
-
-                        if (Doubles::compare($model->charges, 0.0) > 0) {
-                            if (!$txHnd->createTransaction(GeneralAccounts::PARK, GeneralAccounts::CHARGES, $model->charges, TxType::SETTLEMENT, PaymentType::INTERNAL, $description, $link)) {
                                 $tx->rollBack();
                                 throw new NotFoundHttpException($txHnd->error);
                             }
