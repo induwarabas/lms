@@ -9,35 +9,36 @@ use Yii;
  *
  * @property integer $year
  * @property integer $month
+ * @property integer $mntstr
  * @property integer $loan_count
  * @property string $loan_value
- * @property string $exp_principal
- * @property string $exp_charges
- * @property string $exp_interest
- * @property string $exp_penalty
- * @property string $exp_total
- * @property string $exp_arr_principal
- * @property string $exp_arr_charges
- * @property string $exp_arr_interest
- * @property string $exp_arr_penalty
- * @property string $exp_arr_total
- * @property string $receivable
- * @property string $recv_principal
- * @property string $recv_charges
- * @property string $recv_interest
- * @property string $recv_penalty
- * @property string $recv_total
- * @property string $recv_arr_principal
- * @property string $recv_arr_charges
- * @property string $recv_arr_interest
- * @property string $recv_arr_penalty
- * @property string $recv_arr_total
- * @property string $received
- * @property string $savingBalance
- * @property string $partialPay
- * @property string $arrears
+ * @property double $exp_principal
+ * @property double $exp_charges
+ * @property double $exp_interest
+ * @property double $exp_penalty
+ * @property double $exp_total
+ * @property double $exp_arr_principal
+ * @property double $exp_arr_charges
+ * @property double $exp_arr_interest
+ * @property double $exp_arr_penalty
+ * @property double $exp_arr_total
+ * @property double $receivable
+ * @property double $recv_principal
+ * @property double $recv_charges
+ * @property double $recv_interest
+ * @property double $recv_penalty
+ * @property double $recv_total
+ * @property double $recv_arr_principal
+ * @property double $recv_arr_charges
+ * @property double $recv_arr_interest
+ * @property double $recv_arr_penalty
+ * @property double $recv_arr_total
+ * @property double $received
+ * @property double $savingBalance
+ * @property double $partialPay
+ * @property double $arrears
  * @property integer $settlment_count
- * @property string $settlment_amount
+ * @property double $settlment_amount
  */
 class MonthlyReport extends \yii\db\ActiveRecord
 {
@@ -55,8 +56,8 @@ class MonthlyReport extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['year', 'month', 'loan_count', 'loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'savingBalance', 'partialPay', 'arrears', 'settlment_count', 'settlment_amount'], 'required'],
-            [['year', 'month', 'loan_count', 'settlment_count'], 'integer'],
+            [['year', 'month', 'mntstr', 'loan_count', 'loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'savingBalance', 'partialPay', 'arrears', 'settlment_count', 'settlment_amount'], 'required'],
+            [['year', 'month', 'mntstr', 'loan_count', 'settlment_count'], 'integer'],
             [['loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'savingBalance', 'partialPay', 'arrears', 'settlment_amount'], 'number'],
         ];
     }
@@ -69,6 +70,7 @@ class MonthlyReport extends \yii\db\ActiveRecord
         return [
             'year' => 'Year',
             'month' => 'Month',
+            'mntstr' => 'Month String',
             'loan_count' => 'Loan Count',
             'loan_value' => 'Loan Value',
             'exp_principal' => 'Expected Principal',

@@ -46,6 +46,7 @@ class MonthlyReportGenerator
         $report = new MonthlyReport();
         $report->year = $year;
         $report->month = $month;
+        $report->mntstr = $year.'-'.str_pad($month, 2, "0", STR_PAD_LEFT);
         $loans = Yii::$app->getDb()->createCommand("SELECT count(*) as loan_count, sum(`amount`) as loan_amount FROM `loan` WHERE disbursed_date >= :start_date and disbursed_date < :end_date",
             [':start_date' =>self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne();
 
@@ -92,8 +93,6 @@ class MonthlyReportGenerator
         $report->received = $report->recv_total + $report->recv_arr_total;
 
         $savingBalance2=0.0;
-
-        echo date("Y")."-".date("m");
 
         if ($year == date("Y") && $month == date("m")) {
             $savingBalance2 = Yii::$app->getDb()->createCommand("select sum(account.balance) as balance from loan, account where account.id = loan.saving_account and loan.id in (SELECT DISTINCT(loan_id) FROM `loan_schedule` WHERE (`status` in ('DEMANDED', 'ARREARS')) and (settled = 0 or arrears > 0))",

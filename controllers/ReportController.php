@@ -4,10 +4,13 @@ namespace app\controllers;
 
 use app\models\ArrearsSearch;
 use app\models\Loan;
+use app\models\MonthlyReport;
 use app\models\ReceiptSearch;
+use app\utils\Doubles;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\TxType;
+use app\utils\MonthlyReportGenerator;
 use app\utils\Settings;
 use kartik\mpdf\Pdf;
 use Yii;
@@ -265,6 +268,61 @@ class ReportController extends LmsController
                 'print' => false
             ]);
         }
+    }
+
+    public function actionMonthlyPayments() {
+        $startMonthTs = strtotime(date("Y-m-d").' -1 year');
+
+        $start = date('Y-m', $startMonthTs);
+        $columns = array();
+        $thisMonthReceivable = array();
+        $arrearsReceivable = array();
+        $thisMonthReceived = array();
+        $arrearsReceived = array();
+        $savingBalance = array();
+        $arrears = array();
+        $collectedPercentage = array();
+        $reports = MonthlyReport::find()->where(['>', 'mntstr', $start])->all();
+
+        foreach ($reports as $report) {
+            array_push($columns, $report->mntstr);
+            array_push($thisMonthReceivable, doubleval($report->exp_total));
+            array_push($arrearsReceivable, doubleval($report->exp_arr_total));
+            array_push($thisMonthReceived, doubleval($report->recv_total));
+            array_push($arrearsReceived, $report->recv_arr_total + $report->partialPay);
+            array_push($savingBalance, doubleval($report->savingBalance));
+            array_push($arrears, doubleval($report->arrears));
+            if (Doubles::compare($report->receivable,0.0) == 0) {
+                array_push($collectedPercentage, 0.0);
+            } else {
+                array_push($collectedPercentage, round(($report->receivable - $report->arrears) / $report->receivable * 100, 2));
+            }
+        }
+
+        $report = MonthlyReportGenerator::generate(date('Y'), date('m'));
+        array_push($columns, $report->mntstr);
+        array_push($thisMonthReceivable, doubleval($report->exp_total));
+        array_push($arrearsReceivable, doubleval($report->exp_arr_total));
+        array_push($thisMonthReceived, doubleval($report->recv_total));
+        array_push($arrearsReceived, $report->recv_arr_total + $report->partialPay);
+        array_push($savingBalance, doubleval($report->savingBalance));
+        array_push($arrears, doubleval($report->arrears));
+        if (Doubles::compare($report->receivable,0.0) == 0) {
+            array_push($collectedPercentage, 0.0);
+        } else {
+            array_push($collectedPercentage, round(($report->receivable - $report->arrears) / $report->receivable * 100, 2));
+        }
+
+        return $this->render('monthly-payments', ['data' => [
+            'columns' => $columns,
+            'arrears' => $arrears,
+            'thisMonthReceivable' => $thisMonthReceivable,
+            'arrearsReceivable' => $arrearsReceivable,
+            'thisMonthReceived' => $thisMonthReceived,
+            'arrearsReceived' => $arrearsReceived,
+            'savingBalance' => $savingBalance,
+            'collectedPercentage' => $collectedPercentage
+        ]]);
     }
 
     public function actionSummary()
