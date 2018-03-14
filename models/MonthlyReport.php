@@ -33,6 +33,8 @@ use Yii;
  * @property string $recv_arr_penalty
  * @property string $recv_arr_total
  * @property string $received
+ * @property string $savingBalance
+ * @property string $partialPay
  * @property string $arrears
  * @property integer $settlment_count
  * @property string $settlment_amount
@@ -53,9 +55,9 @@ class MonthlyReport extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['year', 'month', 'loan_count', 'loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'arrears', 'settlment_count', 'settlment_amount'], 'required'],
+            [['year', 'month', 'loan_count', 'loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'savingBalance', 'partialPay', 'arrears', 'settlment_count', 'settlment_amount'], 'required'],
             [['year', 'month', 'loan_count', 'settlment_count'], 'integer'],
-            [['loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'arrears', 'settlment_amount'], 'number'],
+            [['loan_value', 'exp_principal', 'exp_charges', 'exp_interest', 'exp_penalty', 'exp_total', 'exp_arr_principal', 'exp_arr_charges', 'exp_arr_interest', 'exp_arr_penalty', 'exp_arr_total', 'receivable', 'recv_principal', 'recv_charges', 'recv_interest', 'recv_penalty', 'recv_total', 'recv_arr_principal', 'recv_arr_charges', 'recv_arr_interest', 'recv_arr_penalty', 'recv_arr_total', 'received', 'savingBalance', 'partialPay', 'arrears', 'settlment_amount'], 'number'],
         ];
     }
 
@@ -91,6 +93,8 @@ class MonthlyReport extends \yii\db\ActiveRecord
             'recv_arr_penalty' => 'Received Arrears Penalty',
             'recv_arr_total' => 'Received Arrears Total',
             'received' => 'Received',
+            'savingBalance' => 'Saving Balance',
+            'partialPay' => 'Partially Payed',
             'arrears' => 'Arrears',
             'settlment_count' => 'Settlement Count',
             'settlment_amount' => 'Settlement Amount',

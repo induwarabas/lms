@@ -9,6 +9,7 @@
 namespace app\utils;
 
 
+use app\models\Account;
 use app\models\LoanSchedule;
 use app\models\MonthlyReport;
 use Yii;
@@ -70,6 +71,7 @@ class MonthlyReportGenerator
         $report->exp_arr_total = $report->exp_arr_principal + $report->exp_arr_charges + $report->exp_arr_interest + $report->exp_arr_penalty;
         $report->receivable = $report->exp_total + $report->exp_arr_total;
 
+        $report->receivable = $report->exp_total + $report->exp_arr_total;
         $received = Yii::$app->getDb()->createCommand("SELECT sum(principal) as principal, sum(interest) as interest, sum(charges) as charges, sum(penalty) as penalty FROM `loan_schedule` WHERE `status` = 'PAYED' and pay_date >= :start_date and pay_date < :end_date and demand_date >= :start_ddate and demand_date < :end_ddate and (settled = 0 or arrears > 0)",
             [':start_date' =>self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth), ':start_ddate' =>self::getStartOfMonth($year, $month), ':end_ddate' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne();
 
@@ -89,7 +91,33 @@ class MonthlyReportGenerator
         $report->recv_arr_total = $report->recv_arr_principal + $report->recv_arr_charges + $report->recv_arr_interest + $report->recv_arr_penalty;
         $report->received = $report->recv_total + $report->recv_arr_total;
 
-        $report->arrears = $report->receivable - $report->received;
+        $savingBalance2=0.0;
+
+        echo date("Y")."-".date("m");
+
+        if ($year == date("Y") && $month == date("m")) {
+            $savingBalance2 = Yii::$app->getDb()->createCommand("select sum(account.balance) as balance from loan, account where account.id = loan.saving_account and loan.id in (SELECT DISTINCT(loan_id) FROM `loan_schedule` WHERE (`status` in ('DEMANDED', 'ARREARS')) and (settled = 0 or arrears > 0))",
+                [':start_date' =>self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne()["balance"];
+        } else {
+            $savingAccounts = Yii::$app->getDb()->createCommand("select loan.saving_account as saving_account from loan where loan.id in (SELECT DISTINCT(loan_id) FROM `loan_schedule` WHERE (`status` in ('DEMANDED', 'ARREARS')) and (settled = 0 or arrears > 0))",
+                [':start_date' =>self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryAll();
+
+            foreach ($savingAccounts as $saving) {
+                $bal = Account::getBalanceAsAt($saving["saving_account"], self::getStartOfMonth($nextYear, $nextMonth));
+                $savingBalance2 += $bal;
+                //echo $saving["saving_account"]."\t".$bal."\t".$savingBalance2."<br/>";
+            }
+        }
+
+
+
+        $halfPaid = Yii::$app->getDb()->createCommand("SELECT sum(paid) as paid FROM `loan_schedule` WHERE `status` != 'PAYED' and demand_date < :end_date and (settled = 0 or arrears > 0)",
+            [ ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne();
+
+        $paidValue = self::getRsVal($halfPaid["paid"], 0.0);
+        $report->savingBalance = $savingBalance2;
+        $report->partialPay = $paidValue;
+        $report->arrears = $report->receivable - $report->received - $paidValue - $savingBalance2;
 
         $settlements = Yii::$app->getDb()->createCommand("SELECT count(*) as settle_count, sum(amount) settle_amount FROM `transaction` WHERE cr_account = '9000000005' and type ='SETTLEMENT' and `timestamp` >= :start_date and `timestamp` < :end_date", [':start_date' => self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne();
         $report->settlment_count = self::getRsVal($settlements["settle_count"], 0);

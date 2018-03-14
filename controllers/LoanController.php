@@ -97,6 +97,7 @@ class LoanController extends LmsController
         MonthlyReportGenerator::generate(2017, 12)->save();
         MonthlyReportGenerator::generate(2018, 1)->save();
         MonthlyReportGenerator::generate(2018, 2)->save();
+        MonthlyReportGenerator::generate(2018, 3)->save();
 
         echo "Done";
     }
