@@ -48,7 +48,7 @@ class AmortizationCalculator
         $schedule->terms = $terms;
         $schedule->interest_terms = $interest_terms;
         $schedule->totalPayment = $payment * $terms + $charges;
-        $schedule->totalInterest = $schedule->totalPayment - $amount;
+        $schedule->totalInterest = $schedule->totalPayment - $amount - $schedule->charges;
         return $schedule;
     }
 }
