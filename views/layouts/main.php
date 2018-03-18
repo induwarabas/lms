@@ -103,6 +103,7 @@ AppAsset::register($this);
                     ['label' => 'Receipts', 'url' => ['/report/receipts', 'ReceiptSearch[from]' => date('Y-m-d')]],
                     ['label' => 'Summary', 'url' => ['/report/summary']],
                     ['label' => 'Monthly Payments', 'url' => ['/report/monthly-payments']],
+                    ['label' => 'Month Summary', 'url' => ['/report/monthly-details']],
                 ]
             ],
             [

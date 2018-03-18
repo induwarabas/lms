@@ -47,11 +47,14 @@ class MonthlyReportGenerator
         $report->year = $year;
         $report->month = $month;
         $report->mntstr = $year.'-'.str_pad($month, 2, "0", STR_PAD_LEFT);
-        $loans = Yii::$app->getDb()->createCommand("SELECT count(*) as loan_count, sum(`amount`) as loan_amount FROM `loan` WHERE disbursed_date >= :start_date and disbursed_date < :end_date",
+        $loans = Yii::$app->getDb()->createCommand("SELECT count(*) as loan_count, sum(`amount`) as loan_amount, sum(`charges`) as loan_charges, sum(`total_interest`) as total_interest FROM `loan` WHERE disbursed_date >= :start_date and disbursed_date < :end_date",
             [':start_date' =>self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne();
 
         $report->loan_count = self::getRsVal($loans["loan_count"], 0);
         $report->loan_value = self::getRsVal($loans["loan_amount"], 0.0);
+        $report->charges_amount = self::getRsVal($loans["loan_charges"], 0.0);
+        $report->interest_amount = self::getRsVal($loans["total_interest"], 0.0);
+
 
         $expected = Yii::$app->getDb()->createCommand("SELECT sum(principal) as principal, sum(interest) as interest, sum(charges) as charges, sum(penalty) as penalty FROM `loan_schedule` WHERE `status` != 'PENDING' and demand_date >= :start_date and demand_date < :end_date and (settled = 0 or arrears > 0)",
             [':start_date' =>self::getStartOfMonth($year, $month), ':end_date' => self::getStartOfMonth($nextYear, $nextMonth)])->queryOne();

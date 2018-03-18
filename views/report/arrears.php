@@ -117,10 +117,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 return $model['arrears'].' /'.($model['arrears'] + $model['demanded']);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
             ['attribute' => 'penalty', 'value' => function ($model) {
-                return number_format($model['paid'] - $model['penalty'], 2);
+                return number_format($model['penalty'] - $model['paid'], 2);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
             ['attribute' => 'balance', 'value' => function ($model) {
-                return number_format($model['balance'], 2);
+                return number_format($model['due'] - $model['balance'], 2);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
             // 'collection_method',
             // 'period',

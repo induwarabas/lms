@@ -10,70 +10,117 @@ use yii\widgets\Pjax;
 use miloschuman\highcharts\Highcharts;
 
 
-
 /* @var $this yii\web\View */
-/* @var $data array*/
+/* @var $data array */
 
-$this->title = 'Monthly Summary';
+$this->title = 'Monthly Payments';
 $this->params['breadcrumbs'][] = $this->title;
-?><?php
-echo Highcharts::widget([
-    'options' => [
-        'chart' => ['type' => 'column'],
-        'title' => ['text' => 'Monthly Payments'],
-        'xAxis' => [
-            'categories' => $data["columns"]
-        ],
-        'yAxis' => [
-            'title' => ['text' => 'Amount']
-        ],
-        'plotOptions' => [
-            'column' => ['stacking' => 'normal']
-        ],
+?>
+<div class="body-content">
+    <p style="text-align: right">
+        <?php
+        echo Html::a("Details", ['monthly-details'], ['class' => 'ui button blue']);
+        ?>
+    </p>
+    <div class="row">
+        <div class="col-lg-8">
 
-        'tooltip' => [
-        'formatter' => new JsExpression("function(){
+            <?php
+            echo Highcharts::widget([
+                'options' => [
+                    'chart' => ['type' => 'column'],
+                    'title' => ['text' => 'Monthly Payments'],
+                    'xAxis' => [
+                        'categories' => $data["columns"]
+                    ],
+                    'yAxis' => [
+                        'title' => ['text' => 'Amount']
+                    ],
+                    'plotOptions' => [
+                        'column' => ['stacking' => 'normal']
+                    ],
+
+                    'tooltip' => [
+                        'formatter' => new JsExpression("function(){
            return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '<br/>' +
-                'Total: ' + this.point.stackTotal;
+                this.series.name + ': Rs. ' + numberWithCommas(this.y) + '<br/>' +
+                'Total: Rs. ' + numberWithCommas(this.point.stackTotal);
          }")],
-        'series' => [
-            ['name' => 'Arrears Receivable', 'data' => $data["arrearsReceivable"], 'stack' => 'Receivable', 'color' => '#ffc107'],
-            ['name' => 'This Month Receivable', 'data' => $data["thisMonthReceivable"], 'stack' => 'Receivable', 'color' => '#17a2b8'],
-            ['name' => 'Saving Balance', 'data' => $data["savingBalance"], 'stack' => 'Received', 'color' => '#28a745'],
-            ['name' => 'Arrears Received', 'data' => $data["arrearsReceived"], 'stack' => 'Received', 'color' => '#ffc107'],
-            ['name' => 'This Month Received', 'data' => $data["thisMonthReceived"], 'stack' => 'Received', 'color' => '#17a2b8'],
-            ['name' => 'Arrears', 'data' => $data["arrears"], 'stack' => 'Arrears', 'color' => '#dc3545'],
-        ]
-    ]
-]);
-
-echo Highcharts::widget([
-    'options' => [
-        'chart' => ['type' => 'line'],
-        'title' => ['text' => 'Performance'],
-        'xAxis' => [
-            'categories' => $data["columns"]
-        ],
-        'yAxis' => [
-            'title' => ['text' => 'Amount']
-        ],
+                    'series' => [
+                        ['name' => 'Arrears Receivable', 'data' => $data["arrearsReceivable"], 'stack' => 'Receivable', 'color' => '#ffc107'],
+                        ['name' => 'This Month Receivable', 'data' => $data["thisMonthReceivable"], 'stack' => 'Receivable', 'color' => '#17a2b8'],
+                        ['name' => 'Saving Balance', 'data' => $data["savingBalance"], 'stack' => 'Received', 'color' => '#28a745'],
+                        ['name' => 'Arrears Received', 'data' => $data["arrearsReceived"], 'stack' => 'Received', 'color' => '#ffc107'],
+                        ['name' => 'This Month Received', 'data' => $data["thisMonthReceived"], 'stack' => 'Received', 'color' => '#17a2b8'],
+                        ['name' => 'Arrears', 'data' => $data["arrears"], 'stack' => 'Arrears', 'color' => '#dc3545'],
+                    ]
+                ]
+            ]);
+            ?>
+        </div>
+        <div class="col-lg-4">
+            <?php
+            echo Highcharts::widget([
+                'options' => [
+                    'chart' => ['type' => 'line'],
+                    'title' => ['text' => 'Performance'],
+                    'xAxis' => [
+                        'categories' => $data["columns"]
+                    ],
+                    'yAxis' => [
+                        'title' => ['text' => 'Amount']
+                    ],
 //        'plotOptions' => [
 //            'column' => ['stacking' => 'normal']
 //        ],
 
-        'tooltip' => [
-            'formatter' => new JsExpression("function(){
+                    'tooltip' => [
+                        'formatter' => new JsExpression("function(){
            return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '%';
+                this.series.name + ': ' + numberWithCommas(this.y) + '%';
          }")],
-        'series' => [
-            ['name' => 'Collections', 'data' => $data["collectedPercentage"], 'stack' => 'Collected', 'color' => '#28a745']
-        ]
-    ]
-]);
-
-
+                    'series' => [
+                        ['name' => 'Collections', 'data' => $data["collectedPercentage"], 'stack' => 'Collected', 'color' => '#28a745']
+                    ]
+                ]
+            ]);
+            ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <?php
+            echo Highcharts::widget([
+                'options' => [
+                    'chart' => ['type' => 'column'],
+                    'title' => ['text' => 'Loan Disbursements'],
+                    'xAxis' => [
+                        'categories' => $data["columns"]
+                    ],
+                    'yAxis' => [
+                        'title' => ['text' => 'Amount']
+                    ],
+                    'tooltip' => [
+                        'formatter' => new JsExpression("function(){
+           return '<b>' + this.x + '</b><br/>' +
+                this.series.name + ': Rs. ' + numberWithCommas(this.y);
+         }")],
+                    'series' => [
+                        ['name' => 'Loan Amount', 'data' => $data["loanAmount"], 'color' => '#ffc107'],
+                        ['name' => 'Interest Amount', 'data' => $data["interestAmount"], 'color' => '#17a2b8'],
+                    ]
+                ]
+            ]);
+            ?>
+        </div>
+    </div>
+</div>
+<?php
+$this->registerJs("
+const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+")
 //    chart: {
 //        type: 'column'
 //    },
