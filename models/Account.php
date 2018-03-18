@@ -7,6 +7,7 @@ use app\utils\widgets\CanvasserView;
 use app\utils\widgets\CollectorView;
 use app\utils\widgets\CustomerView;
 use app\utils\widgets\SupplierView;
+use yii\db\Query;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -184,6 +185,21 @@ class Account extends \yii\db\ActiveRecord
             }
         }
         return "Invalid account";
+    }
+
+    public static function getBalanceAsAt($account, $date) {
+        $tx = Transaction::find()->where(['<', 'timestamp', $date])
+            ->andWhere(['or', ['dr_account' => $account],['cr_account' => $account]])
+            ->orderBy(['txid' => SORT_DESC])
+            ->one();
+        if ($tx == null) {
+            return 0.0;
+        }
+        if ($tx->cr_account == $account) {
+            return $tx->cr_balance;
+        } else {
+            return $tx->dr_balance;
+        }
     }
 
     public function getAccountHtml()

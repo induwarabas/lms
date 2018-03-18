@@ -4,9 +4,14 @@ namespace app\controllers;
 
 use app\models\ArrearsSearch;
 use app\models\Loan;
+use app\models\MonthlyReport;
+use app\models\MonthlySummarySearch;
 use app\models\ReceiptSearch;
+use app\utils\Doubles;
+use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
 use app\utils\enums\TxType;
+use app\utils\MonthlyReportGenerator;
 use app\utils\Settings;
 use kartik\mpdf\Pdf;
 use Yii;
@@ -106,11 +111,13 @@ class ReportController extends LmsController
             }
         }
 
-        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query
+        ]);
         $dataProvider->pagination = array(
             'pageSize' => 20,
         );
-        $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'penalty', 'due']];
+        $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'penalty', 'due', 'balance'], 'defaultOrder' => ['loan_id'=>SORT_ASC]];
 
         $total = $query->sum('due - balance');
 
@@ -261,6 +268,143 @@ class ReportController extends LmsController
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
                 'total' => $total,
+                'print' => false
+            ]);
+        }
+    }
+
+    public function actionMonthlyPayments() {
+
+        $startMonthTs = strtotime(date("Y-m-d") . ' -1 year');
+
+        $start = date('Y-m', $startMonthTs);
+        $columns = array();
+        $thisMonthReceivable = array();
+        $arrearsReceivable = array();
+        $thisMonthReceived = array();
+        $arrearsReceived = array();
+        $savingBalance = array();
+        $loanAmount = array();
+        $interestAmount = array();
+        $arrears = array();
+        $collectedPercentage = array();
+        $reports = MonthlyReport::find()->where(['>', 'mntstr', $start])->all();
+
+        foreach ($reports as $report) {
+            array_push($columns, $report->mntstr);
+            array_push($thisMonthReceivable, doubleval($report->exp_total));
+            array_push($arrearsReceivable, doubleval($report->exp_arr_total));
+            array_push($thisMonthReceived, doubleval($report->recv_total));
+            array_push($arrearsReceived, $report->recv_arr_total + $report->partialPay);
+            array_push($savingBalance, doubleval($report->savingBalance));
+            array_push($arrears, doubleval($report->arrears));
+            array_push($loanAmount, doubleval($report->loan_value));
+            array_push($interestAmount, doubleval($report->interest_amount));
+            if (Doubles::compare($report->receivable, 0.0) == 0) {
+                array_push($collectedPercentage, 0.0);
+            } else {
+                array_push($collectedPercentage, round(($report->receivable - $report->arrears) / $report->receivable * 100, 2));
+            }
+        }
+
+        $report = MonthlyReportGenerator::generate(date('Y'), date('m'));
+        array_push($columns, $report->mntstr);
+        array_push($thisMonthReceivable, doubleval($report->exp_total));
+        array_push($arrearsReceivable, doubleval($report->exp_arr_total));
+        array_push($thisMonthReceived, doubleval($report->recv_total));
+        array_push($arrearsReceived, $report->recv_arr_total + $report->partialPay);
+        array_push($savingBalance, doubleval($report->savingBalance));
+        array_push($arrears, doubleval($report->arrears));
+        if (Doubles::compare($report->receivable, 0.0) == 0) {
+            array_push($collectedPercentage, 0.0);
+        } else {
+            array_push($collectedPercentage, round(($report->receivable - $report->arrears) / $report->receivable * 100, 2));
+        }
+
+        return $this->render('monthly-payments', ['data' => [
+            'columns' => $columns,
+            'arrears' => $arrears,
+            'thisMonthReceivable' => $thisMonthReceivable,
+            'arrearsReceivable' => $arrearsReceivable,
+            'thisMonthReceived' => $thisMonthReceived,
+            'arrearsReceived' => $arrearsReceived,
+            'savingBalance' => $savingBalance,
+            'collectedPercentage' => $collectedPercentage,
+            'loanAmount' => $loanAmount,
+            'interestAmount' => $interestAmount
+        ]]);
+    }
+
+    public function actionMonthlyDetails() {
+        $searchModel = new MonthlySummarySearch();
+        $year = date('Y');
+        $month = date('m');
+        if ($searchModel->load(Yii::$app->request->queryParams)) {
+            $year = $searchModel->year;
+            $month = $searchModel->month;
+        } else {
+            $searchModel->year = $year;
+            $searchModel->month = $month;
+        }
+
+        $report = MonthlyReport::find()->where(['year' => $year, 'month' => $month])->one();
+        if ($report == null) {
+            $report = MonthlyReportGenerator::generate($year, $month);
+        }
+
+        $rows = [];
+        $rows[] = ["type" => "Principal","thisMonth" => $report->exp_principal, "arrears" => $report->exp_arr_principal, "total" => $report->exp_arr_principal + $report->exp_principal];
+        $rows[] = ["type" => "Charges","thisMonth" => $report->exp_charges, "arrears" => $report->exp_arr_charges, "total" => $report->exp_arr_charges + $report->exp_charges];
+        $rows[] = ["type" => "Interest","thisMonth" => $report->exp_interest, "arrears" => $report->exp_arr_interest, "total" => $report->exp_arr_interest + $report->exp_interest];
+        $rows[] = ["type" => "Penalty","thisMonth" => $report->exp_penalty, "arrears" => $report->exp_arr_penalty, "total" => $report->exp_arr_penalty + $report->exp_penalty];
+        $rows[] = ["type" => "Total","thisMonth" => $report->exp_total, "arrears" => $report->exp_arr_total, "total" => $report->exp_total + $report->exp_arr_total];
+        $dataProvider = new ArrayDataProvider(['allModels' => $rows]);
+
+
+        $rows = [];
+        $rows[] = ["type" => "Principal","thisMonth" => $report->recv_principal, "arrears" => $report->recv_arr_principal, "total" => $report->recv_arr_principal + $report->recv_principal];
+        $rows[] = ["type" => "Charges","thisMonth" => $report->recv_charges, "arrears" => $report->recv_arr_charges, "total" => $report->recv_arr_charges + $report->recv_charges];
+        $rows[] = ["type" => "Interest","thisMonth" => $report->recv_interest, "arrears" => $report->recv_arr_interest, "total" => $report->recv_arr_interest + $report->recv_interest];
+        $rows[] = ["type" => "Penalty","thisMonth" => $report->recv_penalty, "arrears" => $report->recv_arr_penalty + $report->partialPay, "total" => $report->recv_arr_penalty + $report->recv_penalty + $report->partialPay];
+        $rows[] = ["type" => "Total","thisMonth" => $report->recv_total, "arrears" => $report->recv_arr_total+ $report->partialPay, "total" => $report->received + $report->partialPay];
+        $dataProvider2 = new ArrayDataProvider(['allModels' => $rows]);
+
+        $rows = [];
+        $rows[] = ['type' => 'Receivable', 'amount' => $report->receivable];
+        $rows[] = ['type' => 'Received', 'amount' => $report->received + $report->partialPay];
+        $rows[] = ['type' => 'Partially Payed', 'amount' => $report->savingBalance];
+        $rows[] = ['type' => 'Arrears', 'amount' => $report->arrears];
+        $dataProvider3 = new ArrayDataProvider(['allModels' => $rows]);
+
+        $rows = [];
+        $rows[] = ['type' => 'Loan Count', 'amount' => $report->loan_count];
+        $rows[] = ['type' => 'Loan Value', 'amount' => number_format($report->loan_value, 2)];
+        $rows[] = ['type' => 'Charges', 'amount' => number_format($report->charges_amount, 2)];
+        $rows[] = ['type' => 'Interest', 'amount' => number_format($report->interest_amount, 2)];
+        $dataProvider4 = new ArrayDataProvider(['allModels' => $rows]);
+
+        if (Yii::$app->getRequest()->getQueryParam("print") == "true") {
+            $dataProvider->pagination = array(
+                'pageSize' => 0,
+            );
+            // return the pdf output as per the destination setting
+            return $this->createPdf("Month Summary", $this->renderPartial('monthly-payments-m', [
+                'receivable' => $dataProvider,
+                'received' => $dataProvider2,
+                'summary' => $dataProvider3,
+                'report' => $report,
+                'disbursements' =>$dataProvider4,
+                'searchModel' => $searchModel,
+                'print' => true
+            ]));
+        } else {
+            return $this->render('monthly-payments-m', [
+                'receivable' => $dataProvider,
+                'received' => $dataProvider2,
+                'summary' => $dataProvider3,
+                'report' => $report,
+                'disbursements' =>$dataProvider4,
+                'searchModel' => $searchModel,
                 'print' => false
             ]);
         }

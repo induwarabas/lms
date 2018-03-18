@@ -23,6 +23,7 @@ use app\utils\GeneralAccounts;
 use app\utils\loan\AmortizationCalculator;
 use app\utils\loan\LoanDisbursement;
 use app\utils\loan\LoanRecovery;
+use app\utils\MonthlyReportGenerator;
 use app\utils\TxHandler;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -73,20 +74,31 @@ class LoanController extends LmsController
     }
 
     public function actionFixschedules() {
-        $txs = Transaction::find()->where(['type' => 'CAPITAL'])->all();
-        foreach ($txs as $tx) {
-            $p1 = explode(' ', $tx->description);
-            $loan_id = substr($p1[4], 1);
-            $demand_date = $p1[6];
-            $schedule = LoanSchedule::find()->where(['loan_id' => $loan_id, 'demand_date' => $demand_date])->one();
-            if ($schedule != null && $schedule->pay_date == null) {
-                $schedule->pay_date = explode(' ', $tx->timestamp)[0];
-                $schedule->save();
-                //print_r($tx);
-                //print_r(explode(' ', $tx->timestamp));
-                //break;
-            }
-        }
+//        $txs = Transaction::find()->where(['type' => 'CAPITAL'])->all();
+//        foreach ($txs as $tx) {
+//            $p1 = explode(' ', $tx->description);
+//            $loan_id = substr($p1[4], 1);
+//            $demand_date = $p1[6];
+//            $schedule = LoanSchedule::find()->where(['loan_id' => $loan_id, 'demand_date' => $demand_date])->one();
+//            if ($schedule != null && $schedule->pay_date == null) {
+//                $schedule->pay_date = explode(' ', $tx->timestamp)[0];
+//                $schedule->save();
+//                //print_r($tx);
+//                //print_r(explode(' ', $tx->timestamp));
+//                //break;
+//            }
+//        }
+
+//        MonthlyReportGenerator::generate(2017, 7)->save();
+//        MonthlyReportGenerator::generate(2017, 8)->save();
+//        MonthlyReportGenerator::generate(2017, 9)->save();
+//        MonthlyReportGenerator::generate(2017, 10)->save();
+//        MonthlyReportGenerator::generate(2017, 11)->save();
+//        MonthlyReportGenerator::generate(2017, 12)->save();
+//        MonthlyReportGenerator::generate(2018, 1)->save();
+ //       MonthlyReportGenerator::generate(2018, 2)->save();
+ //       MonthlyReportGenerator::generate(2018, 3)->save();
+
         echo "Done";
     }
 
