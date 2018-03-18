@@ -9,7 +9,7 @@ use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\widgets\Pjax;
 
-use miloschuman\highcharts\Highcharts;
+use dosamigos\highcharts\HighCharts;
 
 /* @var $this yii\web\View */
 /* @var $receivable yii\data\ArrayDataProvider */
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php ActiveForm::end(); ?>
         <p style="text-align: right">
             <?php
-            echo Html::a("View Year", ['monthly-payments'], ['class' => 'ui button blue']);
+            echo Html::a("Summary", ['monthly-payments'], ['class' => 'ui button blue']);
             echo Html::a("Print", '#', ['class' => 'ui button blue', 'onclick' => PopupWindow::show(Url::current(['print' => 'true']))]);
             ?>
         </p>
@@ -128,7 +128,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-6">
             <?php
             echo Highcharts::widget([
-                'options' => [
+                'clientOptions' => [
                     'chart' => ['type' => 'pie'],
                     'title' => ['text' => 'Payment Summary'],
 //                    'xAxis' => [

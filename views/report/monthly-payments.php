@@ -1,13 +1,13 @@
 <?php
 
 use app\utils\PopupWindow;
+use dosamigos\highcharts\HighCharts;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\widgets\Pjax;
 
-use miloschuman\highcharts\Highcharts;
 
 
 /* @var $this yii\web\View */
@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php
             echo Highcharts::widget([
-                'options' => [
+                'clientOptions' => [
                     'chart' => ['type' => 'column'],
                     'title' => ['text' => 'Monthly Payments'],
                     'xAxis' => [
@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-4">
             <?php
             echo Highcharts::widget([
-                'options' => [
+                'clientOptions' => [
                     'chart' => ['type' => 'line'],
                     'title' => ['text' => 'Performance'],
                     'xAxis' => [
@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-12">
             <?php
             echo Highcharts::widget([
-                'options' => [
+                'clientOptions' => [
                     'chart' => ['type' => 'column'],
                     'title' => ['text' => 'Loan Disbursements'],
                     'xAxis' => [
@@ -106,7 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 this.series.name + ': Rs. ' + numberWithCommas(this.y);
          }")],
                     'series' => [
-                        ['name' => 'Loan Amount', 'data' => $data["loanAmount"], 'color' => '#ffc107'],
+                        ['name' => 'Loan Amount', 'data' => $data["loanAmount"], 'color' => '#28a745'],
                         ['name' => 'Interest Amount', 'data' => $data["interestAmount"], 'color' => '#17a2b8'],
                     ]
                 ]

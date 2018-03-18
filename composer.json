@@ -27,7 +27,7 @@
         "2amigos/yii2-ckeditor-widget": "^1.0@dev",
         "cedx/yii2-mustache": "^0.4.3",
         "robregonm/yii2-pdf": "dev-master",
-        "miloschuman/yii2-highcharts-widget": "dev-master"
+        "2amigos/yii2-highcharts-widget": "~1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
