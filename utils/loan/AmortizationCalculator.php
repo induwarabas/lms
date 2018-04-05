@@ -9,9 +9,14 @@
 namespace app\utils\loan;
 
 
+use app\utils\Doubles;
+
 class AmortizationCalculator
 {
     public function calculateInstallment($amount, $interest_percentage, $terms, $interest_terms) {
+        if (Doubles::compare($interest_percentage, 0.0) == 0) {
+            return round($amount / $terms, 2, PHP_ROUND_HALF_UP);
+        }
         $rate = $interest_percentage / 100.0 / $interest_terms;
         $part1 = pow((1 + $rate), $terms);
         $part2 = $amount * $rate * $part1;
