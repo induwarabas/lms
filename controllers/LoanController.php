@@ -351,11 +351,10 @@ class LoanController extends LmsController
         foreach ($ids as $i) {
             $disbursement = new LoanRecovery();
             if (!$disbursement->recover($i, $date, $daily == 1)) {
-                echo "failed";
-                return;
+                return "failed";
             }
         }
-        echo "success";
+        return "success";
     }
 
     public function actionClose($id)
