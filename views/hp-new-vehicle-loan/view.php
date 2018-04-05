@@ -75,24 +75,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php
         if (User::hasPermission('editafterdisburse')) {
-            if ($loan->status == 'ACTIVE') {
+            if ($loan->status == LoanStatus::ACTIVE) {
                 echo Html::a('Settle', ['loan/settlement', 'id' => $model->id], ['class' => 'ui button red']);
             }
             echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
         } else {
-            if ($loan->status == 'PENDING') {
+            if ($loan->status == LoanStatus::PENDING) {
                 echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
             }
         }
-        if ($loan->status == 'ACTIVE') {
+        if ($loan->status == LoanStatus::ACTIVE) {
             echo Html::a('Recover', ['loan/recover', 'id' => $model->id], ['class' => 'ui button green']);
         }
 
-        if ($loan->status != 'PENDING') {
+        if ($loan->status != LoanStatus::PENDING) {
             echo Html::a('View Schedule', ['loan/schedule', 'id' => $model->id], ['class' => 'ui button brown']);
         }
 
-        if (!$loan->paid) {
+        if ($loan->status != LoanStatus::CLOSED && !$loan->paid) {
             echo Html::a('Down Payment Receipt', '#', ['class' => 'ui button green', 'id' => 'btn-down-pay']);
         }
 
@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
         }
 
-        if ($loan->status == LoanStatus::COMPLETED && User::hasPermission("closeLoan")) {
+        if (($loan->status == LoanStatus::COMPLETED || $loan->status == LoanStatus::PENDING) && User::hasPermission("closeLoan")) {
             echo Html::a('Close', ['loan/close', 'id' => $loan->id], ['class' => 'ui button red', 'id' => 'btn-close-loan']);
         }
         ?>

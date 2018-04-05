@@ -98,7 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
         if ($loan->status == 'ACTIVE') {
             echo Html::a("Welcome Letter", '#', ['class' => 'ui button blue', 'onClick' => "MyWindow=window.open('" . \yii\helpers\Url::to(['welcome-letter', 'id' => $loan->id]) . "','MyWindow',width=700,height=300); return false;"]);
         }
-        if ($loan->status == LoanStatus::COMPLETED && User::hasPermission("closeLoan")) {
+        if (($loan->status == LoanStatus::COMPLETED || $loan->status == LoanStatus::PENDING) && User::hasPermission("closeLoan")) {
             echo Html::a('Close', ['loan/close', 'id' => $loan->id], ['class' => 'ui button red', 'id' => 'btn-close-loan']);
         }
         ?>

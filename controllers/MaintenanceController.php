@@ -48,7 +48,7 @@ class MaintenanceController extends LmsController
                     if ($monthGenerated) {
                         $accounts = Loan::find()->where(['status' => LoanStatus::ACTIVE])->all();
                         $loans = [];
-                        $batch = 10;
+                        $batch = 30;
                         $current = 0;
                         $text = '';
                         foreach ($accounts as $account) {

@@ -364,8 +364,8 @@ class LoanController extends LmsController
             throw new NotFoundHttpException('The loan #'.$id." not found.");
         }
 
-        if ($loan->status !== LoanStatus::COMPLETED) {
-            throw new NotFoundHttpException('The loan #'.$id." is not in COMPLETED state.");
+        if ($loan->status !== LoanStatus::COMPLETED && $loan->status !== LoanStatus::PENDING) {
+            throw new NotFoundHttpException('The loan #'.$id." is not in  state.");
         }
 
         $balance = Account::findOne($loan->saving_account)->balance;
