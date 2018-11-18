@@ -10,6 +10,7 @@ use app\models\Loan;
 use app\models\Transaction;
 use app\utils\AccountDetails;
 use app\utils\GeneralAccounts;
+use app\utils\Settings;
 use kartik\mpdf\Pdf;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -158,6 +159,7 @@ class AccountController extends LmsController
     {
         $from = Yii::$app->request->getQueryParam("from", null);
         $to = Yii::$app->request->getQueryParam("to", null);
+        $print = Yii::$app->request->getQueryParam("print", false);
         if ($from == null && $to == null) {
             $to = date('Y-m-d');
             $from = date('Y-m-d', strtotime("-1 month"));
@@ -169,6 +171,19 @@ class AccountController extends LmsController
         $dataProvider = new ActiveDataProvider([
             'query' => $query
         ]);
+
+        if ($print  == true) {
+            $dataProvider->pagination = array(
+                'pageSize' => 0,
+            );
+            $content = $this->renderPartial('ledger-print', [
+                'details' => $this->getAccountDetails($id),
+                'dataProvider' => $dataProvider,
+                'history' => ['from' => $from, 'to' => $to],
+            ]);
+            //return $content;
+            return $this->createPdf("Ledger", $content);
+        }
 
         return $this->render('ledger', [
             'details' => $this->getAccountDetails($id),
@@ -210,5 +225,39 @@ class AccountController extends LmsController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @param $title string
+     * @param $content string
+     * @return string
+     */
+    private function createPdf($title, $content)
+    {
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_UTF8,
+            // A4 paper format
+            'format' => 'A4',
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            'cssInline' => '.kv-heading-1{font-size:18px} a {color: black;text-decoration: none;} td,th {font-size:11px}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Cash Receipt'],
+            // call mPDF methods on the fly
+            'methods' => [
+                'SetHeader' => [$title . '||' . Settings::companyName()],
+                'SetFooter' => [date("Y-m-d H:i:s") . '||page {PAGENO}'],
+            ]
+        ]);
+        return $pdf->render();
     }
 }

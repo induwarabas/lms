@@ -1,9 +1,7 @@
 <?php
 
 use app\utils\Doubles;
-use app\utils\PopupWindow;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\Pjax;
 use Zelenin\yii\SemanticUI\Elements;
 use Zelenin\yii\SemanticUI\widgets\GridView;
@@ -12,28 +10,14 @@ use Zelenin\yii\SemanticUI\widgets\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $details \app\utils\AccountDetails */
 
-$this->title = 'Recent 10 Transactions';
-if ($history != null) {
-    $this->title = 'Transaction history';
-}
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="account-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= $this->render('_details', [
+<div>
+    <?= $this->render('_details-print', [
         'details' => $details,
     ]) ?>
-    <?php
-    if ($history != null) {
-        echo $this->render('_search', [
-            'history' => $history,
-            'id' => $details->account->id
-        ]);
-    } ?>
-    <?php Pjax::begin(); ?>    <?= GridView::widget([
+    <div style="text-align: right"><b>From:</b> <?= $history['from'] ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>To:</b> <?= $history['to'] ?></div>
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $options = ['id' => $model['txid'], 'onclick' => 'window.location = "' . Yii::$app->getUrlManager()->createUrl(['transaction/view', 'id' => $model['txid']]) . '";'];
@@ -44,14 +28,24 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
-            'txid',
+//            'txid',
             'timestamp',
-            'type',
-            'payment',
+//            'type',
+//            'payment',
             'description',
-            ['attribute' => 'amount', 'format' => 'html', 'value' => function ($data) use ($details) {
+            ['attribute' => 'amount', 'label' => 'Debits', 'format' => 'html', 'value' => function ($data) use ($details) {
                 if ($data->dr_account === $details->account->id) {
                     return number_format($data->amount, 2) . ' ' . Elements::icon('minus square', ['class' => 'red']);
+                } else {
+                    return '';
+                }
+            }, 'contentOptions' => function ($data) {
+                if ($data->reverted != 0) return array('style' => 'text-decoration: line-through;text-align: right;');
+                else return array('style' => 'text-align: right;');
+            }],
+            ['attribute' => 'amount', 'label' => 'Credits', 'format' => 'html', 'value' => function ($data) use ($details) {
+                if ($data->dr_account === $details->account->id) {
+                    return '';
                 } else {
                     return number_format($data->amount, 2) . ' ' . Elements::icon('add square', ['class' => 'green']);
                 }
@@ -79,15 +73,4 @@ $this->params['breadcrumbs'][] = $this->title;
             }],
         ],
     ]); ?>
-    <?php Pjax::end(); ?>
-    <p align="right">
-        <?php
-        if ($history != null) {
-            echo Html::a("Print", '#', ['class' => 'ui button blue', 'onclick' => PopupWindow::show(Url::current(['print' => 'true']))]);
-            echo Html::a('View Recent', ['ledger', 'id' => $details->account->id], ['class' => 'ui button blue']);
-        } else {
-            echo "<br/>";
-            echo Html::a('View History', ['history', 'id' => $details->account->id], ['class' => 'ui button blue']);
-        } ?>
-    </p>
 </div>
