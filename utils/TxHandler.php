@@ -10,8 +10,10 @@ namespace app\utils;
 
 
 use app\models\Account;
+use app\models\Receipt;
 use app\models\Transaction;
 use app\utils\enums\PaymentType;
+use app\utils\enums\TxType;
 use app\utils\widgets\AccountIDView;
 use Yii;
 
@@ -114,6 +116,16 @@ class TxHandler
             }
         }
 
+        if (($transaction->type == TxType::RECEIPT || $transaction->type == TxType::DOWN_PAYMENT) && substr($transaction->cr_account, 0, 1) == Account::getTypeId(Account::TYPE_SAVING)) {
+            $receipt = new Receipt();
+            $receipt->txid = $this->txid;
+            if (!$receipt->save()) {
+                foreach ($receipt->errors as $key => $value) {
+                    $this->error = $value[0];
+                    return false;
+                }
+            }
+        }
         //$tx->commit();
         return true;
     }

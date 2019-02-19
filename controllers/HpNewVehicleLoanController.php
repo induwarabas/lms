@@ -9,6 +9,7 @@ use app\models\HpNewVehicleLoan;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\LoanType;
+use app\models\Receipt;
 use app\models\Template;
 use app\models\Transaction;
 use app\models\VehicleBrand;
@@ -341,6 +342,11 @@ class HpNewVehicleLoanController extends LmsController
             $balanceType = "Balance";
         } else {
             $balance = -$balance;
+        }
+
+        $rec = Receipt::findOne(['txid' => $transaction->txid]);
+        if ($rec != null) {
+            $transaction->txid = $rec->id . '('.$transaction->txid.')';
         }
 
         $template = Template::findOne(2);
