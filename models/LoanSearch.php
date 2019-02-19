@@ -9,7 +9,7 @@ use yii\data\ActiveDataProvider;
 /**
  * LoanSearch represents the model behind the search form about `app\models\Loan`.
  *
- * @property integer $id
+ * @property string $id
  * @property string $customer_id
  * @property integer $type
  * @property string $status
@@ -29,8 +29,8 @@ class LoanSearch extends Model
     public function rules()
     {
         return [
-            [['id', 'type'], 'integer'],
-            [['customer_id', 'status', 'payment_status'], 'string'],
+            [['type'], 'integer'],
+            [['id', 'customer_id', 'status', 'payment_status'], 'string'],
         ];
     }
 
@@ -63,6 +63,17 @@ class LoanSearch extends Model
             $custid[] = ($cust != null) ? $cust->id : 0;
         }
 
+        $loanId = [];
+        if (isset($this->id) && $this->id != '') {
+            $loanId[] = $this->id;
+            if (strlen($this->id) > 4) {
+                $idx = str_replace(' ', '', $this->id);
+                $ids = HpNewVehicleLoan::find()->where('REPLACE(`vehicle_no`, \' \', \'\') LIKE :vid', [':vid' => '%' . $idx])->all();
+                foreach ($ids as $id)
+                    $loanId[] = $id;
+            }
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -77,7 +88,7 @@ class LoanSearch extends Model
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'id' => $loanId,
             'customer_id' => $custid,
             'type' => $this->type,
             'status' => $this->status,

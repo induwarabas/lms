@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         'tableOptions' => ['class' => 'ui table table-striped table-hover'],
         'columns' => [
-            ['attribute' => 'id', 'contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
+            ['attribute' => 'id', 'label' => 'Loan/Vehicle ID','contentOptions' => ['style' => 'max-width: 100px;'], 'headerOptions' => ['style' => 'max-width: 100px;'], 'filterOptions' => ['style' => 'max-width: 100px;']],
             ['attribute' => 'type', 'content' => function ($data) {
                 return LoanType::findOne(['id' => $data->type])->name;
             }, 'filter' => ArrayHelper::map(LoanType::find()->asArray()->all(), 'id', 'name'),

@@ -7,7 +7,7 @@ use app\utils\LoanCustomerValidator;
 /**
  * This is the model class for table "loan".
  *
- * @property integer $id
+ * @property string $id
  * @property integer $type
  * @property integer $customer_id
  * @property string $saving_account
