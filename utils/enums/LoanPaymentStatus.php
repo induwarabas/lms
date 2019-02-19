@@ -16,7 +16,8 @@ class LoanPaymentStatus
     const DONE = "DONE";
     const DEMANDED = "DEMANDED";
     const ARREARS = "ARREARS";
-    const colors  = [LoanPaymentStatus::DONE => 'green', LoanPaymentStatus::DEMANDED => 'orange', LoanPaymentStatus::ARREARS => 'red'];
+    const SEIZED = "SEIZED";
+    const colors  = [LoanPaymentStatus::DONE => 'green', LoanPaymentStatus::DEMANDED => 'orange', LoanPaymentStatus::ARREARS => 'red', LoanPaymentStatus::SEIZED => 'red'];
 
     public static function label($status) {
 

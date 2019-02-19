@@ -30,6 +30,7 @@ namespace app\models;
  * @property string $rmv_recv_date
  * @property string $rmv_recv_agent
  * @property string $rmv_recv_by
+ * @property integer $seized
  */
 class HpNewVehicleLoan extends \yii\db\ActiveRecord
 {
@@ -48,7 +49,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
-            [['id', 'vehicle_type', 'supplier', 'canvassed', 'make'], 'integer'],
+            [['id', 'vehicle_type', 'supplier', 'canvassed', 'make', 'seized'], 'integer'],
             [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges', 'rmv_charges', 'down_payment'], 'number'],
             [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
             [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
@@ -87,6 +88,7 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
             'rmv_recv_date' => 'RMV Received Date',
             'rmv_recv_agent' => 'RMV Received Agent',
             'rmv_recv_by' => 'RMV Received By',
+            'seized' => 'Seized',
         ];
     }
 

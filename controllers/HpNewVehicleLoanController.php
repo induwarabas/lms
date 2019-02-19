@@ -286,6 +286,21 @@ class HpNewVehicleLoanController extends LmsController
         ]);
     }
 
+    public function actionSeize($id) {
+        $model = $this->findModel($id);
+        $model->seized = 1;
+        $model->save();
+
+        return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id]);
+    }
+    public function actionReleaseSeize($id) {
+        $model = $this->findModel($id);
+        $model->seized = 0;
+        $model->save();
+
+        return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id]);
+    }
+
     public function actionPrintReceipt($id)
     {
         $transaction = Transaction::findOne($id);

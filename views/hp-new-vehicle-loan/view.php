@@ -5,6 +5,7 @@ use app\models\DisburseModel;
 use app\models\LoanType;
 use app\models\VehicleBrand;
 use app\models\VehicleType;
+use app\utils\enums\LoanPaymentStatus;
 use app\utils\enums\LoanStatus;
 use app\utils\widgets\AccountIDView;
 use app\utils\widgets\CanvasserView;
@@ -84,6 +85,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'ui button blue']);
             }
         }
+        if ($loan->status == LoanStatus::ACTIVE && $model->seized == 0) {
+            echo Html::a('Seize', ['hp-new-vehicle-loan/seize', 'id' => $model->id], ['class' => 'ui button red']);
+        }
+        if ($loan->status == LoanStatus::ACTIVE && $model->seized == 1) {
+            echo Html::a('Release Seize', ['hp-new-vehicle-loan/release-seize', 'id' => $model->id], ['class' => 'ui button red']);
+        }
+
         if ($loan->status == LoanStatus::ACTIVE) {
             echo Html::a('Recover', ['loan/recover', 'id' => $model->id], ['class' => 'ui button green']);
         }
@@ -170,6 +178,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     ['attribute' => 'status', 'format' => 'html', 'value' => function ($data) {
                         return LoanStatus::label($data->status);
+                    }],
+                    ['attribute' => 'payment_status', 'format' => 'html', 'value' => function ($data)  use ($model) {
+                        return LoanPaymentStatus::label($model->seized == 1 ? "SEIZED":$data->payment_status);
                     }],
                     ['attribute' => 'amount', 'value' => number_format($loan->amount, 2)],
                     ['attribute' => 'charges', 'label' => 'Down Payment', 'value' => function ($data) use ($model) {
