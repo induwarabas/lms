@@ -344,13 +344,14 @@ class HpNewVehicleLoanController extends LmsController
             $balance = -$balance;
         }
 
-        $rec = Receipt::findOne(['txid' => $transaction->txid]);
+        $invoiceNo = str_pad($id, 10, "0", STR_PAD_LEFT);
+        $rec = Receipt::findOne(['txid' => $id]);
         if ($rec != null) {
-            $transaction->txid = $rec->id . '('.$transaction->txid.')';
+            $invoiceNo = str_pad($rec->id, 10, "0", STR_PAD_LEFT). '('.$id.')';
         }
 
         $template = Template::findOne(2);
-        $text .= $m->render($template->content, ['invoice_number' => str_pad($id, 10, "0", STR_PAD_LEFT),
+        $text .= $m->render($template->content, ['invoice_number' => $invoiceNo,
             'loan' => $loan,
             'tx' => $transaction,
             'description' => $description,
