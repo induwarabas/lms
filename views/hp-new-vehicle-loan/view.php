@@ -195,10 +195,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['attribute' => 'rmv_charges', 'label' => 'RMV Charges', 'value' => function ($data) use ($model) {
                         return number_format($model->rmv_charges, 2);
                     }],
+                    ['attribute' => 'charges', 'label' => 'Seize Panelty', 'value' => function ($data) use ($model) {
+                        return number_format($model->seize_panelty, 2);
+                    }],
                     ['attribute' => 'charges', 'label' => 'Other Charges', 'value' => function ($data) use ($model) {
                         return number_format($model->charges, 2);
                     }],
-                    ['attribute' => 'charges', 'label' => 'Total Charges', 'value' => number_format($loan->charges, 2) . "  (Sales Commission + Canvassing Commission + RMV Charges + Other Charges)"],
+                    ['attribute' => 'charges', 'label' => 'Total Charges', 'value' => number_format($loan->charges+$model->seize_panelty, 2) . "  (Sales Commission + Canvassing Commission + RMV Charges + Seize Panelty + Other Charges)"],
                     ['attribute' => 'amount', 'label' => 'Loan Amount', 'format' => 'html', 'value' => function ($data) {
                         return number_format($data->amount + $data->charges, 2) . " (Total Charges + Amount)";
                     }],
