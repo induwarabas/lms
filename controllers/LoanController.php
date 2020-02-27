@@ -28,6 +28,7 @@ use app\utils\TxHandler;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
+use app\models\HpNewVehicleLoan;
 
 /**
  * LoanController implements the CRUD actions for Loan model.
@@ -288,6 +289,7 @@ class LoanController extends LmsController
         );
 
         $loan = Loan::findOne($id);
+        $model = HpNewVehicleLoan::findOne($id);
 
         $result = Yii::$app->db->createCommand("SELECT SUM(penalty) as penalty, SUM(paid) as paid, SUM(due) as due FROM loan_schedule where loan_id = :loanId", [':loanId' => $id])->queryOne();
         $result2 = Yii::$app->db->createCommand("SELECT SUM(principal) as principal, SUM(charges) as charges, SUM(interest) as interest, SUM(penalty) as penalty FROM loan_schedule where loan_id = :loanId and status = 'PAYED'", [':loanId' => $id])->queryOne();
@@ -298,7 +300,8 @@ class LoanController extends LmsController
             'loan' => $loan,
             'total' => $result,
             'payed' => $result2,
-            'balance' => $accountBalance
+            'balance' => $accountBalance,
+            'model' => $model
         ]);
     }
 

@@ -287,13 +287,25 @@ class HpNewVehicleLoanController extends LmsController
         ]);
     }
 
-    public function actionSeize($id) {
-        $model = $this->findModel($id);
-        $model->seized = 1;
-        $model->save();
+    public function actionSeize2($id){
+        $model=$this->findModel($id);
 
-        return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id]);
+        if(Yii::$app->request->post()){
+            $loan=$_POST['HpNewVehicleLoan'];
+            $panalty=$loan['seize_panelty'];
+            $model->seized = 1;
+            $model->seize_panelty = $panalty;
+            $model->save();
+
+            return $this->redirect(['hp-new-vehicle-loan/view', 'id' => $id]);
+        }
+        else{
+            $loan = Loan::findOne(['id' => $id]);
+print_r($_POST);
+            return $this->render('vehicleSeize', ['model'=> $model, 'loan'=>$loan]);
+        }
     }
+
     public function actionReleaseSeize($id) {
         $model = $this->findModel($id);
         $model->seized = 0;

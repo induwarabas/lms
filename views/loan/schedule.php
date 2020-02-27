@@ -9,6 +9,7 @@ use Zelenin\yii\SemanticUI\widgets\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider \yii\data\ActiveDataProvider */
+/* @var $model app\models\HpNewVehicleLoan */
 /* @var $loan \app\models\Loan */
 /* @var $total array */
 /* @var $payed array */
@@ -22,7 +23,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="loan-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php
+if($model->seize_panelty >0 ){
+    echo "<h3 style='color: #AA0101'> You have a seize panelty ".number_format($model->seize_panelty,2)."LKR</h3>";
+}
+    ?>
     <table class="ui table table-bordered">
         <tr>
             <td>
@@ -56,11 +61,11 @@ $this->params['breadcrumbs'][] = $this->title;
             </td>
             <td>
                 <span style="font-weight: bold;">Due</span><br/>
-                <span style="font-size: x-large;"><?= number_format(abs($balance - $total['due']), 2) . Elements::icon( $total['due'] > $balance ? 'minus square' : 'plus square', ['class' => ($total['due']) > $balance ? 'red' : 'green']) ?></span>
+                <span style="font-size: x-large;"><?= number_format(abs($balance - $total['due']+$model->seize_panelty), 2) . Elements::icon( $total['due'] > $balance ? 'minus square' : 'plus square', ['class' => ($total['due']) > $balance ? 'red' : 'green']) ?></span>
                 <br/>
                 <?= number_format($balance, 2) . Elements::icon('add square', ['class' => 'green']) ?>
                 <br/>
-                <?= number_format($total['due'], 2) . Elements::icon('minus square', ['class' => 'red']) ?>
+                <?= number_format($total['due']+$model->seize_panelty, 2) . Elements::icon('minus square', ['class' => 'red']) ?>
             </td>
         </tr>
     </table>
