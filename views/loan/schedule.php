@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
 if($model->seize_panelty >0 ){
-    echo "<h3 style='color: #AA0101'> You have a seize panelty ".number_format($model->seize_panelty,2)."LKR</h3>";
+    echo "<h3 style='color: #AA0101'> This loan has a seize panelty ".number_format($model->seize_panelty,2)."LKR</h3>";
 }
     ?>
     <table class="ui table table-bordered">
