@@ -10,7 +10,6 @@ use yii\bootstrap\Alert;
 use yii\helpers\Html;
 use Zelenin\yii\SemanticUI\Elements;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\TellerReceipt */
 /* @var $loan app\models\Loan */
@@ -18,7 +17,8 @@ use Zelenin\yii\SemanticUI\Elements;
 /* @var $details string */
 /* @var $balance double */
 /* @var $error string */
-/* @var $schedule \app\models\LoanSchedule */
+/* @var $schedule app\models\LoanSchedule */
+/* @var $vehicle app\models\HpNewVehicleLoan */
 
 $this->title = 'Loan Receipt';
 $this->params['breadcrumbs'][] = ['label' => 'Teller', 'url' => ['index']];
@@ -59,6 +59,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <td><?= number_format($loan->amount, 2) ?></td>
         </tr>
         <tr>
+            <td>Seize Panalty</td>
+            <td><?= number_format($vehicle->seize_panelty,2) ?></td>
+        </tr>
+        <tr>
             <td>Saving Account</td>
             <td><?= AccountIDView::widget(['accountId' => $loan->saving_account]) ?></td>
         </tr>
@@ -80,9 +84,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <td><?= number_format($schedule->principal, 2) . " + "
                 .number_format($schedule->interest, 2) . " + "
                 . number_format($schedule->charges, 2) . " + "
+                .number_format($vehicle->seize_panelty,2)."+"
                 . number_format($schedule->penalty, 2) . " - "
                 . number_format($schedule->paid, 2) . " = "
-                . '<span style="font-size: large;font-weight: bold">'.number_format($schedule->due, 2).'</span>' ?>
+                . '<span style="font-size: large;font-weight: bold">'.number_format($schedule->due+$vehicle->seize_panelty, 2).'</span>' ?>
             <br/>
                 (Principal + Interest + Charges + Penalty - Recovered = Due Amount)
             </td>
@@ -90,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php } ?>
         <tr>
             <td>Balance Due</td>
-            <td><?= number_format($schedule->due, 2) ." - ".number_format(Account::findOne($loan->saving_account)->balance, 2) . " = " ?>
+            <td><?= number_format($schedule->due+$vehicle->seize_panelty, 2) ." - ".number_format(Account::findOne($loan->saving_account)->balance, 2) . " = " ?>
                 <?php
                 echo '<span style="font-size: large;font-weight: bold">';
                 if ($balance < 0) {

@@ -15,6 +15,7 @@ use app\models\CollectionMethod;
 use app\models\Loan;
 use app\models\LoanSchedule;
 use app\models\Setting;
+use app\models\HpNewVehicleLoan;
 use app\utils\Doubles;
 use app\utils\enums\LoanPaymentStatus;
 use app\utils\enums\LoanScheduleStatus;
@@ -34,6 +35,7 @@ class LoanRecovery
     public $linkId = "";
 
     private function getAmountToPay($schedule) {
+
         return $schedule->principal + $schedule->interest + $schedule->charges;
     }
 
@@ -190,7 +192,45 @@ class LoanRecovery
         $tx->commit();
         return true;
     }
+    public function recoverSeizePanalty($loanId){
+        $tx = Yii::$app->getDb()->beginTransaction();
+        $loan = Loan::findOne(['id'=>$loanId]);
 
+        if($loan === null){
+            $this->error="The loan #" . $loanId . " not found.";
+            $tx->rollBack();
+            return false;
+        }
+        $vehicle = HpNewVehicleLoan::findOne(['id' => $loanId]);
+        $seizePanelty = $vehicle->seize_panelty;
+        $savingAccount = Account::findOne(['id' => $loan->saving_account]);
+        $remain = $savingAccount->balance;
+        $txhand= new TxHandler();
+
+        if($remain >= $seizePanelty){
+            if(!$txhand->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $seizePanelty, TxType::SEIZE, PaymentType::INTERNAL, "Seize Panelty recovery of loan #" . $loanId)){
+                $tx->rollBack();
+                $this->error = $txhand->error;
+                return false;
+            }
+            $vehicle->seize_panelty = 0.00;
+            $tx->commit();
+            $vehicle->save();
+            return true;
+        }
+        if($remain < $seizePanelty){
+            if(!$txhand->createTransaction($loan->saving_account, GeneralAccounts::PENALTY, $remain, TxType::SEIZE, PaymentType::INTERNAL, "Seize Panelty recovery of loan #" . $loanId )){
+                $tx->rollBack();
+                $this->error = $txhand->error;
+                return false;
+            }
+            $vehicle->seize_panelty = $seizePanelty - $remain;
+            $tx->commit();
+            $vehicle->save();
+            return true;
+        }
+
+    }
     public function recoverInstallments($loanId, $date)
     {
         $tx = Yii::$app->getDb()->beginTransaction();
@@ -294,6 +334,7 @@ class LoanRecovery
     public function recover($loanId, $date = null, $demandDaily = false)
     {
         $loan = Loan::findOne($loanId);
+        $vehicle=HpNewVehicleLoan::findOne($loanId);
         if ($loan == null) {
             $this->error = "Loan ".$loanId." not found";
             return false;
@@ -311,7 +352,11 @@ class LoanRecovery
         if (!$this->updateSchedule($loanId, $date, $demandDaily)) {
             return false;
         }
-
+        if($loan->type == 1 || $loan->type == 2 || $loan->type == 3){
+            if(!$this->recoverSeizePanalty($loanId) ){
+                return false;
+            }
+        }
         if (!$this->recoverPenalty($loanId)) {
             return false;
         }

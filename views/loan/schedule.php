@@ -61,11 +61,11 @@ if($model->seize_panelty >0 ){
             </td>
             <td>
                 <span style="font-weight: bold;">Due</span><br/>
-                <span style="font-size: x-large;"><?= number_format(abs($balance - $total['due']+$model->seize_panelty), 2) . Elements::icon( $total['due'] > $balance ? 'minus square' : 'plus square', ['class' => ($total['due']) > $balance ? 'red' : 'green']) ?></span>
+                <span style="font-size: x-large;"><?= number_format(abs($balance - $total['due']), 2) . Elements::icon( $total['due'] > $balance ? 'minus square' : 'plus square', ['class' => ($total['due']) > $balance ? 'red' : 'green']) ?></span>
                 <br/>
                 <?= number_format($balance, 2) . Elements::icon('add square', ['class' => 'green']) ?>
                 <br/>
-                <?= number_format($total['due']+$model->seize_panelty, 2) . Elements::icon('minus square', ['class' => 'red']) ?>
+                <?= number_format($total['due'], 2) . Elements::icon('minus square', ['class' => 'red']) ?>
             </td>
         </tr>
     </table>

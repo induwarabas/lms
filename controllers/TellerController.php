@@ -51,6 +51,7 @@ class TellerController extends LmsController
         if ($model->load(Yii::$app->request->post()) && $model->validate(['loanId'])) {
             $error = null;
             $loan = Loan::findOne($model->loanId);
+            $vehicle=HpNewVehicleLoan::findOne($model->loanId);
             if ($loan == null) {
                 $model->addError('loanId', "Invalid loan id.");
                 return $this->render('receipt-account', [
@@ -109,7 +110,7 @@ class TellerController extends LmsController
             $details = "#" . $loan->id . " / " . LoanType::findOne($loan->type)->name;
             $due = Yii::$app->getDb()->createCommand("SELECT SUM(due) FROM loan_schedule where loan_id = :id", [':id' => $loan->id])->queryScalar();
             $savingAccount = Account::findOne($loan->saving_account);
-            $balance = $savingAccount->balance - $due;
+            $balance = $savingAccount->balance - ($due+$vehicle->seize_panelty);
 
             $schedules = LoanSchedule::find()->where(['loan_id' => $loan->id])->andWhere(['status' => ['ARREARS', 'DEMANDED']])->orderBy(['installment_id' => SORT_ASC])->all();
 
@@ -156,7 +157,8 @@ class TellerController extends LmsController
                 'customer' => $customer,
                 'balance' => $balance,
                 'schedule' => $scheduleData,
-                'error' => $error
+                'error' => $error,
+                'vehicle' => $vehicle
             ]);
         } else {
             $model->stage = 0;
