@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="hp-new-vehicle-loan-view">
 
-        <h1><?= Html::encode($this->title) ?></h1>
+        <h1><?= Html::encode($this->title.($model->seized == 1? "  (Seized)" : "")) ?></h1>
 
         <?php
         if ($error != null && $error != '') {
