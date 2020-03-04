@@ -116,6 +116,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'arrears', 'value' => function ($model) {
                 return $model['arrears'].' /'.($model['arrears'] + $model['demanded']);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
+            ['attribute' => 'seize', 'value' => function ($model) {
+                return HpNewVehicleLoan::findOne(['id'=>$model['loan_id']])->seize_panelty;
+            }, 'contentOptions' => ['style' => 'text-align: right;']],
             ['attribute' => 'penalty', 'value' => function ($model) {
                 return number_format($model['penalty'] - $model['paid'], 2);
             }, 'contentOptions' => ['style' => 'text-align: right;']],
