@@ -28,6 +28,8 @@ if($model->seize_panelty >0 ){
     echo "<h3 style='color: #AA0101'> This loan has a seize panelty ".number_format($model->seize_panelty,2)."LKR</h3>";
 }
     ?>
+    <?php echo Html::a('Re Schedule', ['loan/reschedule', 'id' => $model->id], ['class' => 'ui button blue']);
+    ?>
     <table class="ui table table-bordered">
         <tr>
             <td>
@@ -69,6 +71,7 @@ if($model->seize_panelty >0 ){
             </td>
         </tr>
     </table>
+
     <?php Pjax::begin(); ?>  <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'ui table table-striped table-hover table-bordered'],

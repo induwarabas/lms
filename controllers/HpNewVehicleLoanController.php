@@ -301,7 +301,6 @@ class HpNewVehicleLoanController extends LmsController
         }
         else{
             $loan = Loan::findOne(['id' => $id]);
-print_r($_POST);
             return $this->render('vehicleSeize', ['model'=> $model, 'loan'=>$loan]);
         }
     }
