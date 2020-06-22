@@ -29,6 +29,7 @@ class TxType
     const REVERT = "REVERT";
     const CLOSE_ACCOUNT = "CLOSE_ACC";
     const SETTLEMENT = "SETTLEMENT";
+    const SEIZE = "SEIZE";
 
     public static function items() {
         return [
@@ -37,6 +38,7 @@ class TxType
             TxType::PAYMENT => TxType::PAYMENT,
             TxType::RECEIPT => TxType::RECEIPT,
             TxType::PENALTY => TxType::PENALTY,
+            TxType::SEIZE => TxType::SEIZE,
             TxType::DOWN_PAYMENT => TxType::DOWN_PAYMENT,
             TxType::RECOVERY => TxType::RECOVERY,
             TxType::CAPITAL_RECOVERY => TxType::CAPITAL_RECOVERY,

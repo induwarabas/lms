@@ -2,40 +2,43 @@
 
 namespace app\models;
 
+use Yii;
+
 /**
  * This is the model class for table "hp_new_vehicle_loan".
  *
- * @property integer $id
- * @property integer $vehicle_type
- * @property string $vehicle_no
- * @property string $engine_no
- * @property string $chasis_no
- * @property string $model
- * @property integer $make
- * @property integer $supplier
- * @property number $price
- * @property number $down_payment
- * @property number $loan_amount
- * @property number $charges
- * @property string $sales_commision_type
- * @property number $sales_commision
- * @property integer $canvassed
- * @property string $canvassing_commision_type
- * @property number $canvassing_commision
- * @property number $insurance
- * @property number $rmv_charges
- * @property string $rmv_sent_date
- * @property string $rmv_sent_agent
- * @property string $rmv_sent_by
- * @property string $rmv_recv_date
- * @property string $rmv_recv_agent
- * @property string $rmv_recv_by
- * @property integer $seized
+ * @property int $id Loan ID
+ * @property int $vehicle_type Vehicle Type
+ * @property string $vehicle_no Vehicle Number
+ * @property string $engine_no Engine Number
+ * @property string $chasis_no Chasis Number
+ * @property string $model Model
+ * @property int $make Make/Brand
+ * @property int $supplier Supplier
+ * @property string $down_payment Down Payment
+ * @property string $price Selling Price
+ * @property string $loan_amount Loan Amount
+ * @property string $charges Charges
+ * @property string $sales_commision_type Sales Commission Type
+ * @property string $sales_commision Sales Commision
+ * @property int $canvassed Canvassed By
+ * @property string $canvassing_commision_type Canvassing Commission Type
+ * @property string $canvassing_commision Canvassing Commision
+ * @property string $insurance Insurance Premium
+ * @property string $rmv_charges RMV Charges
+ * @property string $rmv_sent_date RMV Sent Date
+ * @property string $rmv_sent_agent RMV Sent Agent
+ * @property string $rmv_sent_by RMV Sent By
+ * @property string $rmv_recv_date RMV Received Date
+ * @property string $rmv_recv_agent RMV Received Agent
+ * @property string $rmv_recv_by RMV Received By
+ * @property string $seize_panelty
+ * @property int $seized
  */
 class HpNewVehicleLoan extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -43,51 +46,55 @@ class HpNewVehicleLoan extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'insurance', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
-            [['id', 'vehicle_type', 'supplier', 'canvassed', 'make', 'seized'], 'integer'],
-            [['price', 'loan_amount', 'sales_commision', 'canvassing_commision', 'insurance', 'charges', 'rmv_charges', 'down_payment'], 'number'],
-            [['vehicle_no', 'rmv_sent_date', 'rmv_recv_date'], 'string', 'max' => 10],
+            [['id', 'vehicle_type', 'engine_no', 'chasis_no', 'model', 'make', 'price', 'loan_amount', 'sales_commision_type', 'canvassing_commision_type'], 'required'],
+            [['id', 'vehicle_type', 'make', 'supplier', 'canvassed', 'seized'], 'integer'],
+            [['down_payment', 'price', 'loan_amount', 'charges', 'sales_commision', 'canvassing_commision', 'insurance', 'rmv_charges', 'seize_panelty'], 'number'],
+            [['sales_commision_type', 'canvassing_commision_type'], 'string'],
+            [['rmv_sent_date', 'rmv_recv_date'], 'safe'],
+            [['vehicle_no'], 'string', 'max' => 10],
             [['engine_no', 'chasis_no', 'model'], 'string', 'max' => 128],
             [['rmv_sent_agent', 'rmv_sent_by', 'rmv_recv_agent', 'rmv_recv_by'], 'string', 'max' => 64],
+            [['id'], 'unique'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
-            'id' => 'Loan ID',
+            'id' => 'ID',
             'vehicle_type' => 'Vehicle Type',
-            'vehicle_no' => 'Vehicle Number',
-            'engine_no' => 'Engine Number',
-            'chasis_no' => 'Chasis Number',
+            'vehicle_no' => 'Vehicle No',
+            'engine_no' => 'Engine No',
+            'chasis_no' => 'Chasis No',
             'model' => 'Model',
-            'make' => 'Make/Brand',
+            'make' => 'Make',
             'supplier' => 'Supplier',
-            'price' => 'Selling Price',
             'down_payment' => 'Down Payment',
+            'price' => 'Price',
             'loan_amount' => 'Loan Amount',
             'charges' => 'Charges',
-            'sales_commision_type' => 'Sales Commission Type',
-            'sales_commision' => 'Sales Commission',
-            'canvassed' => 'Canvassed By',
-            'canvassing_commision_type' => 'Canvassing Commission Type',
-            'canvassing_commision' => 'Canvassing Commission',
-            'insurance' => 'Insurance Premium',
-            'rmv_charges' => 'RMV Charges',
-            'rmv_sent_date' => 'RMV Sent Date',
-            'rmv_sent_agent' => 'RMV Sent Agent',
-            'rmv_sent_by' => 'RMV Sent By',
-            'rmv_recv_date' => 'RMV Received Date',
-            'rmv_recv_agent' => 'RMV Received Agent',
-            'rmv_recv_by' => 'RMV Received By',
+            'sales_commision_type' => 'Sales Commision Type',
+            'sales_commision' => 'Sales Commision',
+            'canvassed' => 'Canvassed',
+            'canvassing_commision_type' => 'Canvassing Commision Type',
+            'canvassing_commision' => 'Canvassing Commision',
+            'insurance' => 'Insurance',
+            'rmv_charges' => 'Rmv Charges',
+            'rmv_sent_date' => 'Rmv Sent Date',
+            'rmv_sent_agent' => 'Rmv Sent Agent',
+            'rmv_sent_by' => 'Rmv Sent By',
+            'rmv_recv_date' => 'Rmv Recv Date',
+            'rmv_recv_agent' => 'Rmv Recv Agent',
+            'rmv_recv_by' => 'Rmv Recv By',
+            'seize_panelty' => 'Seize Panelty',
             'seized' => 'Seized',
         ];
     }

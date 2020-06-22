@@ -97,6 +97,7 @@ AppAsset::register($this);
                 'label' => 'Reports',
                 'items' => [
                     ['label' => 'Arrears', 'url' => ['/report/arrears']],
+                    ['label' => 'Seized', 'url' => ['/report/seized']],
                     ['label' => 'To Pay', 'url' => ['/report/payment']],
                     ['label' => 'To Disburse', 'url' => ['/report/disburse']],
                     ['label' => 'Payments', 'url' => ['/report/payments', 'ReceiptSearch[from]' => date('Y-m-d')]],

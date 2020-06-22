@@ -28,6 +28,7 @@ use app\utils\TxHandler;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
+use app\models\HpNewVehicleLoan;
 
 /**
  * LoanController implements the CRUD actions for Loan model.
@@ -73,7 +74,8 @@ class LoanController extends LmsController
         ]);
     }
 
-    public function actionFixschedules() {
+    public function actionFixschedules()
+    {
 //        $txs = Transaction::find()->where(['type' => 'CAPITAL'])->all();
 //        foreach ($txs as $tx) {
 //            $p1 = explode(' ', $tx->description);
@@ -96,8 +98,8 @@ class LoanController extends LmsController
 //        MonthlyReportGenerator::generate(2017, 11)->save();
 //        MonthlyReportGenerator::generate(2017, 12)->save();
 //        MonthlyReportGenerator::generate(2018, 1)->save();
- //       MonthlyReportGenerator::generate(2018, 2)->save();
- //       MonthlyReportGenerator::generate(2018, 3)->save();
+        //       MonthlyReportGenerator::generate(2018, 2)->save();
+        //       MonthlyReportGenerator::generate(2018, 3)->save();
 
         echo "Done";
     }
@@ -125,7 +127,7 @@ class LoanController extends LmsController
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
         } else if ($model->type == LoanTypes::DAILY_COLLECTION) {
             return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
-        }else if ($model->type == LoanTypes::PERSONAL) {
+        } else if ($model->type == LoanTypes::PERSONAL) {
             return $this->redirect(['personal-loan/create', 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
@@ -227,9 +229,9 @@ class LoanController extends LmsController
         }
         if (LoanTypes::isVehicleLoan($model->type)) {
             return $this->redirect(["hp-new-vehicle-loan/create", 'type' => $model->type]);
-        } else  if ($model->type == LoanTypes::DAILY_COLLECTION) {
+        } else if ($model->type == LoanTypes::DAILY_COLLECTION) {
             return $this->redirect(["daily-collection-loan/create", 'type' => $model->type]);
-        } else  if ($model->type == LoanTypes::PERSONAL) {
+        } else if ($model->type == LoanTypes::PERSONAL) {
             return $this->redirect(["personal-loan/create", 'type' => $model->type]);
         } else {
             Yii::$app->getSession()->remove('loan');
@@ -288,6 +290,7 @@ class LoanController extends LmsController
         );
 
         $loan = Loan::findOne($id);
+        $model = HpNewVehicleLoan::findOne($id);
 
         $result = Yii::$app->db->createCommand("SELECT SUM(penalty) as penalty, SUM(paid) as paid, SUM(due) as due FROM loan_schedule where loan_id = :loanId", [':loanId' => $id])->queryOne();
         $result2 = Yii::$app->db->createCommand("SELECT SUM(principal) as principal, SUM(charges) as charges, SUM(interest) as interest, SUM(penalty) as penalty FROM loan_schedule where loan_id = :loanId and status = 'PAYED'", [':loanId' => $id])->queryOne();
@@ -298,8 +301,45 @@ class LoanController extends LmsController
             'loan' => $loan,
             'total' => $result,
             'payed' => $result2,
-            'balance' => $accountBalance
+            'balance' => $accountBalance,
+            'model' => $model
         ]);
+    }
+
+    public function actionReschedule($id)
+    {
+        $model = $this->findModel($id);
+        if (Yii::$app->request->post()) {
+            $loan1 = $_POST['Loan'];
+            $date = $loan1['disbursed_date'];
+
+            $query = LoanSchedule::find()->Where(['loan_id' => $id, 'status' => 'PENDING'])->orderBy('installment_id')->all();
+
+            $loan = $this->findModel($id);
+            $tx = Yii::$app->getDb()->beginTransaction();
+            $timeAdd = "month";
+            if ($loan->collection_method === 2) //Weekly
+            {
+                $timeAdd = "week";
+            } else if ($loan->collection_method == 3) //Daily
+            {
+                $timeAdd = "day";
+            }
+            $i = 0;
+            foreach ($query as $row) {
+                $dt = date('Y-m-d', strtotime("+".$i." ".$timeAdd, strtotime($date)));
+                ++$i;
+                $row['demand_date'] = $dt;
+                $row->save();
+            }
+            $tx->commit();
+
+            return $this->redirect(['loan/schedule', 'id' => $id]);
+
+        } else {
+            $loan = Loan::findOne(['id' => $id]);
+            return $this->render('reschedule', ['loan' => $loan]);
+        }
     }
 
     public function actionCreatex()
@@ -361,11 +401,11 @@ class LoanController extends LmsController
     {
         $loan = Loan::findOne($id);
         if ($loan == null) {
-            throw new NotFoundHttpException('The loan #'.$id." not found.");
+            throw new NotFoundHttpException('The loan #' . $id . " not found.");
         }
 
         if ($loan->status !== LoanStatus::COMPLETED && $loan->status !== LoanStatus::PENDING) {
-            throw new NotFoundHttpException('The loan #'.$id." is not in  state.");
+            throw new NotFoundHttpException('The loan #' . $id . " is not in  state.");
         }
 
         $balance = Account::findOne($loan->saving_account)->balance;
@@ -378,20 +418,21 @@ class LoanController extends LmsController
                 $balance,
                 TxType::CLOSE_ACCOUNT,
                 PaymentType::INTERNAL,
-                "Close loan #".$loan->id.".")) {
+                "Close loan #" . $loan->id . ".")) {
                 $tx->rollBack();
-                throw new NotFoundHttpException('Failed to transfer balance of #'.$id.". ".$txHnd->error);
+                throw new NotFoundHttpException('Failed to transfer balance of #' . $id . ". " . $txHnd->error);
             }
         }
         $loan->status = LoanStatus::CLOSED;
         if (!$loan->save()) {
-            throw new NotFoundHttpException('Failed to save loan #'.$id.".");
+            throw new NotFoundHttpException('Failed to save loan #' . $id . ".");
         }
         $tx->commit();
         return $this->redirect(['view', 'id' => $id]);
     }
 
-    public function actionAssignCollectors() {
+    public function actionAssignCollectors()
+    {
         $model = new CollectorAssignmentModel();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $loanIds = explode("\n", str_replace('\r', '', $model->loans));
@@ -401,7 +442,7 @@ class LoanController extends LmsController
             $date = Setting::findOne(1)->value;
             foreach ($loans as $loan) {
                 if ($loan->type != LoanTypes::DAILY_COLLECTION) {
-                    $model->addError('loans', "Loan ".$loan->id." is not a Daily Collection loan.");
+                    $model->addError('loans', "Loan " . $loan->id . " is not a Daily Collection loan.");
                     $tx->rollBack();
                     $failed = true;
                     break;
@@ -412,7 +453,7 @@ class LoanController extends LmsController
                 }
                 $col->collector_id = $model->collector;
                 if (!$col->save()) {
-                    $model->addError('loans', "Failed to save ".$loan->id." data.");
+                    $model->addError('loans', "Failed to save " . $loan->id . " data.");
                     $tx->rollBack();
                     $failed = true;
                     break;
@@ -428,7 +469,8 @@ class LoanController extends LmsController
         ]);
     }
 
-    public function actionSettlement() {
+    public function actionSettlement()
+    {
         $model = new LoanSettlement();
         $model->stage = 1;
         $loaded = false;
@@ -452,7 +494,7 @@ class LoanController extends LmsController
                         $error = "Principal amount is greater than the loan account balance";
                     } else {
                         $principalLoss = -$loanAccount->balance - $principal;
-                        $description = "Settlement of loan #".$loan->id;
+                        $description = "Settlement of loan #" . $loan->id;
                         $tx = Yii::$app->db->beginTransaction();
                         $txHnd = new TxHandler();
                         $link = $txHnd->createLink();
@@ -503,7 +545,7 @@ class LoanController extends LmsController
                             $schedule->settled = 1;
                             $schedule->pay_date = date('Y-m-d');
                             $schedule->due = 0;
-                            if(!$schedule->save()) {
+                            if (!$schedule->save()) {
                                 $tx->rollBack();
                                 throw new NotFoundHttpException("Failed to save the loan schedule.");
                             }

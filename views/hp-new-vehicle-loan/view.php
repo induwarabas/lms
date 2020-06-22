@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="hp-new-vehicle-loan-view">
 
-        <h1><?= Html::encode($this->title) ?></h1>
+        <h1><?= Html::encode($this->title.($model->seized == 1? "  (Seized)" : "")) ?></h1>
 
         <?php
         if ($error != null && $error != '') {
@@ -86,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         }
         if ($loan->status == LoanStatus::ACTIVE && $model->seized == 0) {
-            echo Html::a('Seize', ['hp-new-vehicle-loan/seize', 'id' => $model->id], ['class' => 'ui button red']);
+            echo Html::a('Seize', ['hp-new-vehicle-loan/seize2', 'id' => $model->id], ['class' => 'ui button red']);
         }
         if ($loan->status == LoanStatus::ACTIVE && $model->seized == 1) {
             echo Html::a('Release Seize', ['hp-new-vehicle-loan/release-seize', 'id' => $model->id], ['class' => 'ui button red']);
@@ -194,6 +194,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     }],
                     ['attribute' => 'rmv_charges', 'label' => 'RMV Charges', 'value' => function ($data) use ($model) {
                         return number_format($model->rmv_charges, 2);
+                    }],
+                    ['attribute' => 'charges', 'label' => 'Seize Panelty', 'value' => function ($data) use ($model) {
+                        return number_format($model->seize_panelty, 2);
                     }],
                     ['attribute' => 'charges', 'label' => 'Other Charges', 'value' => function ($data) use ($model) {
                         return number_format($model->charges, 2);

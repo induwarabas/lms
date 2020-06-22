@@ -3,10 +3,12 @@
 namespace app\controllers;
 
 use app\models\ArrearsSearch;
+use app\models\SeizeSearch;
 use app\models\Loan;
 use app\models\MonthlyReport;
 use app\models\MonthlySummarySearch;
 use app\models\ReceiptSearch;
+use app\models\HpNewVehicleLoan;
 use app\utils\Doubles;
 use app\utils\enums\LoanStatus;
 use app\utils\enums\LoanTypes;
@@ -135,6 +137,63 @@ class ReportController extends LmsController
             ]));
         } else {
             return $this->render('arrears', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'total' => $total,
+                'print' => false
+            ]);
+        }
+    }
+
+    public function actionSeized()
+    {
+        $searchModel = new SeizeSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+
+        $query = new Query();
+        $query->select(['loan_due.*', 'loan.type', 'hp_new_vehicle_loan.seize_panelty', 'customer.*', 'account.balance'])
+            ->from('loan_due')
+            ->innerJoin('loan', 'loan_due.loan_id = loan.id')
+            ->innerJoin('customer', 'loan.customer_id = customer.id')
+            ->innerJoin('account', 'loan.saving_account = account.id')
+            ->leftJoin('hp_new_vehicle_loan', 'hp_new_vehicle_loan.id = loan.id')
+            ->where('loan_due.due > account.balance and hp_new_vehicle_loan.seized = 1');
+
+        if ($searchModel->validate()) {
+            $query->andFilterWhere(['area' => $searchModel->area]);
+            if ($searchModel->type == 100) {
+                $query->andFilterWhere(['loan.type' => [LoanTypes::HP_REG_VEHICLE_REFINANCE, LoanTypes::HP_REG_VEHICLE_OTHER, LoanTypes::HP_NEW_VEHICLE]]);
+            } else {
+                $query->andFilterWhere(['loan.type' => $searchModel->type]);
+            }
+            if ($searchModel->arrears != null) {
+                $query->andWhere('arrears >= :arr', [':arr' => $searchModel->arrears]);
+            }
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query
+        ]);
+        $dataProvider->pagination = array(
+            'pageSize' => 20,
+        );
+        $dataProvider->sort = ['attributes' => ['loan_id', 'type', 'arrears', 'seize_panelty', 'penalty', 'due', 'balance'], 'defaultOrder' => ['loan_id'=>SORT_ASC]];
+
+        $total = $query->sum('due - balance');
+
+        if (Yii::$app->getRequest()->getQueryParam("print") == "true") {
+            $dataProvider->pagination = array(
+                'pageSize' => 0,
+            );
+            // return the pdf output as per the destination setting
+            return $this->createPdf("Arrears Report", $this->renderPartial('arrears', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'total' => $total,
+                'print' => true
+            ]));
+        } else {
+            return $this->render('seized', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
                 'total' => $total,

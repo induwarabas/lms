@@ -9,6 +9,7 @@ use Zelenin\yii\SemanticUI\widgets\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider \yii\data\ActiveDataProvider */
+/* @var $model app\models\HpNewVehicleLoan */
 /* @var $loan \app\models\Loan */
 /* @var $total array */
 /* @var $payed array */
@@ -22,7 +23,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="loan-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php
+if($model->seize_panelty >0 ){
+    echo "<h3 style='color: #AA0101'> This loan has a seize panelty ".number_format($model->seize_panelty,2)."LKR</h3>";
+}
+    ?>
+    <?php echo Html::a(' Re Schedule ', ['loan/reschedule', 'id' => $model->id], ['class' => 'ui button blue', 'style'=> 'font-size:14px']);
+    ?>
     <table class="ui table table-bordered">
         <tr>
             <td>
@@ -64,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </td>
         </tr>
     </table>
+
     <?php Pjax::begin(); ?>  <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'ui table table-striped table-hover table-bordered'],
